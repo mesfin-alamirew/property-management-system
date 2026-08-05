@@ -9,7 +9,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { Button } from '@/components/ui/button';
+import { StatusBadge } from '@/components/common/status-badge';
+import { RowActionButtons } from '@/components/common/row-action-buttons';
 
 type PropertyTypeTableProps = {
   propertyTypes: PropertyType[];
@@ -46,23 +47,15 @@ export function PropertyTypeTable({
             <TableCell>{propertyType.name}</TableCell>
 
             <TableCell>
-              {propertyType.isActive ? 'Active' : 'Inactive'}
+              <StatusBadge active={propertyType.isActive} />
             </TableCell>
 
-            <TableCell className="space-x-2">
-              <Button variant="secondary" onClick={() => onEdit(propertyType)}>
-                Edit
-              </Button>
-
-              <Button
-                variant="danger"
-                disabled={deactivatingId === propertyType.id}
-                onClick={() => onDeactivate(propertyType)}
-              >
-                {deactivatingId === propertyType.id
-                  ? 'Deactivating...'
-                  : 'Deactivate'}
-              </Button>
+            <TableCell>
+              <RowActionButtons
+                onEdit={() => onEdit(propertyType)}
+                onDeactivate={() => onDeactivate(propertyType)}
+                loading={deactivatingId === propertyType.id}
+              />
             </TableCell>
           </TableRow>
         ))}

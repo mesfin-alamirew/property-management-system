@@ -15,6 +15,8 @@ import { deactivatePropertyTypeAction } from '../actions/property-type.actions';
 import { PropertyTypeDialog } from './property-type-dialog';
 import { PropertyTypeTable } from './property-type-table';
 
+import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+
 type PropertyTypeWorkspaceProps = {
   propertyTypes: PropertyType[];
 };
@@ -31,6 +33,11 @@ export function PropertyTypeWorkspace({
 
   const [deactivatingId, setDeactivatingId] = useState<string | null>(null);
 
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+
+  const [propertyTypeToDeactivate, setPropertyTypeToDeactivate] =
+    useState<PropertyType | null>(null);
+
   function handleCreate() {
     setSelectedPropertyType(null);
     setIsDialogOpen(true);
@@ -41,22 +48,28 @@ export function PropertyTypeWorkspace({
     setIsDialogOpen(true);
   }
 
-  async function handleDeactivate(propertyType: PropertyType) {
-    const confirmed = window.confirm(
-      `Are you sure you want to deactivate "${propertyType.name}"?`,
-    );
+  function handleDeactivate(propertyType: PropertyType) {
+    setPropertyTypeToDeactivate(propertyType);
+    setIsConfirmationOpen(true);
+  }
 
-    if (!confirmed) {
+  async function confirmDeactivate() {
+    if (!propertyTypeToDeactivate) {
       return;
     }
 
     try {
-      setDeactivatingId(propertyType.id);
+      setDeactivatingId(propertyTypeToDeactivate.id);
 
-      const result = await deactivatePropertyTypeAction(propertyType.id);
+      const result = await deactivatePropertyTypeAction(
+        propertyTypeToDeactivate.id,
+      );
 
       if (result.success) {
         toast.success('Property Type deactivated successfully');
+
+        setIsConfirmationOpen(false);
+        setPropertyTypeToDeactivate(null);
 
         router.refresh();
       } else {
@@ -84,6 +97,19 @@ export function PropertyTypeWorkspace({
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         propertyType={selectedPropertyType}
+      />
+      <ConfirmationDialog
+        open={isConfirmationOpen}
+        onOpenChange={setIsConfirmationOpen}
+        title="Deactivate Property Type"
+        description={
+          propertyTypeToDeactivate
+            ? `Are you sure you want to deactivate "${propertyTypeToDeactivate.name}"?`
+            : ''
+        }
+        confirmLabel="Deactivate"
+        loading={deactivatingId !== null}
+        onConfirm={confirmDeactivate}
       />
     </MasterDataLayout>
   );
