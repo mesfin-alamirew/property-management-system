@@ -29,6 +29,8 @@ export function PropertyTypeWorkspace({
   const [selectedPropertyType, setSelectedPropertyType] =
     useState<PropertyType | null>(null);
 
+  const [deactivatingId, setDeactivatingId] = useState<string | null>(null);
+
   function handleCreate() {
     setSelectedPropertyType(null);
     setIsDialogOpen(true);
@@ -48,14 +50,20 @@ export function PropertyTypeWorkspace({
       return;
     }
 
-    const result = await deactivatePropertyTypeAction(propertyType.id);
+    try {
+      setDeactivatingId(propertyType.id);
 
-    if (result.success) {
-      toast.success('Property Type deactivated successfully');
+      const result = await deactivatePropertyTypeAction(propertyType.id);
 
-      router.refresh();
-    } else {
-      toast.error(result.message);
+      if (result.success) {
+        toast.success('Property Type deactivated successfully');
+
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    } finally {
+      setDeactivatingId(null);
     }
   }
 
@@ -69,6 +77,7 @@ export function PropertyTypeWorkspace({
         propertyTypes={propertyTypes}
         onEdit={handleEdit}
         onDeactivate={handleDeactivate}
+        deactivatingId={deactivatingId}
       />
 
       <PropertyTypeDialog

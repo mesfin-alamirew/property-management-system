@@ -15,12 +15,14 @@ type PropertyTypeTableProps = {
   propertyTypes: PropertyType[];
   onEdit: (propertyType: PropertyType) => void;
   onDeactivate: (propertyType: PropertyType) => void;
+  deactivatingId: string | null;
 };
 
 export function PropertyTypeTable({
   propertyTypes,
   onEdit,
   onDeactivate,
+  deactivatingId,
 }: PropertyTypeTableProps) {
   return (
     <Table>
@@ -54,9 +56,12 @@ export function PropertyTypeTable({
 
               <Button
                 variant="danger"
+                disabled={deactivatingId === propertyType.id}
                 onClick={() => onDeactivate(propertyType)}
               >
-                Deactivate
+                {deactivatingId === propertyType.id
+                  ? 'Deactivating...'
+                  : 'Deactivate'}
               </Button>
             </TableCell>
           </TableRow>

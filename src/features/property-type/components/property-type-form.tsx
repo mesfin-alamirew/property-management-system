@@ -32,7 +32,7 @@ export function PropertyTypeForm({
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<PropertyTypeFormData>({
     resolver: zodResolver(propertyTypeSchema),
 
@@ -91,7 +91,15 @@ export function PropertyTypeForm({
         <textarea {...register('description')} className="border p-2" />
       </div>
 
-      <Button type="submit">{propertyType ? 'Update' : 'Save'}</Button>
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting
+          ? propertyType
+            ? 'Updating...'
+            : 'Saving...'
+          : propertyType
+            ? 'Update'
+            : 'Save'}
+      </Button>
     </form>
   );
 }
