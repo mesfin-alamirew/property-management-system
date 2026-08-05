@@ -14,11 +14,13 @@ import { Button } from '@/components/ui/button';
 type PropertyTypeTableProps = {
   propertyTypes: PropertyType[];
   onEdit: (propertyType: PropertyType) => void;
+  onDeactivate: (propertyType: PropertyType) => void;
 };
 
 export function PropertyTypeTable({
   propertyTypes,
   onEdit,
+  onDeactivate,
 }: PropertyTypeTableProps) {
   return (
     <Table>
@@ -45,9 +47,16 @@ export function PropertyTypeTable({
               {propertyType.isActive ? 'Active' : 'Inactive'}
             </TableCell>
 
-            <TableCell>
+            <TableCell className="space-x-2">
               <Button variant="secondary" onClick={() => onEdit(propertyType)}>
                 Edit
+              </Button>
+
+              <Button
+                variant="danger"
+                onClick={() => onDeactivate(propertyType)}
+              >
+                Deactivate
               </Button>
             </TableCell>
           </TableRow>
