@@ -35,13 +35,17 @@ enum OrganizationUnitType {
 
 
 model OrganizationUnit {
+  // Identity
   id          String               @id @default(cuid())
+
+  // Business Fields
   code        String               @unique
   name        String
   description String?
 
   type        OrganizationUnitType
 
+  // Relationships
   countryId   String?
   country     Country?             @relation(fields: [countryId], references: [id])
 
@@ -49,11 +53,96 @@ model OrganizationUnit {
   parent      OrganizationUnit?    @relation("OrganizationHierarchy", fields: [parentId], references: [id])
   children    OrganizationUnit[]   @relation("OrganizationHierarchy")
 
+  properties  Property[]
+
+  // Status
   isActive    Boolean              @default(true)
 
+  // Audit
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
-  
+
+  // Indexes
   @@index([countryId])
   @@index([parentId])
+}
+
+model PropertyType {
+  // Identity
+  id          String      @id @default(cuid())
+
+  // Business Fields
+  code        String      @unique
+  name        String      @unique
+  description String?
+
+  // Relationships
+  properties  Property[]
+
+  // Status
+  isActive    Boolean     @default(true)
+
+  // Audit
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Indexes
+  @@index([isActive])
+}
+
+enum OwnershipType {
+  OWNED
+  LEASED
+}
+
+enum PropertyStatus {
+  ACTIVE
+  INACTIVE
+  DISPOSED
+}
+
+model Property {
+  // Identity
+  id                 String            @id @default(cuid())
+
+  // Business Fields
+  propertyCode       String            @unique
+  name               String
+  displayName        String?
+  description        String?
+
+  address            String?
+  city               String?
+  stateProvince      String?
+  postalCode         String?
+
+  latitude           Decimal?
+  longitude          Decimal?
+
+  constructionDate   DateTime?
+  grossAreaSqm       Decimal?
+
+  // Relationships
+  organizationUnitId String
+  organizationUnit   OrganizationUnit  @relation(fields: [organizationUnitId], references: [id])
+
+  propertyTypeId     String
+  propertyType       PropertyType      @relation(fields: [propertyTypeId], references: [id])
+
+  // Status
+  ownership          OwnershipType
+  status             PropertyStatus    @default(ACTIVE)
+  isActive           Boolean           @default(true)
+
+  // Audit
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  // Indexes
+  @@index([organizationUnitId])
+  @@index([propertyTypeId])
+  @@index([propertyCode])
+  @@index([name])
+  @@index([status])
+  @@index([isActive])
 }
