@@ -13,15 +13,16 @@ datasource db {
 }
 
 model Country {
-  id                String               @id @default(cuid())
-  code              String               @unique
-  name              String               @unique
-  isActive          Boolean              @default(true)
+  id       String  @id @default(cuid())
+  code     String  @unique
+  name     String  @unique
+  isActive Boolean @default(true)
 
+  regions           Region[]
   organizationUnits OrganizationUnit[]
 
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum OrganizationUnitType {
@@ -33,34 +34,33 @@ enum OrganizationUnitType {
   FIELD_OFFICE
 }
 
-
 model OrganizationUnit {
   // Identity
-  id          String               @id @default(cuid())
+  id String @id @default(cuid())
 
   // Business Fields
-  code        String               @unique
+  code        String  @unique
   name        String
   description String?
 
-  type        OrganizationUnitType
+  type OrganizationUnitType
 
   // Relationships
-  countryId   String?
-  country     Country?             @relation(fields: [countryId], references: [id])
+  countryId String?
+  country   Country? @relation(fields: [countryId], references: [id])
 
-  parentId    String?
-  parent      OrganizationUnit?    @relation("OrganizationHierarchy", fields: [parentId], references: [id])
-  children    OrganizationUnit[]   @relation("OrganizationHierarchy")
+  parentId String?
+  parent   OrganizationUnit?  @relation("OrganizationHierarchy", fields: [parentId], references: [id])
+  children OrganizationUnit[] @relation("OrganizationHierarchy")
 
-  properties  Property[]
+  properties Property[]
 
   // Status
-  isActive    Boolean              @default(true)
+  isActive Boolean @default(true)
 
   // Audit
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes
   @@index([countryId])
@@ -69,80 +69,196 @@ model OrganizationUnit {
 
 model PropertyType {
   // Identity
-  id          String      @id @default(cuid())
+  id String @id @default(cuid())
 
   // Business Fields
-  code        String      @unique
-  name        String      @unique
+  code        String  @unique
+  name        String  @unique
   description String?
 
   // Relationships
-  properties  Property[]
+  properties Property[]
 
   // Status
-  isActive    Boolean     @default(true)
+  isActive Boolean @default(true)
 
   // Audit
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes
   @@index([isActive])
 }
 
-enum OwnershipType {
-  OWNED
-  LEASED
+model PropertyStatus {
+  id String @id @default(cuid())
+
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  properties Property[]
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
 }
 
-enum PropertyStatus {
-  ACTIVE
-  INACTIVE
-  DISPOSED
+model PropertyTenure {
+  id String @id @default(cuid())
+
+  code String @unique
+
+  name String @unique
+
+  description String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  properties Property[]
+
+  @@index([isActive])
 }
 
 model Property {
   // Identity
-  id                 String            @id @default(cuid())
+  id String @id @default(cuid())
 
   // Business Fields
-  propertyCode       String            @unique
-  name               String
-  displayName        String?
-  description        String?
+  propertyCode String  @unique
+  name         String
+  displayName  String?
+  description  String?
 
-  address            String?
-  city               String?
-  stateProvince      String?
-  postalCode         String?
+  address       String?
+  city          String?
+  stateProvince String?
+  postalCode    String?
 
-  latitude           Decimal?
-  longitude          Decimal?
+  latitude  Decimal?
+  longitude Decimal?
 
-  constructionDate   DateTime?
-  grossAreaSqm       Decimal?
+  constructionDate DateTime?
+  grossAreaSqm     Decimal?
 
   // Relationships
   organizationUnitId String
-  organizationUnit   OrganizationUnit  @relation(fields: [organizationUnitId], references: [id])
+  organizationUnit   OrganizationUnit @relation(fields: [organizationUnitId], references: [id])
 
-  propertyTypeId     String
-  propertyType       PropertyType      @relation(fields: [propertyTypeId], references: [id])
+  propertyTypeId String
+  propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
 
-  // Status
-  ownership          OwnershipType
-  status             PropertyStatus    @default(ACTIVE)
-  isActive           Boolean           @default(true)
+  propertyCategoryId String?
+  propertyCategory   PropertyCategory? @relation(fields: [propertyCategoryId], references: [id])
+
+  
+  propertyTenureId String?
+  propertyTenure   PropertyTenure? @relation(fields: [propertyTenureId], references: [id])
+
+  propertyStatusId String?
+  propertyStatus   PropertyStatus? @relation(fields: [propertyStatusId], references: [id])
+
+  isActive Boolean @default(true)
 
   // Audit
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes
   @@index([organizationUnitId])
   @@index([propertyTypeId])
-  @@index([propertyCode])
-  @@index([name])
-  @@index([status])
+  @@index([propertyCategoryId])
+  @@index([propertyTenureId])
+  @@index([propertyStatusId])
+  @@index([isActive])
+}
+
+model Region {
+  id String @id @default(cuid())
+
+  code String
+  name String
+
+  countryId String
+
+  country Country @relation(fields: [countryId], references: [id])
+
+  zones    Zone[]
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countryId, code])
+  @@unique([countryId, name])
+  @@index([countryId])
+}
+
+model Zone {
+  id String @id @default(cuid())
+
+  code String
+  name String
+
+  regionId String
+
+  region Region @relation(fields: [regionId], references: [id])
+
+  woredas  Woreda[]
+  isActive Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([regionId, code])
+  @@unique([regionId, name])
+  @@index([regionId])
+}
+
+model Woreda {
+  id String @id @default(cuid())
+
+  zoneId String
+
+  zone Zone @relation(fields: [zoneId], references: [id])
+
+  code String
+  name String
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([zoneId, code])
+  @@unique([zoneId, name])
+  @@index([zoneId])
+}
+model PropertyCategory {
+  id          String  @id @default(cuid())
+
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  parentId    String?
+  parent      PropertyCategory?  @relation("PropertyCategoryHierarchy", fields: [parentId], references: [id])
+  children    PropertyCategory[] @relation("PropertyCategoryHierarchy")
+
+  isActive    Boolean @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  properties  Property[]
+
+  @@index([parentId])
   @@index([isActive])
 }

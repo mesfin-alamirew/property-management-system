@@ -18,6 +18,8 @@ import {
   createPropertyTypeAction,
   updatePropertyTypeAction,
 } from '../actions/property-type.actions';
+import { TextField } from '@/components/form/text-field';
+import { TextAreaField } from '@/components/form/text-area-field';
 
 type PropertyTypeFormProps = {
   propertyType?: PropertyType | null;
@@ -69,27 +71,25 @@ export function PropertyTypeForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label>Code</label>
+      <TextField
+        label="Code"
+        required
+        error={errors.code?.message}
+        {...register('code')}
+      />
 
-        <input {...register('code')} className="border p-2" />
+      <TextField
+        label="Name"
+        required
+        error={errors.name?.message}
+        {...register('name')}
+      />
 
-        <p className="text-red-500">{errors.code?.message}</p>
-      </div>
-
-      <div>
-        <label>Name</label>
-
-        <input {...register('name')} className="border p-2" />
-
-        <p className="text-red-500">{errors.name?.message}</p>
-      </div>
-
-      <div>
-        <label>Description</label>
-
-        <textarea {...register('description')} className="border p-2" />
-      </div>
+      <TextAreaField
+        label="Description"
+        error={errors.description?.message}
+        {...register('description')}
+      />
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting

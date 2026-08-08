@@ -1,5 +1,15 @@
 # Project Notes
 
+# Project
+
+Name: Property Management System (PMS)
+
+Purpose:
+An enterprise-grade Property Management System developed using
+Next.js, Prisma, and PostgreSQL following a feature-based,
+Clean Architecture-inspired approach with reusable development
+patterns and standardized master data modules.
+
 ## Decision 001
 
 ### OrganizationUnit uses a self-referencing hierarchy.
@@ -92,3 +102,191 @@ The refinement phase will include:
 - Responsive behavior
 - Accessibility improvements
 - Consistent component design
+
+# Master Data Development Standard
+
+## Overview
+
+All master data modules follow a consistent feature-based architecture.
+The goal is to maintain separation of concerns, reusability, and predictable development patterns.
+
+Implemented reference modules:
+
+- Property Type
+- Country
+
+## Feature Structure
+
+Each master data feature follows:
+
+features/{entity}/
+
+- actions/
+- commands/
+- components/
+- queries/
+- repositories/
+- schemas/
+
+## Layer Responsibilities
+
+### Schema Layer
+
+Responsible for:
+
+- input validation
+- data normalization
+
+Does not:
+
+- access database
+- contain business rules
+
+### Repository Layer
+
+Responsible for:
+
+- Prisma/database operations
+
+Does not:
+
+- validate business rules
+- handle UI concerns
+
+### Command Layer
+
+Responsible for:
+
+- business rules
+- duplicate checking
+- entity existence validation
+- domain exceptions
+
+### Action Layer
+
+Responsible for:
+
+- server-client boundary
+- schema parsing
+- invoking commands
+- cache revalidation
+
+### Component Layer
+
+Pattern:
+
+Page
+↓
+Workspace
+↓
+Table + Dialog
+↓
+Form
+
+Responsibilities:
+
+Page:
+
+- server component
+- data fetching
+
+Workspace:
+
+- client state management
+- dialog control
+
+Table:
+
+- display records
+- trigger actions
+
+Dialog:
+
+- modal container
+
+Form:
+
+- validation
+- create/update submission
+
+## Shared Master Data Components
+
+Reusable components:
+
+- MasterDataLayout
+- StatusBadge
+- RowActionButtons
+- ConfirmationDialog
+
+## Standard Operations
+
+Every master data module should support:
+
+- List
+- Create
+- Edit
+- Deactivate (soft delete)
+
+## Reference Implementation
+
+Property Type was the first reference implementation.
+
+Country validated that the same architecture can be reused.
+
+Master Data Standards
+
+## Type I
+
+Independent Master Data
+
+Reference:
+Property Type
+
+## Type II
+
+Hierarchical Master Data
+
+Reference:
+Region
+
+Master Data Module Checklist
+
+Database
+☐ Prisma model
+☐ Migration
+☐ Indexes
+☐ Relationships
+
+Backend
+☐ Repository
+☐ Commands
+☐ Queries
+☐ Actions
+
+Frontend
+☐ Workspace
+☐ Table
+☐ Dialog
+☐ Form
+
+UX
+☐ Search
+☐ Status badge
+☐ Row actions
+☐ Confirmation dialog
+☐ Loading state
+
+Documentation
+☐ Database
+☐ Business rules
+☐ API
+☐ Architecture
+
+Validation
+☐ Create
+☐ Edit
+☐ Activate/Deactivate
+☐ Search
+
+Git
+☐ Commit milestone
