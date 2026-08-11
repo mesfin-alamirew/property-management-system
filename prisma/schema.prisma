@@ -158,18 +158,21 @@ model Property {
   propertyCategoryId String?
   propertyCategory   PropertyCategory? @relation(fields: [propertyCategoryId], references: [id])
 
-  
   propertyTenureId String?
   propertyTenure   PropertyTenure? @relation(fields: [propertyTenureId], references: [id])
 
   propertyStatusId String?
   propertyStatus   PropertyStatus? @relation(fields: [propertyStatusId], references: [id])
 
+  // Buildings
+  buildings Building[]
+
   isActive Boolean @default(true)
 
   // Audit
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  buildingDetail BuildingDetail?
 
   // Indexes
   @@index([organizationUnitId])
@@ -241,24 +244,145 @@ model Woreda {
   @@unique([zoneId, name])
   @@index([zoneId])
 }
+
 model PropertyCategory {
-  id          String  @id @default(cuid())
+  id String @id @default(cuid())
 
   code        String  @unique
   name        String  @unique
   description String?
 
-  parentId    String?
-  parent      PropertyCategory?  @relation("PropertyCategoryHierarchy", fields: [parentId], references: [id])
-  children    PropertyCategory[] @relation("PropertyCategoryHierarchy")
+  parentId String?
+  parent   PropertyCategory?  @relation("PropertyCategoryHierarchy", fields: [parentId], references: [id])
+  children PropertyCategory[] @relation("PropertyCategoryHierarchy")
 
-  isActive    Boolean @default(true)
+  isActive Boolean @default(true)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  properties  Property[]
+  properties Property[]
 
   @@index([parentId])
   @@index([isActive])
+}
+
+model BuildingType {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  buildings Building[]
+
+  @@index([isActive])
+}
+
+model BuildingCondition {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  buildings Building[]
+
+  @@index([isActive])
+}
+
+model Building {
+  id String @id @default(cuid())
+
+  // Identity
+  buildingCode String
+  name         String
+  description  String?
+
+  // Relationships
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  buildingTypeId String
+  buildingType   BuildingType @relation(fields: [buildingTypeId], references: [id])
+
+  buildingConditionId String?
+  buildingCondition   BuildingCondition? @relation(fields: [buildingConditionId], references: [id])
+
+  // Physical characteristics
+  numberOfFloors    Int?
+  numberOfBasements Int?
+
+  // Construction
+  yearRenovated Int?
+
+  // Areas
+  floorAreaSqm  Decimal?
+  usableAreaSqm Decimal?
+
+  // Capacity
+  numberOfRooms   Int?
+  numberOfUnits   Int?
+  parkingCapacity Int?
+
+  // Lifecycle
+  isActive Boolean @default(true)
+
+  // Additional information
+  notes String?
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([propertyId, buildingCode])
+  @@index([propertyId])
+  @@index([buildingTypeId])
+  @@index([buildingConditionId])
+  @@index([isActive])
+}
+
+model BuildingDetail {
+  id String @id @default(cuid())
+
+  propertyId String   @unique
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  buildingCode String?
+  buildingName String?
+
+  buildingType String?
+
+  numberOfFloors    Int?
+  numberOfBasements Int?
+
+  yearBuilt     Int?
+  yearRenovated Int?
+
+  floorAreaSqm  Decimal?
+  usableAreaSqm Decimal?
+
+  numberOfRooms   Int?
+  numberOfUnits   Int?
+  parkingCapacity Int?
+
+  condition String?
+
+  accessibilityFeatures String?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([buildingType])
+  @@index([condition])
 }

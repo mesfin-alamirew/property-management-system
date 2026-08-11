@@ -64,6 +64,144 @@ async function main() {
     });
   }
 
+  const buildingTypes = [
+    {
+      code: 'OFFICE',
+      name: 'Office',
+      description:
+        'Building primarily used for administrative or office activities',
+    },
+    {
+      code: 'RESIDENTIAL',
+      name: 'Residential',
+      description: 'Building primarily used for residential purposes',
+    },
+    {
+      code: 'WAREHOUSE',
+      name: 'Warehouse',
+      description: 'Building primarily used for storage of goods or materials',
+    },
+    {
+      code: 'TRAINING_CENTER',
+      name: 'Training Center',
+      description:
+        'Building primarily used for training and learning activities',
+    },
+    {
+      code: 'SCHOOL',
+      name: 'School',
+      description: 'Building used for educational activities',
+    },
+    {
+      code: 'HOSPITAL',
+      name: 'Hospital',
+      description: 'Building used for healthcare and medical services',
+    },
+    {
+      code: 'RETAIL',
+      name: 'Retail',
+      description:
+        'Building primarily used for retail or commercial activities',
+    },
+    {
+      code: 'FACTORY',
+      name: 'Factory',
+      description: 'Building used for manufacturing or production activities',
+    },
+    {
+      code: 'WORKSHOP',
+      name: 'Workshop',
+      description:
+        'Building used for repair, fabrication, or technical activities',
+    },
+    {
+      code: 'LABORATORY',
+      name: 'Laboratory',
+      description:
+        'Building used for laboratory, research, or testing activities',
+    },
+    {
+      code: 'PARKING_STRUCTURE',
+      name: 'Parking Structure',
+      description: 'Building or structure primarily used for vehicle parking',
+    },
+    {
+      code: 'GUEST_HOUSE',
+      name: 'Guest House',
+      description:
+        'Building used to accommodate organizational guests or visitors',
+    },
+    {
+      code: 'COMMUNITY_CENTER',
+      name: 'Community Center',
+      description: 'Building used for community, social, or public activities',
+    },
+    {
+      code: 'UTILITY_BUILDING',
+      name: 'Utility Building',
+      description: 'Building supporting utility or infrastructure services',
+    },
+    {
+      code: 'SECURITY_BUILDING',
+      name: 'Security Building',
+      description:
+        'Building used for security, guarding, or access-control activities',
+    },
+    {
+      code: 'OTHER',
+      name: 'Other',
+      description: 'Building type not covered by the standard classifications',
+    },
+  ];
+
+  for (const buildingType of buildingTypes) {
+    await prisma.buildingType.upsert({
+      where: {
+        code: buildingType.code,
+      },
+      update: buildingType,
+      create: buildingType,
+    });
+  }
+
+  const buildingConditions = [
+    {
+      code: 'EXCELLENT',
+      name: 'Excellent',
+      description: 'Building is in excellent physical condition',
+    },
+    {
+      code: 'GOOD',
+      name: 'Good',
+      description: 'Building is in good physical condition',
+    },
+    {
+      code: 'FAIR',
+      name: 'Fair',
+      description: 'Building has some condition issues but remains serviceable',
+    },
+    {
+      code: 'POOR',
+      name: 'Poor',
+      description: 'Building requires significant repair or improvement',
+    },
+    {
+      code: 'CRITICAL',
+      name: 'Critical',
+      description: 'Building requires urgent intervention or may be unsafe',
+    },
+  ];
+
+  for (const buildingCondition of buildingConditions) {
+    await prisma.buildingCondition.upsert({
+      where: {
+        code: buildingCondition.code,
+      },
+      update: buildingCondition,
+      create: buildingCondition,
+    });
+  }
+
   console.log('PMS seed completed.');
 }
 
