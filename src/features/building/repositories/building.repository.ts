@@ -79,6 +79,8 @@ export async function createBuildingRecord(data: BuildingFormData) {
           ? Number(data.numberOfBasements)
           : undefined,
 
+      yearBuilt: data.yearBuilt ? Number(data.yearBuilt) : undefined,
+      accessibilityFeatures: data.accessibilityFeatures,
       yearRenovated:
         data.yearRenovated !== undefined
           ? Number(data.yearRenovated)
@@ -130,6 +132,7 @@ export async function updateBuildingRecord(id: string, data: BuildingFormData) {
         data.numberOfBasements !== undefined
           ? Number(data.numberOfBasements)
           : undefined,
+      yearBuilt: data.yearBuilt ? Number(data.yearBuilt) : undefined,
 
       yearRenovated:
         data.yearRenovated !== undefined
@@ -154,6 +157,7 @@ export async function updateBuildingRecord(id: string, data: BuildingFormData) {
           ? Number(data.parkingCapacity)
           : undefined,
 
+      accessibilityFeatures: data.accessibilityFeatures,
       notes: data.notes,
     },
   });

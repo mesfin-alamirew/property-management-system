@@ -11,6 +11,7 @@ export type BuildingWithRelations = {
 
   numberOfFloors: number | null;
   numberOfBasements: number | null;
+  yearBuilt: number | null;
   yearRenovated: number | null;
 
   floorAreaSqm: string | null;
@@ -21,6 +22,7 @@ export type BuildingWithRelations = {
   parkingCapacity: number | null;
 
   isActive: boolean;
+  accessibilityFeatures: string | null;
   notes: string | null;
 
   createdAt: Date;

@@ -170,9 +170,8 @@ model Property {
   isActive Boolean @default(true)
 
   // Audit
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  buildingDetail BuildingDetail?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes
   @@index([organizationUnitId])
@@ -317,11 +316,14 @@ model Building {
   buildingConditionId String?
   buildingCondition   BuildingCondition? @relation(fields: [buildingConditionId], references: [id])
 
+  spaces BuildingSpace[]
+
   // Physical characteristics
   numberOfFloors    Int?
   numberOfBasements Int?
 
   // Construction
+  yearBuilt     Int?
   yearRenovated Int?
 
   // Areas
@@ -337,7 +339,8 @@ model Building {
   isActive Boolean @default(true)
 
   // Additional information
-  notes String?
+  accessibilityFeatures String?
+  notes                 String?
 
   // Audit
   createdAt DateTime @default(now())
@@ -350,39 +353,61 @@ model Building {
   @@index([isActive])
 }
 
-model BuildingDetail {
+model BuildingSpace {
   id String @id @default(cuid())
 
-  propertyId String   @unique
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  // Identity
+  code String
+  name String
 
-  buildingCode String?
-  buildingName String?
+  // Relationships
+  buildingId String
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
 
-  buildingType String?
+  spaceTypeId String
+  spaceType   BuildingSpaceType @relation(fields: [spaceTypeId], references: [id])
 
-  numberOfFloors    Int?
-  numberOfBasements Int?
+  // Physical characteristics
+  floorNumber Int?
+  areaSqm     Decimal?
+  capacity    Int?
 
-  yearBuilt     Int?
-  yearRenovated Int?
+  // Lifecycle
+  isActive Boolean @default(true)
 
-  floorAreaSqm  Decimal?
-  usableAreaSqm Decimal?
-
-  numberOfRooms   Int?
-  numberOfUnits   Int?
-  parkingCapacity Int?
-
-  condition String?
-
-  accessibilityFeatures String?
-
+  // Additional information
   notes String?
 
+  // Audit
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([buildingType])
-  @@index([condition])
+  @@unique([buildingId, code])
+  @@index([buildingId])
+  @@index([spaceTypeId])
+  @@index([isActive])
+}
+
+model BuildingSpaceType {
+  id String @id @default(cuid())
+
+  // Business fields
+  code        String
+  name        String
+  description String?
+
+  // Lifecycle
+  isActive Boolean @default(true)
+
+  // Relationships
+  spaces BuildingSpace[]
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Indexes
+  @@unique([code])
+  @@unique([name])
+  @@index([isActive])
 }

@@ -39,6 +39,7 @@ export function BuildingTable({
           <TableHead>Property</TableHead>
           <TableHead>Type</TableHead>
           <TableHead>Condition</TableHead>
+          <TableHead>Year Built</TableHead>
           <TableHead>Floors</TableHead>
           <TableHead>Floor Area (sqm)</TableHead>
           <TableHead>Status</TableHead>
@@ -60,6 +61,7 @@ export function BuildingTable({
             <TableCell>{building.buildingType.name}</TableCell>
 
             <TableCell>{building.buildingCondition?.name ?? '-'}</TableCell>
+            <TableCell>{building.yearBuilt ?? '-'}</TableCell>
 
             <TableCell>{building.numberOfFloors ?? '-'}</TableCell>
 

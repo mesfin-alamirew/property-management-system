@@ -4,6 +4,9 @@ export async function getBuildings() {
   const buildings = await prisma.building.findMany({
     where: {
       isActive: true,
+      property: {
+        isActive: true,
+      },
     },
     orderBy: {
       name: 'asc',

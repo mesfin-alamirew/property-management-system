@@ -86,7 +86,10 @@ export function BuildingForm({
         building?.numberOfBasements !== undefined
           ? building.numberOfBasements.toString()
           : '',
-
+      yearBuilt:
+        building?.yearBuilt !== null && building?.yearBuilt !== undefined
+          ? building.yearBuilt.toString()
+          : '',
       yearRenovated:
         building?.yearRenovated !== null &&
         building?.yearRenovated !== undefined
@@ -121,7 +124,7 @@ export function BuildingForm({
         building?.parkingCapacity !== undefined
           ? building.parkingCapacity.toString()
           : '',
-
+      accessibilityFeatures: building?.accessibilityFeatures ?? '',
       notes: building?.notes ?? '',
     },
   });
@@ -334,6 +337,15 @@ export function BuildingForm({
       {/* Construction */}
       <div className="space-y-4">
         <h3 className="text-sm font-semibold">Construction</h3>
+        <TextField
+          label="Year Built"
+          type="number"
+          min="1800"
+          max={new Date().getFullYear()}
+          step="1"
+          error={errors.yearBuilt?.message}
+          {...register('yearBuilt')}
+        />
 
         <TextField
           label="Year Renovated"
@@ -349,7 +361,11 @@ export function BuildingForm({
       {/* Additional Information */}
       <div className="space-y-4">
         <h3 className="text-sm font-semibold">Additional Information</h3>
-
+        <TextAreaField
+          label="Accessibility Features"
+          error={errors.accessibilityFeatures?.message}
+          {...register('accessibilityFeatures')}
+        />
         <TextAreaField
           label="Notes"
           error={errors.notes?.message}

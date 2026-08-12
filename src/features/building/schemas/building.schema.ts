@@ -46,6 +46,18 @@ export const buildingSchema = z.object({
         (Number.isInteger(Number(value)) && Number(value) >= 0),
       'Number of basements must be a valid non-negative integer',
     ),
+  yearBuilt: z
+    .string()
+    .optional()
+    .transform((value) => value?.trim() || undefined)
+    .refine(
+      (value) =>
+        value === undefined ||
+        (Number.isInteger(Number(value)) &&
+          Number(value) >= 1800 &&
+          Number(value) <= new Date().getFullYear()),
+      'Building year must be a valid year',
+    ),
 
   yearRenovated: z
     .string()
@@ -114,7 +126,10 @@ export const buildingSchema = z.object({
         (Number.isInteger(Number(value)) && Number(value) >= 0),
       'Parking capacity must be a valid non-negative integer',
     ),
-
+  accessibilityFeatures: z
+    .string()
+    .optional()
+    .transform((value) => value?.trim() || undefined),
   notes: z
     .string()
     .optional()
