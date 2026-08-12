@@ -167,6 +167,8 @@ model Property {
   // Buildings
   buildings Building[]
 
+  ownerships Ownership[]
+
   isActive Boolean @default(true)
 
   // Audit
@@ -410,4 +412,47 @@ model BuildingSpaceType {
   @@unique([code])
   @@unique([name])
   @@index([isActive])
+}
+
+model OwnershipType {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerships Ownership[]
+}
+
+model Ownership {
+  id String @id @default(cuid())
+
+  propertyId      String
+  ownershipTypeId String
+
+  startDate DateTime
+  endDate   DateTime?
+
+  acquisitionDate     DateTime?
+  acquisitionPrice    Decimal?  @db.Decimal(18, 2)
+  acquisitionCurrency String?
+
+  deedNumber            String?
+  legalReference        String?
+  registrationAuthority String?
+
+  notes String?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  property      Property      @relation(fields: [propertyId], references: [id])
+  ownershipType OwnershipType @relation(fields: [ownershipTypeId], references: [id])
+
+  @@index([propertyId])
+  @@index([ownershipTypeId])
+  @@index([propertyId, isActive])
 }
