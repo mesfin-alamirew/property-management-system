@@ -290,3 +290,49 @@ Validation
 
 Git
 ☐ Commit milestone
+
+features/
+├── asset-category/
+│ ├── actions/
+│ ├── commands/
+│ ├── components/
+│ ├── queries/
+│ ├── repositories/
+│ └── schemas/
+└── types/
+│
+├── asset-type/
+│ ├── actions/
+│ ├── commands/
+│ ├── components/
+│ ├── queries/
+│ ├── repositories/
+│ └── schemas/
+└── types/
+│
+├── asset-status/
+│ ├── actions/
+│ ├── commands/
+│ ├── components/
+│ ├── queries/
+│ ├── repositories/
+│ └── schemas/
+└── types/
+│
+├── asset-condition/
+│ ├── actions/
+│ ├── commands/
+│ ├── components/
+│ ├── queries/
+│ ├── repositories/
+│ └── schemas/
+└── types/
+│
+└── asset/
+├── actions/
+├── commands/
+├── components/
+├── queries/
+├── repositories/
+└── schemas/
+└── types/
