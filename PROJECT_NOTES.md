@@ -336,3 +336,5 @@ features/
 ├── repositories/
 └── schemas/
 └── types/
+
+Prisma Model → Types → Schema → Repository → Commands → Queries → Actions → Form → Dialog → Table → Workspace → Page → Route → Test → Commit → Push
