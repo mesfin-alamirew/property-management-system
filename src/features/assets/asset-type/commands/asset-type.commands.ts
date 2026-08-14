@@ -8,7 +8,7 @@ import {
   deactivateAssetTypeRecord,
 } from '../repositories/asset-type.repository';
 
-import { findAssetCategoryById } from '@/features/asset-category/repositories/asset-category.repository';
+import { findAssetCategoryById } from '@/features/assets/asset-category/repositories/asset-category.repository';
 
 import type { AssetTypeFormData } from '../schemas/asset-type.schema';
 

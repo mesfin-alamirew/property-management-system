@@ -556,3 +556,12 @@ model Asset {
   @@index([conditionId])
   @@index([serialNumber])
 }
+
+model AssetCodeSequence {
+  id         String   @id @default(cuid())
+  year       Int      @unique
+  lastNumber Int      @default(0)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

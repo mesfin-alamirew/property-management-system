@@ -338,3 +338,34 @@ features/
 └── types/
 
 Prisma Model → Types → Schema → Repository → Commands → Queries → Actions → Form → Dialog → Table → Workspace → Page → Route → Test → Commit → Push
+
+//////////
+And the architectural grouping remains:
+
+features/
+├── administration/
+├── assets/
+├── buildings/
+├── properties/
+├── ownerships/
+├── acquisition/
+├── assignment/
+├── location/
+├── verification/
+├── maintenance/
+├── incidents/
+├── disposal/
+└── reporting/
+
+////////
+Asset Registry Business Rule
+BR-001 Asset Code → Required, unique, system-generated
+BR-002 Asset Tag → Optional, unique when provided
+BR-003 Asset Name → Required
+BR-004 Asset Type → Must reference an active Asset Type
+BR-005 Asset Status → Must reference an active Asset Status
+BR-006 Asset Condition → Must reference an active Asset Condition
+BR-007 Serial Number → Optional; uniqueness to be finalized
+BR-008 Asset Code → Immutable after creation
+BR-009 Asset Type → Controlled update
+BR-010 Deactivation → Soft delete; disposal is a separate process

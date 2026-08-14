@@ -1,4 +1,4 @@
-import { getAssetCategories } from '@/features/asset-category/queries/asset-category.queries';
+import { getAssetCategories } from '@/features/assets/asset-category/queries/asset-category.queries';
 
 import { getAssetTypes } from '../queries/asset-type.queries';
 

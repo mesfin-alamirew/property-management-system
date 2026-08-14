@@ -263,3 +263,39 @@ ASSET MANAGEMENT SYSTEM
 | **7. Asset Incident Management**         | What happened when an unusual/loss/damage event occurred?  |
 | **8. Asset Retirement & Disposal**       | How does the asset leave active organizational use?        |
 | **9. Reporting, Audit & Administration** | How do we control, monitor, audit, and administer the AMS? |
+
+1. Asset Registry & Classification
+   ├── Asset Category ✅
+   ├── Asset Type ✅
+   ├── Asset Status ✅
+   ├── Asset Condition ← Next recommended
+   ├── Asset
+   └── supporting asset masters
+
+2. Asset Acquisition
+   ├── Acquisition Method
+   ├── Supplier/Vendor
+   ├── Purchase/Acquisition
+   └── ...
+
+3. Asset Assignment & Accountability
+   ├── Employee/Responsible Person
+   ├── Assignment
+   └── Accountability
+
+4. Asset Location & Movement
+   ├── Location
+   ├── Asset Location
+   └── Movement/Transfer
+
+5. Physical Verification & Inventory
+   ├── Verification
+   └── Inventory
+
+6. Maintenance & Service Management
+
+7. Asset Incident Management
+
+8. Asset Retirement & Disposal
+
+9. Reporting, Audit & Administration
