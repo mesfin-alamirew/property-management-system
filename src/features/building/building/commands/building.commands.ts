@@ -8,9 +8,9 @@ import {
   deactivateBuildingRecord,
 } from '../repositories/building.repository';
 
-import { findPropertyById } from '@/features/property/repositories/property.repository';
-import { findBuildingTypeById } from '@/features/building-type/repositories/building-type.repository';
-import { findBuildingConditionById } from '@/features/building-condition/repositories/building-condition.repository';
+import { findPropertyById } from '@/features/properties/property/repositories/property.repository';
+import { findBuildingTypeById } from '@/features/building/building-type/repositories/building-type.repository';
+import { findBuildingConditionById } from '@/features/building/building-condition/repositories/building-condition.repository';
 
 import type { BuildingFormData } from '../schemas/building.schema';
 

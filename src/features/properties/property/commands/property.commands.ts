@@ -8,11 +8,11 @@ import {
   findPropertyById,
 } from '../repositories/property.repository';
 
-import { findOrganizationUnitById } from '@/features/organization-unit/repositories/organization-unit.repository';
-import { findPropertyTypeById } from '@/features/property-type/repositories/property-type.repository';
-import { findPropertyCategoryById } from '@/features/property-category/repositories/property-category.repository';
-import { findPropertyTenureById } from '@/features/property-tenure/repositories/property-tenure.repository';
-import { findPropertyStatusById } from '@/features/property-status/repositories/property-status.repository';
+import { findOrganizationUnitById } from '@/features/administration/organization-unit/repositories/organization-unit.repository';
+import { findPropertyTypeById } from '@/features/properties/property-type/repositories/property-type.repository';
+import { findPropertyCategoryById } from '@/features/properties/property-category/repositories/property-category.repository';
+import { findPropertyTenureById } from '@/features/properties/property-tenure/repositories/property-tenure.repository';
+import { findPropertyStatusById } from '@/features/properties/property-status/repositories/property-status.repository';
 
 import type { PropertyFormData } from '../schemas/property.schema';
 

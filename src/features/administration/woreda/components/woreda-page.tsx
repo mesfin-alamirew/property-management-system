@@ -1,6 +1,6 @@
 import { getWoredas } from '../queries/woreda.queries';
 
-import { getZonesForLookup } from '@/features/zone/queries/zone.queries';
+import { getZonesForLookup } from '@/features/administration/zone/queries/zone.queries';
 
 import { WoredaWorkspace } from './woreda-workspace';
 

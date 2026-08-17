@@ -8,8 +8,8 @@ import {
   deactivateBuildingSpaceRecord,
 } from '../repositories/building-space.repository';
 
-import { findBuildingById } from '@/features/building/repositories/building.repository';
-import { findBuildingSpaceTypeById } from '@/features/building-space-type/repositories/building-space-type.repository';
+import { findBuildingById } from '@/features/building/building/repositories/building.repository';
+import { findBuildingSpaceTypeById } from '@/features/building/building-space-type/repositories/building-space-type.repository';
 
 import type { BuildingSpaceFormData } from '../schemas/building-space.schema';
 

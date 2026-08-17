@@ -3,7 +3,7 @@ import { AppError } from '@/lib/errors';
 import { findWoredas, findWoredaById } from '../repositories/woreda.repository';
 
 import type { WoredaWithZone } from '../types/woreda.types';
-import { findActiveZonesForLookup } from '@/features/zone/repositories/zone.repository';
+import { findActiveZonesForLookup } from '@/features/administration/zone/repositories/zone.repository';
 
 export async function getZonesForLookup() {
   return findActiveZonesForLookup();

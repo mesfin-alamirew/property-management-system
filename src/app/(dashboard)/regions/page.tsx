@@ -1,4 +1,4 @@
-import { RegionPage } from '@/features/region/components/region-page';
+import { RegionPage } from '@/features/administration/region/components/region-page';
 
 export default function Page() {
   return <RegionPage />;

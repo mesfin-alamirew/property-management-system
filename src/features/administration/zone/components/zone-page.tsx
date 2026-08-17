@@ -1,6 +1,6 @@
 import { getZones } from '../queries/zone.queries';
 
-import { getRegionsForLookup } from '@/features/region/queries/region.queries';
+import { getRegionsForLookup } from '@/features/administration/region/queries/region.queries';
 
 import { ZoneWorkspace } from './zone-workspace';
 

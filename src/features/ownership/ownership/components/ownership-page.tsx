@@ -1,7 +1,7 @@
 import { getOwnerships } from '../queries/ownership.queries';
 
-import { getProperties } from '@/features/property/queries/property.queries';
-import { getOwnershipTypes } from '@/features/ownership-type/queries/ownership-type.queries';
+import { getProperties } from '@/features/properties/property/queries/property.queries';
+import { getOwnershipTypes } from '@/features/ownership/ownership-type/queries/ownership-type.queries';
 
 import { OwnershipWorkspace } from './ownership-workspace';
 

@@ -1,4 +1,4 @@
-import { PropertyTenurePage } from '@/features/property-tenure/components/property-tenure-page';
+import { PropertyTenurePage } from '@/features/properties/property-tenure/components/property-tenure-page';
 
 export default function Page() {
   return <PropertyTenurePage />;

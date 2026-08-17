@@ -1,4 +1,4 @@
-import { CountryPage } from '@/features/country/components/country-page';
+import { CountryPage } from '@/features/administration/country/components/country-page';
 
 export default function Page() {
   return <CountryPage />;

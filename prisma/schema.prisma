@@ -457,99 +457,100 @@ model Ownership {
   @@index([propertyId, isActive])
 }
 
-
 ///ASSET///
 model AssetCategory {
-  id          String   @id @default(cuid())
-  code        String   @unique
+  id          String  @id @default(cuid())
+  code        String  @unique
   name        String
   description String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
-  parentId    String?
-  parent      AssetCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
-  children    AssetCategory[] @relation("CategoryHierarchy")
+  parentId String?
+  parent   AssetCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children AssetCategory[] @relation("CategoryHierarchy")
 
-  assetTypes  AssetType[]
+  assetTypes AssetType[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([parentId])
   @@index([isActive])
 }
 
 model AssetType {
-  id          String   @id @default(cuid())
-  code        String   @unique
+  id          String  @id @default(cuid())
+  code        String  @unique
   name        String
   description String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
-  categoryId  String
-  category    AssetCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categoryId String
+  category   AssetCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
-  assets      Asset[]
+  assets Asset[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([categoryId])
   @@index([isActive])
 }
 
 model AssetStatus {
-  id          String   @id @default(cuid())
-  code        String   @unique
+  id          String  @id @default(cuid())
+  code        String  @unique
   name        String
   description String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
-  assets      Asset[]
+  assets Asset[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([isActive])
 }
 
 model AssetCondition {
-  id          String   @id @default(cuid())
-  code        String   @unique
+  id          String  @id @default(cuid())
+  code        String  @unique
   name        String
   description String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
-  assets      Asset[]
+  assets Asset[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([isActive])
 }
 
 model Asset {
-  id           String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  assetCode    String   @unique
-  assetTag     String?  @unique
-  name         String
-  description  String?
+  assetCode   String  @unique
+  assetTag    String? @unique
+  name        String
+  description String?
 
   manufacturer String?
   model        String?
   serialNumber String?
 
-  assetTypeId  String
-  statusId     String
-  conditionId  String
+  assetTypeId String
+  statusId    String
+  conditionId String
 
-  assetType    AssetType      @relation(fields: [assetTypeId], references: [id], onDelete: Restrict)
-  status       AssetStatus    @relation(fields: [statusId], references: [id], onDelete: Restrict)
-  condition    AssetCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
+  assetType AssetType      @relation(fields: [assetTypeId], references: [id], onDelete: Restrict)
+  status    AssetStatus    @relation(fields: [statusId], references: [id], onDelete: Restrict)
+  condition AssetCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  acquisitionItem AcquisitionItem?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([assetTypeId])
   @@index([statusId])
@@ -558,10 +559,70 @@ model Asset {
 }
 
 model AssetCodeSequence {
-  id         String   @id @default(cuid())
-  year       Int      @unique
-  lastNumber Int      @default(0)
+  id         String @id @default(cuid())
+  year       Int    @unique
+  lastNumber Int    @default(0)
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AcquisitionMethod {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String
+  description String?
+  isActive    Boolean @default(true)
+
+  acquisitions Acquisition[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Acquisition {
+  id                String   @id @default(cuid())
+  acquisitionNumber String   @unique
+  acquisitionDate   DateTime
+
+  acquisitionMethodId String
+  acquisitionMethod   AcquisitionMethod @relation(fields: [acquisitionMethodId], references: [id], onDelete: Restrict)
+
+  supplierName    String?
+  referenceNumber String?
+  description     String?
+  fundingSource   String?
+
+  totalAmount Decimal?
+  currency    String?
+  notes       String?
+
+  items AcquisitionItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([acquisitionMethodId])
+  @@index([acquisitionDate])
+}
+
+model AcquisitionItem {
+  id String @id @default(cuid())
+
+  acquisitionId String
+  assetId       String @unique
+
+  acquisition Acquisition @relation(fields: [acquisitionId], references: [id], onDelete: Cascade)
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  unitCost  Decimal?
+  totalCost Decimal?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([acquisitionId])
 }

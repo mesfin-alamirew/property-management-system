@@ -5,7 +5,7 @@ import {
   getOrganizationUnitParents,
 } from '../queries/organization-unit.queries';
 
-import { getCountries } from '@/features/country/queries/country.queries';
+import { getCountries } from '@/features/administration/country/queries/country.queries';
 
 import { OrganizationUnitType } from '@/generated/prisma/client';
 

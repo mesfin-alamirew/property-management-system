@@ -1,4 +1,4 @@
-import { getCountries } from '@/features/country/queries/country.queries';
+import { getCountries } from '@/features/administration/country/queries/country.queries';
 import { getRegions } from '../queries/region.queries';
 
 import { RegionWorkspace } from './region-workspace';
