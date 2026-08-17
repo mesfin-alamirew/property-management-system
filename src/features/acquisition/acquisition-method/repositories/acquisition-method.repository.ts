@@ -35,6 +35,14 @@ export async function findAcquisitionMethodByCode(code: string) {
   });
 }
 
+export async function findAcquisitionMethodByName(name: string) {
+  return prisma.acquisitionMethod.findFirst({
+    where: {
+      name,
+    },
+  });
+}
+
 export async function createAcquisitionMethod(data: {
   code: string;
   name: string;

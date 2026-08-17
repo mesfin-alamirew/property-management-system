@@ -7,3 +7,16 @@ export type AcquisitionMethodListItem = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type CreateAcquisitionMethodInput = {
+  code: string;
+  name: string;
+  description?: string;
+};
+
+export type UpdateAcquisitionMethodInput = {
+  code: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+};

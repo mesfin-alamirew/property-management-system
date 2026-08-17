@@ -5,7 +5,8 @@ export const acquisitionMethodSchema = z.object({
     .string()
     .trim()
     .min(1, 'Code is required')
-    .max(50, 'Code must not exceed 50 characters'),
+    .max(50, 'Code must not exceed 50 characters')
+    .transform((value) => value.toUpperCase()),
 
   name: z
     .string()
