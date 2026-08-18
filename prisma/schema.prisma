@@ -548,7 +548,7 @@ model Asset {
   condition AssetCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
 
   acquisitionItem AcquisitionItem?
-
+ 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
