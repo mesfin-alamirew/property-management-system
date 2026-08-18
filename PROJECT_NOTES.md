@@ -369,3 +369,124 @@ BR-007 Serial Number → Optional; uniqueness to be finalized
 BR-008 Asset Code → Immutable after creation
 BR-009 Asset Type → Controlled update
 BR-010 Deactivation → Soft delete; disposal is a separate process
+
+////Our working rules are now:
+
+Follow the AMS roadmap.
+Resolve dependencies first within each roadmap item.
+Reuse approved code and conventions—paths, names, types, schemas, repository patterns, shared components, etc.
+No silent assumptions.
+One layer at a time.
+Test each increment before moving forward.
+Commit and push after a completed increment.
+
+/////
+┌────────────────────┐
+│ Asset │
+│ │
+│ id │
+│ assetCode │
+│ statusId │
+│ conditionId │
+└─────────┬──────────┘
+│
+│
+▼
+┌────────────────────────────┐
+│ AssetAssignment │
+│ │
+│ id │
+│ assetId │
+│ employeeId │
+│ assignedAt │
+│ returnedAt │
+│ status │
+│ assignedByUserId │
+│ returnedByUserId │
+│ conditionAtAssignment │
+│ conditionAtReturn │
+│ handoverReference │
+│ remarks │
+│ createdAt │
+│ updatedAt │
+└───────────┬────────────────┘
+│
+▼
+┌────────────────────┐
+│ Employee │
+│ │
+│ id │
+│ employeeNumber │
+│ name │
+│ organizationUnitId │
+│ isActive │
+└────────────────────┘
+
+////
+┌──────────────────────┐
+│ Authentication Layer │
+│ │
+│ Azure AD / Other │
+└──────────┬───────────┘
+│
+▼
+┌──────────────┐ ┌──────────────┐
+│ Employee │ 0..1 │ User │
+│ ├───────┤ │
+│ employeeNo │ │ application │
+│ name │ │ identity │
+│ orgUnit │ │ isActive │
+└──────────────┘ └──────┬───────┘
+│
+│ 1..\*
+▼
+┌──────────────┐
+│ UserRole │
+└──────┬───────┘
+│
+▼
+┌──────────────┐
+│ Role │
+└──────────────┘
+
+                       //////
+
+┌────────────────────┐
+│ User │
+│ │
+│ id │
+│ employeeId ? │
+│ username │
+│ displayName │
+│ isActive │
+│ createdAt │
+│ updatedAt │
+└─────────┬──────────┘
+│
+│ 1..\*
+▼
+┌────────────────────┐
+│ UserRole │
+│ │
+│ id │
+│ userId │
+│ roleId │
+│ assignedAt │
+│ assignedByUserId │
+│ removedAt │
+│ removedByUserId │
+└─────────┬──────────┘
+│
+│
+▼
+┌────────────────────┐
+│ Role │
+│ │
+│ id │
+│ code │
+│ name │
+│ description │
+│ isActive │
+│ createdAt │
+│ updatedAt │
+└────────────────────┘

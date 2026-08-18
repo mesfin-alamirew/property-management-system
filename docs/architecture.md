@@ -299,3 +299,18 @@ ASSET MANAGEMENT SYSTEM
 8. Asset Retirement & Disposal
 
 9. Reporting, Audit & Administration
+
+/////
+Asset Registry
+├── Asset
+├── Asset Type
+├── Asset Status
+├── Asset Condition
+└── Classification
+↓
+Asset Acquisition
+├── Acquisition
+├── Acquisition Method
+└── Acquisition Item
+↓
+Asset Assignment & Accountability ← NEXT

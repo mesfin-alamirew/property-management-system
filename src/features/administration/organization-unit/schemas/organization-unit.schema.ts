@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { OrganizationUnitType } from '@/generated/prisma/client';
-
 export const organizationUnitSchema = z.object({
   code: z
     .string()

@@ -54,6 +54,7 @@ model OrganizationUnit {
   children OrganizationUnit[] @relation("OrganizationHierarchy")
 
   properties Property[]
+  employees  Employee[]
 
   // Status
   isActive Boolean @default(true)
@@ -547,8 +548,9 @@ model Asset {
   status    AssetStatus    @relation(fields: [statusId], references: [id], onDelete: Restrict)
   condition AssetCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
 
-  acquisitionItem AcquisitionItem?
- 
+  acquisitionItem  AcquisitionItem?
+  assetAssignments AssetAssignment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -566,6 +568,7 @@ model AssetCodeSequence {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model AcquisitionNumberSequence {
   id         String @id @default(cuid())
   year       Int    @unique
@@ -574,6 +577,7 @@ model AcquisitionNumberSequence {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model AcquisitionMethod {
   id          String  @id @default(cuid())
   code        String  @unique
@@ -632,4 +636,176 @@ model AcquisitionItem {
   updatedAt DateTime @updatedAt
 
   @@index([acquisitionId])
+}
+
+model Employee {
+  id String @id @default(cuid())
+
+  employeeNumber String @unique
+
+  firstName String
+
+  middleName String?
+
+  lastName String
+
+  organizationUnitId String
+
+  organizationUnit OrganizationUnit @relation(fields: [organizationUnitId], references: [id], onDelete: Restrict)
+
+  isActive Boolean @default(true)
+
+  assetAssignments AssetAssignment[]
+
+  user User?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationUnitId])
+  @@index([lastName])
+  @@index([isActive])
+}
+
+model AssetAssignment {
+  id String @id @default(cuid())
+
+  assetId    String
+  employeeId String
+
+  assignedAt DateTime  @default(now())
+  returnedAt DateTime?
+
+  notes String?
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assetId])
+  @@index([employeeId])
+  @@index([assignedAt])
+  @@index([returnedAt])
+}
+
+model Role {
+  id String @id @default(cuid())
+
+  code String @unique
+
+  name String
+
+  description String?
+
+  isActive Boolean @default(true)
+
+  userRoles UserRole[]
+
+  rolePermissions RolePermission[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model User {
+  id String @id @default(cuid())
+
+  employeeId String? @unique
+
+  employee Employee? @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  username String @unique
+
+  displayName String
+
+  isActive Boolean @default(true)
+
+  userRolesAssigned UserRole[] @relation("UserRoleAssignments")
+
+  rolesAssigned UserRole[] @relation("UserRoleAssignedBy")
+
+  rolesRemoved UserRole[] @relation("UserRoleRemovedBy")
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model UserRole {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation("UserRoleAssignments", fields: [userId], references: [id], onDelete: Restrict)
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  assignedAt DateTime @default(now())
+
+  assignedByUserId String
+  assignedByUser   User   @relation("UserRoleAssignedBy", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  removedAt       DateTime?
+  removedByUserId String?
+  removedByUser   User?     @relation("UserRoleRemovedBy", fields: [removedByUserId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([roleId])
+  @@index([assignedByUserId])
+  @@index([removedByUserId])
+  @@index([removedAt])
+}
+
+model Permission {
+  id String @id @default(cuid())
+
+  code String @unique
+
+  resource String
+
+  action String
+
+  description String?
+
+  isActive Boolean @default(true)
+
+  rolePermissions RolePermission[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([resource, action])
+  @@index([resource])
+  @@index([action])
+  @@index([isActive])
+}
+
+model RolePermission {
+  id String @id @default(cuid())
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
 }
