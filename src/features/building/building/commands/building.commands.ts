@@ -13,8 +13,12 @@ import { findBuildingTypeById } from '@/features/building/building-type/reposito
 import { findBuildingConditionById } from '@/features/building/building-condition/repositories/building-condition.repository';
 
 import type { BuildingFormData } from '../schemas/building.schema';
-
-export async function createBuilding(data: BuildingFormData) {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+export async function createBuilding(userId: string, data: BuildingFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING:CREATE',
+  });
   const property = await findPropertyById(data.propertyId);
 
   if (!property) {
@@ -70,7 +74,15 @@ export async function createBuilding(data: BuildingFormData) {
   return createBuildingRecord(data);
 }
 
-export async function updateBuilding(id: string, data: BuildingFormData) {
+export async function updateBuilding(
+  userId: string,
+  id: string,
+  data: BuildingFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING:UPDATE',
+  });
   const building = await findBuildingById(id);
 
   if (!building) {
@@ -133,7 +145,11 @@ export async function updateBuilding(id: string, data: BuildingFormData) {
   return updateBuildingRecord(id, data);
 }
 
-export async function deactivateBuilding(id: string) {
+export async function deactivateBuilding(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING:DEACTIVATE',
+  });
   const building = await findBuildingById(id);
 
   if (!building) {

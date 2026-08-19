@@ -1,8 +1,40 @@
 import { prisma } from '../src/lib/prisma';
+import { AuthProvider } from '../src/generated/prisma/client';
 
 async function main() {
   console.log('Starting PMS seed...');
 
+  const devUser = await prisma.user.upsert({
+    where: {
+      username: 'dev.user',
+    },
+    update: {
+      displayName: 'Development User',
+      isActive: true,
+    },
+    create: {
+      username: 'dev.user',
+      displayName: 'Development User',
+      isActive: true,
+    },
+  });
+
+  await prisma.userIdentity.upsert({
+    where: {
+      provider_externalId: {
+        provider: AuthProvider.LOCAL,
+        externalId: 'dev-local-user-001',
+      },
+    },
+    update: {
+      userId: devUser.id,
+    },
+    create: {
+      userId: devUser.id,
+      provider: AuthProvider.LOCAL,
+      externalId: 'dev-local-user-001',
+    },
+  });
   const statuses = [
     {
       code: 'ACTIVE',

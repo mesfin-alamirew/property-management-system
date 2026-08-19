@@ -490,3 +490,210 @@ Commit and push after a completed increment.
 │ createdAt │
 │ updatedAt │
 └────────────────────┘
+/////
+
+                 Authentication
+                       │
+                       ▼
+                     User
+                       │
+                       ▼
+              Server Action
+                       │
+                 validation
+                       │
+                       ▼
+                  Command
+                       │
+              requirePermission()
+                       │
+                       ▼
+          Authorization Service
+                       │
+                       ▼
+          Authorization Repository
+                       │
+                       ▼
+                    Prisma
+                       │
+          ┌────────────┴────────────┐
+          ▼                         ▼
+       UserRole                 Permission
+          │                         ▲
+          ▼                         │
+         Role ─────────── RolePermission
+
+
+         //////
+         User → UserRole → Role → RolePermission → Permission
+
+         //////
+         Server Action
+     ↓
+
+Command
+↓
+requirePermission()
+↓
+Authorization Service
+↓
+Authorization Repository
+
+          Authentication Provider
+                    │
+                    ▼
+               AuthProvider
+                    │
+                    ▼
+              AuthIdentity
+                    │
+                    ▼
+              UserIdentity
+                    │
+                    ▼
+                  User
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+       Employee           UserRole
+                              │
+                              ▼
+                            Role
+                              │
+                              ▼
+                        Permission
+
+his is the right dependency order:
+
+Prisma Identity Model
+↓
+Identity Repository
+↓
+Identity Mapping Service
+↓
+Authentication Service
+↓
+Server Action
+↓
+Building Command
+↓
+Authorization
+
+Current approved roadmap
+
+1. AuthProvider enum ← approved
+2. UserIdentity model ← approved
+3. User.identities relation ← approved
+4. Prisma migration
+5. UserIdentity repository
+6. Identity mapping service
+7. Authentication service
+8. Server Action integration
+9. Building Command integration
+10. Verify full authentication → authorization flow
+
+//
+┌─────────────────────────────┐
+│ Authentication Provider │
+│ implementation │
+└──────────────┬──────────────┘
+│
+▼
+AuthProviderAdapter
+│
+▼
+AuthIdentity
+├── provider
+├── externalId
+├── username?
+└── displayName?
+│
+▼
+Identity Mapping Service
+│
+▼
+UserIdentity Repository
+│
+▼
+AuthenticatedUser
+├── id
+├── employeeId
+├── username
+└── displayName
+
+Complete Flow
+
+Authentication Provider
+│
+▼
+AuthProviderAdapter
+│
+▼
+AuthIdentity
+(provider + externalId)
+│
+▼
+resolveAuthenticatedUser()
+│
+▼
+findUserByIdentity()
+│
+▼
+AuthenticatedUser
+
+////
+AuthProvider enum
+│
+▼
+AuthIdentity
+│
+▼
+AuthProviderAdapter
+│
+▼
+AuthenticationService
+│
+▼
+Identity Mapping Service
+│
+▼
+UserIdentity Repository
+│
+▼
+AuthenticatedUser
+
+////User
+│
+├── UserIdentity[]
+│ │
+│ └── External identity
+│
+├── Session[]
+│ │
+│ └── Current application session
+│
+└── UserRole[]
+│
+└── Authorization
+
+/////
+Authentication
+✅ DevAuthProvider
+✅ UserIdentity resolution
+✅ Session creation
+✅ Session cookie
+✅ getCurrentUser()
+
+Authorization
+✅ requirePermission()
+✅ CREATE
+✅ UPDATE
+✅ DEACTIVATE
+
+Building
+✅ Server Actions pass user.id
+✅ Commands receive user.id
+✅ Business rules remain in commands
+✅ Repository remains database-only
+✅ Lint
+✅ Build

@@ -721,11 +721,16 @@ model User {
 
   employee Employee? @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
+
   username String @unique
 
   displayName String
 
   isActive Boolean @default(true)
+
+  identities UserIdentity[]
+  
+  sessions Session[]
 
   userRolesAssigned UserRole[] @relation("UserRoleAssignments")
 
@@ -808,4 +813,47 @@ model RolePermission {
   @@unique([roleId, permissionId])
   @@index([roleId])
   @@index([permissionId])
+}
+
+enum AuthProvider {
+  LOCAL
+  AZURE_AD
+}
+
+model UserIdentity {
+
+  id String @id @default(cuid())
+
+  userId String
+
+  user User @relation(fields: [userId],references: [id],onDelete: Restrict)
+
+  provider AuthProvider
+
+  externalId String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, externalId])
+
+  @@index([userId])
+}
+
+model Session {
+  id String @id @default(cuid())
+
+  userId String
+
+  user User @relation(fields: [userId],references: [id],onDelete: Restrict)
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
 }
