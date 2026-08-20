@@ -803,3 +803,49 @@ Building Repository
 │
 ▼
 Prisma
+
+////
+🔐 Centralized authentication through (dashboard)/layout.tsx
+🍪 Database-backed sessions with secure HTTP-only cookies
+🚪 Reusable logout action
+👤 Current-user resolution
+🛡️ Role → Permission authorization
+🔒 Server-side permission enforcement inside commands
+🏗️ Building CRUD already protected
+📦 A structure that can scale to Properties, Assets, Units, Maintenance, Reports, and other PMS modules
+
+/////
+Prisma Model
+↓
+Types
+↓
+Schema
+↓
+Repository
+↓
+Commands
+├── Authentication
+└── Authorization
+↓
+Queries
+↓
+Actions
+└── Authentication/session check where appropriate
+↓
+Form
+↓
+Dialog
+↓
+Table
+↓
+Workspace
+↓
+Page
+↓
+Route
+↓
+Test
+↓
+Commit
+↓
+Push

@@ -674,14 +674,21 @@ model AssetAssignment {
   assetId    String
   employeeId String
 
-  assignedAt DateTime  @default(now())
-  returnedAt DateTime?
+  assignedAt       DateTime @default(now())
+  assignedByUserId String
+
+  returnedAt       DateTime?
+  returnedByUserId String?
 
   notes String?
 
   asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
 
   employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  assignedByUser User @relation("AssetAssignmentAssignedBy", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  returnedByUser User? @relation("AssetAssignmentReturnedBy", fields: [returnedByUserId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -690,6 +697,8 @@ model AssetAssignment {
   @@index([employeeId])
   @@index([assignedAt])
   @@index([returnedAt])
+  @@index([assignedByUserId])
+  @@index([returnedByUserId])
 }
 
 model User {
@@ -699,7 +708,6 @@ model User {
 
   employee Employee? @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
-
   username String @unique
 
   displayName String
@@ -707,8 +715,11 @@ model User {
   isActive Boolean @default(true)
 
   identities UserIdentity[]
-  
+
   sessions Session[]
+
+  assetAssignmentsMade  AssetAssignment[] @relation("AssetAssignmentAssignedBy")
+  assetReturnsProcessed AssetAssignment[] @relation("AssetAssignmentReturnedBy")
 
   userRolesAssigned UserRole[] @relation("UserRoleAssignments")
 
@@ -722,6 +733,7 @@ model User {
 
   @@index([isActive])
 }
+
 model Role {
   id String @id @default(cuid())
 
@@ -743,6 +755,7 @@ model Role {
 
   @@index([isActive])
 }
+
 model UserRole {
   id String @id @default(cuid())
 
@@ -819,12 +832,11 @@ enum AuthProvider {
 }
 
 model UserIdentity {
-
   id String @id @default(cuid())
 
   userId String
 
-  user User @relation(fields: [userId],references: [id],onDelete: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   provider AuthProvider
 
@@ -835,7 +847,6 @@ model UserIdentity {
   updatedAt DateTime @updatedAt
 
   @@unique([provider, externalId])
-
   @@index([userId])
 }
 
@@ -844,7 +855,7 @@ model Session {
 
   userId String
 
-  user User @relation(fields: [userId],references: [id],onDelete: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   expiresAt DateTime
 

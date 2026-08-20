@@ -265,9 +265,9 @@ ASSET MANAGEMENT SYSTEM
 | **9. Reporting, Audit & Administration** | How do we control, monitor, audit, and administer the AMS? |
 
 1. Asset Registry & Classification
-   ├── Asset Category ✅
-   ├── Asset Type ✅
-   ├── Asset Status ✅
+   ├── Asset Category
+   ├── Asset Type
+   ├── Asset Status
    ├── Asset Condition ← Next recommended
    ├── Asset
    └── supporting asset masters
@@ -314,3 +314,79 @@ Asset Acquisition
 └── Acquisition Item
 ↓
 Asset Assignment & Accountability ← NEXT
+
+/////
+ASSET MANAGEMENT SYSTEM
+│
+├── 1. Asset Registry & Classification
+│ ├── Asset
+│ ├── Asset Type
+│ ├── Asset Status
+│ ├── Asset Condition
+│ └── Classification
+│
+├── 2. Asset Acquisition
+│ ├── Acquisition
+│ ├── Acquisition Method
+│ └── Acquisition Item
+│
+├── 3. Asset Assignment & Accountability ← NEXT
+│ ├── Employee ✓ implemented
+│ └── Asset Assignment ← CONTINUE HERE
+│
+├── 4. Asset Location & Movement
+├── 5. Physical Verification & Inventory
+├── 6. Maintenance & Service Management
+├── 7. Asset Incident Management
+├── 8. Asset Retirement & Disposal
+└── 9. Reporting, Audit & Administration
+
+///
+Module 3 — Asset Assignment & Accountability
+
+Employee ✓
+↓
+Asset Assignment ← NOW
+↓
+Accountability
+↓
+Assignment history
+↓
+Return / reassignment
+
+ROADMAP
+
+Prisma Model
+↓
+Types
+↓
+Schema
+↓
+Repository
+↓
+Commands
+├── Authentication
+└── Authorization
+↓
+Queries
+↓
+Actions
+└── Authentication/session check where appropriate
+↓
+Form
+↓
+Dialog
+↓
+Table
+↓
+Workspace
+↓
+Page
+↓
+Route
+↓
+Test
+↓
+Commit
+↓
+Push
