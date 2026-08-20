@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts",
-    "test:auth": "tsx scripts/test-auth.ts"
+    "test:auth": "tsx scripts/test-auth.ts",
+    "test:building-action": "tsx scripts/test-building-action.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

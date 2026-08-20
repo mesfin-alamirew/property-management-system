@@ -692,28 +692,6 @@ model AssetAssignment {
   @@index([returnedAt])
 }
 
-model Role {
-  id String @id @default(cuid())
-
-  code String @unique
-
-  name String
-
-  description String?
-
-  isActive Boolean @default(true)
-
-  userRoles UserRole[]
-
-  rolePermissions RolePermission[]
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-
-  @@index([isActive])
-}
-
 model User {
   id String @id @default(cuid())
 
@@ -744,7 +722,27 @@ model User {
 
   @@index([isActive])
 }
+model Role {
+  id String @id @default(cuid())
 
+  code String @unique
+
+  name String
+
+  description String?
+
+  isActive Boolean @default(true)
+
+  userRoles UserRole[]
+
+  rolePermissions RolePermission[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
 model UserRole {
   id String @id @default(cuid())
 

@@ -563,7 +563,7 @@ Authorization Repository
                               ▼
                         Permission
 
-his is the right dependency order:
+This is the right dependency order:
 
 Prisma Identity Model
 ↓
@@ -697,3 +697,109 @@ Building
 ✅ Repository remains database-only
 ✅ Lint
 ✅ Build
+
+Server Action
+↓
+Authentication
+↓
+Command
+↓
+Authorization
+↓
+Business Rules
+↓
+Repository
+↓
+Database
+
+URRENT PMS ARCHITECTURE
+
+                    PMS
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+     Authentication        Authorization
+          │                     │
+     UserIdentity          Permission
+          │                     │
+       Session             UserRole
+          │                     │
+          └──────────┬──────────┘
+                     │
+               Server Actions
+                     │
+                  Commands
+                     │
+                Repositories
+                     │
+                  Prisma
+                     │
+                PostgreSQL
+
+🎯 The 5 concepts I particularly want you to grasp
+
+If you don't remember everything tomorrow, focus on these five:
+
+1. Authentication
+
+Who is the user?
+
+2. Authorization
+
+What is the user allowed to do?
+
+3. Session
+
+How does the application remember the authenticated user between requests?
+
+4. Separation of responsibilities
+
+Action → Authentication → Command → Authorization/Business Rules → Repository → Database
+
+5. Debugging by proving assumptions
+
+Instead of immediately changing code:
+
+Error
+↓
+What does it actually say?
+↓
+Which layer produced it?
+↓
+Can I independently verify the assumption?
+↓
+Only then change the code
+
+That fifth one is especially valuable for the kind of enterprise system we're building.
+
+//////
+┌──────────────────┐
+│ Server Action │
+└────────┬─────────┘
+│
+▼
+requireCurrentUser()
+│
+▼
+┌──────────────────┐
+│ Authenticated │
+│ User │
+└────────┬─────────┘
+│ user.id
+▼
+Building Service
+│
+▼
+requirePermission()
+│
+▼
+Authorization
+│
+▼
+Business Rules
+│
+▼
+Building Repository
+│
+▼
+Prisma

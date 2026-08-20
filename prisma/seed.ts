@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { prisma } from '../src/lib/prisma';
 import { AuthProvider } from '../src/generated/prisma/client';
 
@@ -35,6 +36,104 @@ async function main() {
       externalId: 'dev-local-user-001',
     },
   });
+
+  const systemAdminRole = await prisma.role.upsert({
+    where: {
+      code: 'SYSTEM_ADMIN',
+    },
+    update: {
+      name: 'System Administrator',
+      description: 'Development and system administration role',
+      isActive: true,
+    },
+    create: {
+      code: 'SYSTEM_ADMIN',
+      name: 'System Administrator',
+      description: 'Development and system administration role',
+      isActive: true,
+    },
+  });
+
+  const buildingPermissions = [
+    {
+      code: 'BUILDING:CREATE',
+      resource: 'BUILDING',
+      action: 'CREATE',
+      description: 'Create a building',
+    },
+    {
+      code: 'BUILDING:READ',
+      resource: 'BUILDING',
+      action: 'READ',
+      description: 'View building information',
+    },
+    {
+      code: 'BUILDING:UPDATE',
+      resource: 'BUILDING',
+      action: 'UPDATE',
+      description: 'Update building information',
+    },
+    {
+      code: 'BUILDING:DEACTIVATE',
+      resource: 'BUILDING',
+      action: 'DEACTIVATE',
+      description: 'Deactivate a building',
+    },
+  ];
+
+  for (const permission of buildingPermissions) {
+    await prisma.permission.upsert({
+      where: {
+        code: permission.code,
+      },
+      update: permission,
+      create: permission,
+    });
+  }
+
+  for (const permission of buildingPermissions) {
+    const dbPermission = await prisma.permission.findUnique({
+      where: {
+        code: permission.code,
+      },
+    });
+
+    if (!dbPermission) {
+      throw new Error(`Permission not found after upsert: ${permission.code}`);
+    }
+
+    await prisma.rolePermission.upsert({
+      where: {
+        roleId_permissionId: {
+          roleId: systemAdminRole.id,
+          permissionId: dbPermission.id,
+        },
+      },
+      update: {},
+      create: {
+        roleId: systemAdminRole.id,
+        permissionId: dbPermission.id,
+      },
+    });
+  }
+
+  const existingUserRole = await prisma.userRole.findFirst({
+    where: {
+      userId: devUser.id,
+      roleId: systemAdminRole.id,
+      removedAt: null,
+    },
+  });
+
+  if (!existingUserRole) {
+    await prisma.userRole.create({
+      data: {
+        userId: devUser.id,
+        roleId: systemAdminRole.id,
+        assignedByUserId: devUser.id,
+      },
+    });
+  }
   const statuses = [
     {
       code: 'ACTIVE',

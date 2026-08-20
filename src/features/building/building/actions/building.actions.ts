@@ -12,7 +12,7 @@ import {
 } from '../commands/building.commands';
 
 import { buildingSchema } from '../schemas/building.schema';
-import { getCurrentUser } from '@/lib/auth/current-user';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 type BuildingActionData = {
   id: string;
@@ -24,11 +24,7 @@ export async function createBuildingAction(
   try {
     const data = buildingSchema.parse(formData);
 
-    const user = await getCurrentUser();
-
-    if (!user) {
-      throw new AppError('Authentication required', 'UNAUTHENTICATED');
-    }
+    const user = await requireCurrentUser();
 
     const result = await createBuilding(user.id, data);
 
@@ -62,11 +58,7 @@ export async function updateBuildingAction(
   try {
     const data = buildingSchema.parse(formData);
 
-    const user = await getCurrentUser();
-
-    if (!user) {
-      throw new AppError('Authentication required', 'UNAUTHENTICATED');
-    }
+    const user = await requireCurrentUser();
 
     const result = await updateBuilding(user.id, id, data);
 
@@ -97,11 +89,7 @@ export async function deactivateBuildingAction(
   id: string,
 ): Promise<ActionResult<BuildingActionData>> {
   try {
-    const user = await getCurrentUser();
-
-    if (!user) {
-      throw new AppError('Authentication required', 'UNAUTHENTICATED');
-    }
+    const user = await requireCurrentUser();
 
     const result = await deactivateBuilding(user.id, id);
 

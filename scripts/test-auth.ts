@@ -11,6 +11,9 @@ async function main() {
     destroyUserSession,
   } = await import('../src/lib/auth/session.service');
 
+  const { authorize, requirePermission } =
+    await import('../src/lib/authorization/authorization.service');
+
   const user = await prisma.user.findUnique({
     where: {
       username: 'dev.user',
@@ -48,6 +51,42 @@ async function main() {
     'Authenticated user after session destruction:',
     deletedSessionUser,
   );
+
+  const createAuthorization = await authorize({
+    userId: user.id,
+    permissionCode: 'BUILDING:CREATE',
+  });
+
+  console.log('BUILDING:CREATE authorization:', createAuthorization);
+
+  const deleteAuthorization = await authorize({
+    userId: user.id,
+    permissionCode: 'BUILDING:DELETE',
+  });
+
+  console.log('BUILDING:DELETE authorization:', deleteAuthorization);
+
+  try {
+    await requirePermission({
+      userId: user.id,
+      permissionCode: 'BUILDING:CREATE',
+    });
+
+    console.log('BUILDING:CREATE requirePermission: ALLOWED');
+  } catch (error) {
+    console.log('BUILDING:CREATE requirePermission: DENIED', error);
+  }
+
+  try {
+    await requirePermission({
+      userId: user.id,
+      permissionCode: 'BUILDING:DELETE',
+    });
+
+    console.log('BUILDING:DELETE requirePermission: ALLOWED');
+  } catch {
+    console.log('BUILDING:DELETE requirePermission: DENIED');
+  }
 
   await prisma.$disconnect();
 }
