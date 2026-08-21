@@ -544,11 +544,16 @@ model Asset {
   statusId    String
   conditionId String
 
+  locationId String?
+
   assetType AssetType      @relation(fields: [assetTypeId], references: [id], onDelete: Restrict)
   status    AssetStatus    @relation(fields: [statusId], references: [id], onDelete: Restrict)
   condition AssetCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
 
+  location AssetLocation? @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
   acquisitionItem  AcquisitionItem?
+  assetMovements   AssetMovement[]
   assetAssignments AssetAssignment[]
 
   createdAt DateTime @default(now())
@@ -558,6 +563,60 @@ model Asset {
   @@index([statusId])
   @@index([conditionId])
   @@index([serialNumber])
+  @@index([locationId])
+}
+
+model AssetLocation {
+  id String @id @default(cuid())
+
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  isActive Boolean @default(true)
+
+  assets Asset[]
+
+  movementsFrom AssetMovement[] @relation("MovementFromLocation")
+  movementsTo   AssetMovement[] @relation("MovementToLocation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model AssetMovement {
+  id String @id @default(cuid())
+
+  assetId String
+
+  fromLocationId String?
+  toLocationId   String
+
+  movedAt DateTime @default(now())
+
+  movedByUserId String
+
+  reason String?
+  notes  String?
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  fromLocation AssetLocation? @relation("MovementFromLocation", fields: [fromLocationId], references: [id], onDelete: Restrict)
+
+  toLocation AssetLocation @relation("MovementToLocation", fields: [toLocationId], references: [id], onDelete: Restrict)
+
+  movedByUser User @relation(fields: [movedByUserId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assetId])
+  @@index([fromLocationId])
+  @@index([toLocationId])
+  @@index([movedByUserId])
+  @@index([movedAt])
 }
 
 model AssetCodeSequence {
@@ -716,7 +775,8 @@ model User {
 
   identities UserIdentity[]
 
-  sessions Session[]
+  sessions       Session[]
+  assetMovements AssetMovement[]
 
   assetAssignmentsMade  AssetAssignment[] @relation("AssetAssignmentAssignedBy")
   assetReturnsProcessed AssetAssignment[] @relation("AssetAssignmentReturnedBy")
