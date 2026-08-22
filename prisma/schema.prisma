@@ -56,6 +56,8 @@ model OrganizationUnit {
   properties Property[]
   employees  Employee[]
 
+  physicalVerifications PhysicalVerification[]
+
   // Status
   isActive Boolean @default(true)
 
@@ -514,13 +516,19 @@ model AssetStatus {
 }
 
 model AssetCondition {
-  id          String  @id @default(cuid())
+  id String @id @default(cuid())
+
   code        String  @unique
   name        String
   description String?
-  isActive    Boolean @default(true)
+
+  isActive Boolean @default(true)
 
   assets Asset[]
+
+  physicalVerificationItemsExpected PhysicalVerificationItem[] @relation("PhysicalVerificationExpectedCondition")
+
+  unregisteredAssetObservations UnregisteredAssetObservation[] @relation("UnregisteredAssetObservedCondition")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -556,6 +564,10 @@ model Asset {
   assetMovements   AssetMovement[]
   assetAssignments AssetAssignment[]
 
+  physicalVerificationItems PhysicalVerificationItem[]
+
+  unregisteredAssetObservations UnregisteredAssetObservation[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -579,6 +591,12 @@ model AssetLocation {
 
   movementsFrom AssetMovement[] @relation("MovementFromLocation")
   movementsTo   AssetMovement[] @relation("MovementToLocation")
+
+  physicalVerifications PhysicalVerification[]
+
+  physicalVerificationItemsExpectedLocation PhysicalVerificationItem[] @relation("PhysicalVerificationExpectedLocation")
+
+  unregisteredAssetObservations UnregisteredAssetObservation[] @relation("UnregisteredAssetObservedLocation")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -634,6 +652,18 @@ model AcquisitionNumberSequence {
   lastNumber Int    @default(0)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PhysicalVerificationNumberSequence {
+  id String @id @default(cuid())
+
+  year Int @unique
+
+  lastNumber Int @default(0)
+
+  createdAt DateTime @default(now())
+
   updatedAt DateTime @updatedAt
 }
 
@@ -718,6 +748,8 @@ model Employee {
 
   user User?
 
+  physicalVerificationItemsExpected PhysicalVerificationItem[] @relation("PhysicalVerificationExpectedEmployee")
+
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
@@ -786,6 +818,12 @@ model User {
   rolesAssigned UserRole[] @relation("UserRoleAssignedBy")
 
   rolesRemoved UserRole[] @relation("UserRoleRemovedBy")
+
+  physicalVerificationsCreated PhysicalVerification[] @relation("PhysicalVerificationCreatedBy")
+
+  physicalVerificationItemsVerified PhysicalVerificationItem[] @relation("PhysicalVerificationVerifiedBy")
+
+  unregisteredAssetObservations UnregisteredAssetObservation[] @relation("UnregisteredAssetObservedBy")
 
   createdAt DateTime @default(now())
 
@@ -925,4 +963,267 @@ model Session {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model PhysicalVerification {
+  id String @id @default(cuid())
+
+  // Business Identity
+
+  referenceNumber String @unique
+
+  title String
+
+  // Scope
+
+  scope PhysicalVerificationScope
+
+  organizationUnitId String?
+
+  organizationUnit OrganizationUnit? @relation(fields: [organizationUnitId], references: [id], onDelete: Restrict)
+
+  locationId String?
+
+  location AssetLocation? @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  // Lifecycle
+
+  status PhysicalVerificationStatus @default(DRAFT)
+
+  scheduledAt DateTime?
+
+  startedAt DateTime?
+
+  completedAt DateTime?
+
+  notes String?
+
+  // Accountability
+
+  createdByUserId String
+
+  createdByUser User @relation("PhysicalVerificationCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  // Verification Records
+
+  items PhysicalVerificationItem[]
+
+  unregisteredObservations UnregisteredAssetObservation[]
+
+  // Audit
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  // Indexes
+
+  @@index([status])
+  @@index([scope])
+  @@index([organizationUnitId])
+  @@index([locationId])
+  @@index([createdByUserId])
+}
+
+model PhysicalVerificationItem {
+  id String @id @default(cuid())
+
+  // Verification / Asset Identity
+
+  verificationId String
+
+  verification PhysicalVerification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+
+  assetId String
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  // Expected Asset Snapshot
+
+  expectedAssetCode String
+
+  expectedAssetTag String?
+
+  expectedSerialNumber String?
+
+  expectedAssetName String
+
+  // Expected Custodian Snapshot
+
+  expectedEmployeeId String?
+
+  expectedEmployee Employee? @relation("PhysicalVerificationExpectedEmployee", fields: [expectedEmployeeId], references: [id], onDelete: Restrict)
+
+  expectedEmployeeNumber String?
+
+  expectedEmployeeName String?
+
+  // Expected Location Snapshot
+
+  expectedLocationId String?
+
+  expectedLocation AssetLocation? @relation("PhysicalVerificationExpectedLocation", fields: [expectedLocationId], references: [id], onDelete: Restrict)
+
+  expectedLocationCode String?
+
+  expectedLocationName String?
+
+  // Expected Condition Snapshot
+
+  expectedConditionId String?
+
+  expectedCondition AssetCondition? @relation("PhysicalVerificationExpectedCondition", fields: [expectedConditionId], references: [id], onDelete: Restrict)
+
+  expectedConditionCode String?
+
+  expectedConditionName String?
+
+  // Observed Asset
+
+  observedAssetTag String?
+
+  observedSerialNumber String?
+
+  // Observed Custodian Snapshot
+
+  observedEmployeeNumber String?
+
+  observedEmployeeName String?
+
+  // Observed Location Snapshot
+
+  observedLocationCode String?
+
+  observedLocationName String?
+
+  // Observed Condition Snapshot
+
+  observedConditionCode String?
+
+  observedConditionName String?
+
+  // Result
+
+  result PhysicalVerificationResult @default(PENDING)
+
+  notes String?
+
+  // Verification Accountability
+
+  verifiedByUserId String?
+
+  verifiedByUser User? @relation("PhysicalVerificationVerifiedBy", fields: [verifiedByUserId], references: [id], onDelete: Restrict)
+
+  verifiedAt DateTime?
+
+  // Audit
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  // Constraints / Indexes
+
+  @@unique([verificationId, assetId])
+  @@index([assetId])
+  @@index([verificationId])
+  @@index([result])
+  @@index([expectedEmployeeId])
+  @@index([expectedLocationId])
+  @@index([expectedConditionId])
+  @@index([verifiedByUserId])
+}
+
+model UnregisteredAssetObservation {
+  id String @id @default(cuid())
+
+  // Verification
+
+  verificationId String
+
+  verification PhysicalVerification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+
+  // Physical Identification
+
+  observedAssetTag String?
+
+  observedSerialNumber String?
+
+  observedName String
+
+  // Location Snapshot
+
+  observedLocationId String?
+
+  observedLocation AssetLocation? @relation("UnregisteredAssetObservedLocation", fields: [observedLocationId], references: [id], onDelete: Restrict)
+
+  observedLocationCode String?
+
+  observedLocationName String?
+
+  // Condition Snapshot
+
+  observedConditionId String?
+
+  observedCondition AssetCondition? @relation("UnregisteredAssetObservedCondition", fields: [observedConditionId], references: [id], onDelete: Restrict)
+
+  observedConditionCode String?
+
+  observedConditionName String?
+
+  // Observation
+
+  notes String?
+
+  observedByUserId String
+
+  observedByUser User @relation("UnregisteredAssetObservedBy", fields: [observedByUserId], references: [id], onDelete: Restrict)
+
+  observedAt DateTime
+
+  // Later Registration
+
+  registeredAssetId String?
+
+  registeredAsset Asset? @relation(fields: [registeredAssetId], references: [id], onDelete: Restrict)
+
+  // Audit
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  // Indexes
+
+  @@index([verificationId])
+  @@index([observedLocationId])
+  @@index([observedConditionId])
+  @@index([observedByUserId])
+  @@index([registeredAssetId])
+}
+
+enum PhysicalVerificationScope {
+  ORGANIZATION
+  ORGANIZATION_UNIT
+  LOCATION
+  ORGANIZATION_UNIT_LOCATION
+  SELECTED_ASSETS
+}
+
+enum PhysicalVerificationStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PhysicalVerificationResult {
+  PENDING
+  VERIFIED
+  NOT_FOUND
+  LOCATION_MISMATCH
+  CUSTODIAN_MISMATCH
+  CONDITION_MISMATCH
+  IDENTIFICATION_MISMATCH
+  MULTIPLE_DISCREPANCIES
 }

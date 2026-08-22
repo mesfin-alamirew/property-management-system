@@ -1,0 +1,570 @@
+| ID            | Business Rule                                                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **BR-PV-001** | Only an authorized administrative user may create a Physical Verification session.                                                                               |
+| **BR-PV-002** | A verification session has a defined scope, and its asset list is captured as verification items when the session is initiated.                                  |
+| **BR-PV-003** | Assets are generated from the scope and may be adjusted before the session starts. Once started, the verification item list is frozen.                           |
+| **BR-PV-004** | A verifier may record a physically observed asset that is not registered in the system. It does not automatically create an Asset record.                        |
+| **BR-PV-005** | A completed verification cannot be directly modified. Corrections require an authorized correction/review process that preserves the original record and reason. |
+
+
+BR-PV-001  Authorization
+BR-PV-002  Scope & Snapshot
+BR-PV-003  Generation & Freeze
+BR-PV-004  Unregistered Asset Discovery
+BR-PV-005  Completion & Correction
+BR-PV-006  One Asset per Verification Session
+BR-PV-007  Expected State Snapshot
+BR-PV-008  Optional Custodian
+
+┌─────────────────────────┐
+│  PhysicalVerification  │
+│─────────────────────────│
+│ id                      │
+│ verificationCode        │
+│ name                    │
+│ description             │
+│ scope                   │
+│ status                  │
+│ verificationDate        │
+│ startedAt               │
+│ completedAt             │
+│ createdByUserId         │
+│ createdAt               │
+│ updatedAt               │
+└────────────┬────────────┘
+             │
+             │ 1:N
+             ▼
+┌─────────────────────────────┐
+│ PhysicalVerificationItem    │
+│─────────────────────────────│
+│ id                          │
+│ verificationId              │
+│ assetId                     │
+│ result                      │
+│ expectedLocationId          │
+│ observedLocationId          │
+│ expectedEmployeeId          │
+│ observedEmployeeId          │
+│ observedConditionId         │
+│ observedAssetTag            │
+│ observedSerialNumber        │
+│ notes                       │
+│ verifiedAt                  │
+│ verifiedByUserId            │
+└──────────────┬──────────────┘
+               │
+               │ N:1
+               ▼
+          ┌─────────┐
+          │  Asset  │
+          └─────────┘
+
+
+
+
+
+                    ┌──────────────────────┐
+                    │ PhysicalVerification │
+                    │──────────────────────│
+                    │ scope                │
+                    │ status               │
+                    │ verificationDate     │
+                    │ createdBy            │
+                    └──────────┬───────────┘
+                               │
+                 ┌─────────────┴──────────────┐
+                 │                            │
+                1:N                          1:N
+                 │                            │
+                 ▼                            ▼
+     ┌────────────────────────┐   ┌──────────────────────────┐
+     │ PhysicalVerificationItem│   │UnregisteredAssetObservation│
+     └────────────┬───────────┘   └──────────────────────────┘
+                  │
+                 N:1
+                  │
+                  ▼
+               Asset
+
+Our PhysicalVerificationItem concept is therefore becoming
+PhysicalVerificationItem
+│
+├── Verification Reference
+│   ├── verificationId
+│   └── assetId
+│
+├── Expected Asset Snapshot
+│   ├── assetCode
+│   ├── assetTag
+│   ├── serialNumber
+│   └── assetName
+│
+├── Expected Custodian Snapshot
+│   ├── employeeId
+│   ├── employeeNumber
+│   └── employeeName
+│
+├── Expected Location Snapshot
+│   ├── locationId
+│   ├── locationCode
+│   └── locationName
+│
+├── Expected Condition Snapshot
+│   ├── conditionId
+│   ├── conditionCode
+│   └── conditionName
+│
+├── Observed Information
+│   ├── assetTag
+│   ├── serialNumber
+│   ├── employeeId?
+│   ├── employeeNumber?
+│   ├── employeeName?
+│   ├── locationId?
+│   ├── locationCode?
+│   ├── locationName?
+│   ├── conditionId?
+│   ├── conditionCode?
+│   └── conditionName?
+│
+├── Result
+├── Notes
+├── VerifiedAt
+└── VerifiedByUserId
+
+PROPERTY MANAGEMENT SYSTEM
+───────────────────────────
+PMS DESIGN & IMPLEMENTATION HANDBOOK
+
+1. System Overview
+2. Architecture & Design Principles
+3. Business Rules Catalog
+4. Data Model / ERD
+5. Module 1 — Asset Registry & Classification
+6. Module 2 — Asset Acquisition
+7. Module 3 — Asset Assignment & Accountability
+8. Module 4 — Asset Location & Movement
+9. Module 5 — Physical Verification & Inventory
+10. Module 6 — Maintenance & Service Management
+11. Module 7 — Asset Incident Management
+12. Module 8 — Asset Retirement & Disposal
+13. Module 9 — Reporting, Audit & Administration
+14. Security & Authorization
+15. Audit & Historical Data Principles
+16. Database / Prisma Design
+17. Application Architecture
+18. Workflows & Business Processes
+19. Testing & Acceptance
+20. Deployment & Operational Notes
+21. Change History / Approved Decisions
+22. Appendix
+
+
+                                      ┌──────────────┐
+                                      │     User     │
+                                      └──────┬───────┘
+                                             │
+                            ┌────────────────┴───────────────┐
+                            │                                │
+                         creates                         verifies
+                            │                                │
+                            ▼                                ▼
+                ┌──────────────────────┐       ┌─────────────────────────┐
+                │ PhysicalVerification │       │ PhysicalVerificationItem│
+                └──────────┬───────────┘       └────────────┬────────────┘
+                           │                                │
+                     1:N   │                                │ N:1
+                           │                                ▼
+                           │                             ┌───────┐
+                           │                             │ Asset │
+                           │                             └───────┘
+                           │
+             ┌─────────────┴──────────────┐
+             │                            │
+           1:N                          1:N
+             │                            │
+             ▼                            ▼
+┌────────────────────────────┐  ┌──────────────────────────────┐
+│PhysicalVerificationItem    │  │UnregisteredAssetObservation │
+└────────────────────────────┘  └──────────────────────────────┘
+
+                         ┌──────────────┐
+                         │     User     │
+                         └──────┬───────┘
+                                │
+                 ┌──────────────┼─────────────────┐
+                 │              │                 │
+              creates        verifies          observes
+                 │              │                 │
+                 ▼              ▼                 ▼
+        ┌────────────────┐ ┌─────────────────┐ ┌────────────────────────┐
+        │Physical        │ │Physical         │ │UnregisteredAsset       │
+        │Verification    │ │VerificationItem │ │Observation             │
+        └───────┬────────┘ └────────┬────────┘ └────────────────────────┘
+                │                   │
+                │ 1:N               │ N:1
+                │                   ▼
+                │               ┌─────────┐
+                └──────────────►│  Asset  │
+                                └─────────┘
+
+Proposed complete entity
+
+PhysicalVerificationItem
+│
+├── id
+├── verificationId
+├── assetId
+│
+├── EXPECTED ASSET
+│   ├── expectedAssetCode
+│   ├── expectedAssetTag?
+│   ├── expectedSerialNumber?
+│   └── expectedAssetName
+│
+├── EXPECTED CUSTODIAN
+│   ├── expectedEmployeeId?
+│   ├── expectedEmployeeNumber?
+│   └── expectedEmployeeName?
+│
+├── EXPECTED LOCATION
+│   ├── expectedLocationId?
+│   ├── expectedLocationCode?
+│   └── expectedLocationName?
+│
+├── EXPECTED CONDITION
+│   ├── expectedConditionId?
+│   ├── expectedConditionCode?
+│   └── expectedConditionName?
+│
+├── OBSERVED ASSET
+│   ├── observedAssetTag?
+│   └── observedSerialNumber?
+│
+├── OBSERVED CUSTODIAN
+│   ├── observedEmployeeId?
+│   ├── observedEmployeeNumber?
+│   └── observedEmployeeName?
+│
+├── OBSERVED LOCATION
+│   ├── observedLocationId?
+│   ├── observedLocationCode?
+│   └── observedLocationName?
+│
+├── OBSERVED CONDITION
+│   ├── observedConditionId?
+│   ├── observedConditionCode?
+│   └── observedConditionName?
+│
+├── result
+├── notes?
+├── verifiedByUserId?
+├── verifiedAt?
+├── createdAt
+└── updatedAt
+
+
+
+Approved Physical Verification lifecycle
+                  ┌─────────────┐
+                  │    DRAFT    │
+                  └──────┬──────┘
+                         │ Start
+                         ▼
+                ┌─────────────────┐
+                │   IN_PROGRESS   │
+                └───────┬─────────┘
+                        │
+              ┌─────────┴─────────┐
+              │                   │
+          All items            Cancel
+          resolved                │
+              │                   ▼
+              ▼              ┌───────────┐
+       ┌─────────────┐       │ CANCELLED │
+       │  COMPLETED  │       └───────────┘
+       └─────────────┘
+
+Proposed dependency-first strategy
+
+                    FOUNDATION / REFERENCE DATA
+                              │
+             ┌────────────────┼────────────────┐
+             │                │                │
+             ▼                ▼                ▼
+       OrganizationUnit    Employee          User
+             │                │                │
+             └────────────┬───┴────────────┘
+                          │
+                          ▼
+                    ASSET REGISTRY
+                          │
+        ┌─────────────────┼─────────────────┐
+        ▼                 ▼                 ▼
+    Asset Type       Asset Status      Asset Condition
+        │                 │                 │
+        └─────────────────┼─────────────────┘
+                          ▼
+                         Asset
+                          │
+              ┌───────────┼────────────┐
+              ▼           ▼            ▼
+       Asset Assignment  Location    Movement
+              │           │            │
+              └───────────┴────────────┘
+                          │
+                          ▼
+                 PHYSICAL VERIFICATION
+                          │
+             ┌────────────┴─────────────┐
+             ▼                          ▼
+   PhysicalVerification       UnregisteredObservation
+             │
+             ▼
+   PhysicalVerificationItem
+
+   LEVEL 0 — Foundation
+│
+├── Country
+├── OrganizationUnit
+├── User
+└── other shared/reference models
+
+LEVEL 1 — Master Data
+│
+├── AssetType
+├── AssetStatus
+├── AssetCondition
+├── AcquisitionMethod
+└── other independent master data
+
+LEVEL 2 — Core Business Entities
+│
+├── Employee
+├── Asset
+├── Acquisition
+└── AcquisitionItem
+
+LEVEL 3 — Accountability / Operations
+│
+├── AssetAssignment
+├── AssetLocation
+└── AssetMovement
+
+LEVEL 4 — Verification
+│
+├── PhysicalVerification
+├── PhysicalVerificationItem
+└── UnregisteredAssetObservation
+
+LEVEL 5 — Operational Processes
+│
+├── Maintenance
+├── MaintenanceService
+├── Incident
+└── IncidentResolution
+
+LEVEL 6 — Lifecycle
+│
+├── AssetRetirement
+├── Disposal
+└── DisposalItem
+
+LEVEL 7 — Reporting / Audit
+│
+├── AuditLog
+├── Reports
+└── Administration
+
+Our implementation map
+PMS
+│
+├── LEVEL 0 — Foundation
+│   ├── OrganizationUnit       ✓
+│   ├── User                   ✓
+│   └── Employee               ✓
+│
+├── LEVEL 1 — Master Data
+│   ├── AssetType              ✓
+│   ├── AssetStatus            ✓
+│   ├── AssetCondition         ✓
+│   ├── Classification         ✓/review
+│   └── AcquisitionMethod      ← check
+│
+├── LEVEL 2 — Core
+│   ├── Asset                  ✓
+│   ├── Acquisition             ← remaining
+│   └── AcquisitionItem         ← remaining
+│
+├── LEVEL 3 — Accountability
+│   ├── AssetAssignment         ✓
+│   ├── AssetLocation            ✓
+│   └── AssetMovement            ✓
+│
+├── LEVEL 4 — Verification
+│   ├── PhysicalVerification
+│   ├── PhysicalVerificationItem
+│   └── UnregisteredAssetObservation
+│                              ← CURRENT
+│
+├── LEVEL 5 — Operations
+│   ├── Maintenance
+│   ├── MaintenanceService
+│   ├── Incident
+│   └── IncidentResolution
+│
+├── LEVEL 6 — Lifecycle
+│   ├── Retirement
+│   ├── Disposal
+│   └── DisposalItem
+│
+└── LEVEL 7 — Reporting
+    ├── Audit
+    ├── Reporting
+    └── Administration
+
+updatedAtLEVEL 0 — FOUNDATION
+│
+├── OrganizationUnit        ✓
+├── User                    ✓
+├── Employee                ✓
+└── Country / references    ✓
+LEVEL 1 — MASTER DATA
+│
+├── AssetType               ✓
+├── AssetStatus             ✓
+├── AssetCondition          ✓
+├── AcquisitionMethod       ✓
+└── Classification          ❌
+LEVEL 2 — CORE BUSINESS
+│
+├── Asset                    ✓
+├── Acquisition              ✓
+└── AcquisitionItem          ✓
+LEVEL 3 — ACCOUNTABILITY
+│
+├── AssetAssignment          ✓
+├── AssetLocation            ✓
+└── AssetMovement            ✓
+
+LEVEL 4 — VERIFICATION
+│
+├── PhysicalVerification
+├── PhysicalVerificationItem
+└── UnregisteredAssetObservation
+
+        ← CURRENT
+
+4. One more useful discovery
+
+Your AcquisitionItem contains:
+
+assetId String @unique
+
+This means your current model enforces:
+
+One Asset can appear in only one AcquisitionItem.
+
+That may be exactly what we want if an asset represents a unique physical asset and its acquisition record is immutable.
+
+But we should eventually discuss this rule because an asset can theoretically have acquisition-related adjustments or multiple acquisition records depending on the organization's business process.
+
+We don't need to change it now. I'm just flagging it as an architectural decision worth recording in docs/notes.txt / the eventual PMS handbook.
+
+ASSET MANAGEMENT SYSTEM
+
+1. Asset Registry & Classification
+   ├── Asset              ✓
+   ├── Asset Type         ✓
+   ├── Asset Status       ✓
+   ├── Asset Condition    ✓
+   └── Classification     ⬜
+
+2. Asset Acquisition
+   ├── Acquisition         ✓ Prisma model
+   ├── Acquisition Method  ✓ Prisma model
+   └── Acquisition Item    ✓ Prisma model
+
+3. Asset Assignment & Accountability
+   ├── Employee            ✓
+   └── Asset Assignment    ✓
+
+4. Asset Location & Movement
+   ├── Asset Location      ✓
+   └── Asset Movement      ✓
+
+5. Physical Verification & Inventory
+   ├── PhysicalVerification
+   ├── PhysicalVerificationItem
+   └── UnregisteredAssetObservation
+                          ← CURRENT
+
+6. Maintenance & Service Management
+   └── Pending
+
+7. Asset Incident Management
+   └── Pending
+
+8. Asset Retirement & Disposal
+   └── Pending
+
+9. Reporting, Audit & Administration
+   └── Pending
+
+
+
+PMS Implementation Pipeline
+Prisma Model
+      ↓
+Types
+      ↓
+Zod Schema
+      ↓
+Repository
+      ↓
+Commands
+      ├── Authentication
+      └── Authorization
+      ↓
+Queries
+      ↓
+Actions
+      └── Authentication / Session Check where appropriate
+      ↓
+Form
+      ↓
+Dialog
+      ↓
+Table
+      ↓
+Workspace
+      ↓
+Page
+      ↓
+Route
+      ↓
+Test
+      ↓
+Commit
+      ↓
+Push
+
+ASSET Registration & ACCOUNTABILITY
+Registration answers:
+
+What is this asset?
+
+Assignment answers:
+
+Who is responsible for this asset?
+
+Movement/location answers:
+
+Where is this asset?
+
+Physical Verification answers:
+
+Does the physical reality match the expected state?
+
+That separation is actually good PMS architecture.

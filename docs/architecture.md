@@ -330,15 +330,22 @@ ASSET MANAGEMENT SYSTEM
 │ ├── Acquisition Method
 │ └── Acquisition Item
 │
-├── 3. Asset Assignment & Accountability ← NEXT
-│ ├── Employee ✓ implemented
-│ └── Asset Assignment ← CONTINUE HERE
+├── 3. Asset Assignment & Accountability ✓
+│ ├── Employee ✓
+│ └── Asset Assignment ✓
 │
-├── 4. Asset Location & Movement
-├── 5. Physical Verification & Inventory
+├── 4. Asset Location & Movement ✓
+│ ├── Asset Location ✓
+│ └── Asset Movement ✓
+│
+├── 5. Physical Verification & Inventory ← NEXT
+│
 ├── 6. Maintenance & Service Management
+│
 ├── 7. Asset Incident Management
+│
 ├── 8. Asset Retirement & Disposal
+│
 └── 9. Reporting, Audit & Administration
 
 ///
@@ -355,6 +362,7 @@ Assignment history
 Return / reassignment
 
 ROADMAP
+Physical Verification & Inventory — Business Requirements → Business Rules → Process → Entities → Relationships → Prisma Model.
 
 Prisma Model
 ↓
@@ -390,3 +398,102 @@ Test
 Commit
 ↓
 Push
+
+Proposed conceptual workflow
+
+I recommend this workflow initially:
+
+Create Verification Session
+↓
+Select scope
+↓
+Generate verification items
+↓
+Perform physical verification
+↓
+Record observations
+↓
+Identify discrepancies
+↓
+Review discrepancies
+↓
+Complete verification
+↓
+Generate verification/inventory report
+
+Eventually:
+
+                         ┌── Found
+                         │
+
+Asset ── Verification ───┼── Missing
+│
+├── Wrong Location
+│
+├── Wrong Custodian
+│
+├── Damaged
+│
+└── Unregistered
+
+| ID |. Business Rule Rule -----------------------------------------------------------------------------------------------------
+| **BR-PV-001** | Only an authorized administrative user may create a Physical Verification session. |
+| **BR-PV-002** | A verification session has a defined scope, and its asset list is captured as verification items when the session is initiated. |
+| **BR-PV-003** | Assets are generated from the scope and may be adjusted before the session starts. Once started, the verification item list is frozen. |
+| **BR-PV-004** | A verifier may record a physically observed asset that is not registered in the system. It does not automatically create an Asset record. |
+| **BR-PV-005** | A completed verification cannot be directly modified. Corrections require an authorized correction/review process that preserves the original record and reason. |
+
+Current Business Rules
+
+We now have six:
+
+BR-PV-001 Authorization
+BR-PV-002 Scope & Snapshot
+BR-PV-003 Generation & Freeze
+BR-PV-004 Unregistered Asset Discovery
+BR-PV-005 Completion & Correction
+BR-PV-006 One Asset per Verification Session
+
+┌─────────────────────────┐
+│ PhysicalVerification │
+│─────────────────────────│
+│ id │
+│ verificationCode │
+│ name │
+│ description │
+│ scope │
+│ status │
+│ verificationDate │
+│ startedAt │
+│ completedAt │
+│ createdByUserId │
+│ createdAt │
+│ updatedAt │
+└────────────┬────────────┘
+│
+│ 1:N
+▼
+┌─────────────────────────────┐
+│ PhysicalVerificationItem │
+│─────────────────────────────│
+│ id │
+│ verificationId │
+│ assetId │
+│ result │
+│ expectedLocationId │
+│ observedLocationId │
+│ expectedEmployeeId │
+│ observedEmployeeId │
+│ observedConditionId │
+│ observedAssetTag │
+│ observedSerialNumber │
+│ notes │
+│ verifiedAt │
+│ verifiedByUserId │
+└──────────────┬──────────────┘
+│
+│ N:1
+▼
+┌─────────┐
+│ Asset │
+└─────────┘

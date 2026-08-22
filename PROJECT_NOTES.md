@@ -849,3 +849,16 @@ Test
 Commit
 ↓
 Push
+
+/////CURRENT DEV STATUS////
+Asset Registry
+├── Asset
+├── Asset Type
+├── Asset Status
+└── Asset Condition
+
+Asset Assignment & Accountability
+├── Employee
+├── Asset Assignment
+├── Asset Location
+└── Asset Movement
