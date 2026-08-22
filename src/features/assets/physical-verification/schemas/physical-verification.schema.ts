@@ -69,6 +69,10 @@ export const createPhysicalVerificationSchema = z
   });
 
 export const verifyPhysicalVerificationItemSchema = z.object({
+  assetFound: z.boolean({
+    message: 'Please indicate whether the asset was found',
+  }),
+
   observedAssetTag: z
     .string()
     .trim()
@@ -121,25 +125,9 @@ export const verifyPhysicalVerificationItemSchema = z.object({
   observedConditionName: z
     .string()
     .trim()
-    .max(200, 'Condition name must not exceed 200 characters')
+    .max(200, 'Observed condition name must not exceed 200 characters')
     .optional()
     .or(z.literal('')),
-
-  result: z.enum(
-    [
-      'PENDING',
-      'VERIFIED',
-      'NOT_FOUND',
-      'LOCATION_MISMATCH',
-      'CUSTODIAN_MISMATCH',
-      'CONDITION_MISMATCH',
-      'IDENTIFICATION_MISMATCH',
-      'MULTIPLE_DISCREPANCIES',
-    ],
-    {
-      message: 'Verification result is required',
-    },
-  ),
 
   notes: z
     .string()

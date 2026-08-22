@@ -39,11 +39,10 @@ model OrganizationUnit {
   id String @id @default(cuid())
 
   // Business Fields
-  code        String  @unique
+  code        String               @unique
   name        String
   description String?
-
-  type OrganizationUnitType
+  type        OrganizationUnitType
 
   // Relationships
   countryId String?
@@ -55,6 +54,8 @@ model OrganizationUnit {
 
   properties Property[]
   employees  Employee[]
+
+  assetLocations AssetLocation[]
 
   physicalVerifications PhysicalVerification[]
 
@@ -585,6 +586,10 @@ model AssetLocation {
   name        String  @unique
   description String?
 
+  organizationUnitId String
+
+  organizationUnit OrganizationUnit @relation(fields: [organizationUnitId], references: [id], onDelete: Restrict)
+
   isActive Boolean @default(true)
 
   assets Asset[]
@@ -601,6 +606,7 @@ model AssetLocation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([organizationUnitId])
   @@index([isActive])
 }
 

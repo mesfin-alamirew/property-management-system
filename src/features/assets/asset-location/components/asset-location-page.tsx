@@ -1,9 +1,20 @@
-import { getAssetLocations } from '../queries/asset-location.queries';
+import {
+  getAssetLocations,
+  getActiveOrganizationUnits,
+} from '../queries/asset-location.queries';
 
 import { AssetLocationWorkspace } from './asset-location-workspace';
 
 export async function AssetLocationPage() {
-  const assetLocations = await getAssetLocations();
+  const [assetLocations, organizationUnits] = await Promise.all([
+    getAssetLocations(),
+    getActiveOrganizationUnits(),
+  ]);
 
-  return <AssetLocationWorkspace assetLocations={assetLocations} />;
+  return (
+    <AssetLocationWorkspace
+      assetLocations={assetLocations}
+      organizationUnits={organizationUnits}
+    />
+  );
 }

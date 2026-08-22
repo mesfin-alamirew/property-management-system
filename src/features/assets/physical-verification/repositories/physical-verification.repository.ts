@@ -7,6 +7,7 @@ import type {
   CreateUnregisteredAssetObservationFormData,
   VerifyPhysicalVerificationItemFormData,
 } from '../schemas/physical-verification.schema';
+import { PhysicalVerificationResult } from '@/generated/prisma/client';
 
 export async function findPhysicalVerifications() {
   return prisma.physicalVerification.findMany({
@@ -299,6 +300,7 @@ export async function updatePhysicalVerificationItemRecord(
   id: string,
   userId: string,
   data: VerifyPhysicalVerificationItemFormData,
+  result: PhysicalVerificationResult,
 ) {
   return tx.physicalVerificationItem.update({
     where: {
@@ -306,20 +308,17 @@ export async function updatePhysicalVerificationItemRecord(
     },
 
     data: {
-      observedAssetTag: data.observedAssetTag || null,
-      observedSerialNumber: data.observedSerialNumber || null,
+      observedAssetTag: data.observedAssetTag,
+      observedSerialNumber: data.observedSerialNumber,
+      observedEmployeeNumber: data.observedEmployeeNumber,
+      observedEmployeeName: data.observedEmployeeName,
+      observedLocationCode: data.observedLocationCode,
+      observedLocationName: data.observedLocationName,
+      observedConditionCode: data.observedConditionCode,
+      observedConditionName: data.observedConditionName,
 
-      observedEmployeeNumber: data.observedEmployeeNumber || null,
-      observedEmployeeName: data.observedEmployeeName || null,
-
-      observedLocationCode: data.observedLocationCode || null,
-      observedLocationName: data.observedLocationName || null,
-
-      observedConditionCode: data.observedConditionCode || null,
-      observedConditionName: data.observedConditionName || null,
-
-      result: data.result,
-      notes: data.notes || null,
+      result, // ✅ calculated by the service
+      notes: data.notes,
 
       verifiedByUserId: userId,
       verifiedAt: new Date(),
@@ -489,6 +488,32 @@ export async function getAvailableAssetsForVerification() {
           },
         },
       },
+    },
+  });
+}
+export async function countUnverifiedPhysicalVerificationItems(
+  verificationId: string,
+) {
+  return prisma.physicalVerificationItem.count({
+    where: {
+      verificationId,
+      verifiedAt: null,
+    },
+  });
+}
+
+export async function completePhysicalVerificationRecord(
+  tx: Prisma.TransactionClient,
+  verificationId: string,
+) {
+  return tx.physicalVerification.update({
+    where: {
+      id: verificationId,
+    },
+
+    data: {
+      status: 'COMPLETED',
+      completedAt: new Date(),
     },
   });
 }

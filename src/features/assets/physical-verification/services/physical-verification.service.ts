@@ -9,6 +9,7 @@ import {
   createUnregisteredAssetObservationRecord,
   findPhysicalVerificationById,
   findPhysicalVerificationItemById,
+  completePhysicalVerificationRecord,
 } from '../repositories/physical-verification.repository';
 
 import { determinePhysicalVerificationResult } from '../services/physical-verification-result.service';
@@ -21,13 +22,13 @@ import type {
 
 import { generateNextPhysicalVerificationNumber } from '../services/physical-verification-number.service';
 
-/**
- * Create a new Physical Verification.
- */
 export async function createPhysicalVerification(
   userId: string,
   data: CreatePhysicalVerificationFormData,
 ) {
+  /*
+   * Validate Organization Unit when required by the scope.
+   */
   if (
     data.scope === 'ORGANIZATION_UNIT' ||
     data.scope === 'ORGANIZATION_UNIT_LOCATION'
@@ -60,6 +61,9 @@ export async function createPhysicalVerification(
     }
   }
 
+  /*
+   * Validate Asset Location when required by the scope.
+   */
   if (
     data.scope === 'LOCATION' ||
     data.scope === 'ORGANIZATION_UNIT_LOCATION'
@@ -75,6 +79,7 @@ export async function createPhysicalVerification(
       where: {
         id: data.locationId,
       },
+
       select: {
         id: true,
         code: true,
@@ -98,6 +103,10 @@ export async function createPhysicalVerification(
       );
     }
 
+    /*
+     * For ORGANIZATION_UNIT_LOCATION, make sure the
+     * selected location belongs to the selected unit.
+     */
     if (
       data.scope === 'ORGANIZATION_UNIT_LOCATION' &&
       location.organizationUnitId !== data.organizationUnitId
@@ -109,6 +118,18 @@ export async function createPhysicalVerification(
     }
   }
 
+  /*
+   * SELECTED_ASSETS is not implemented yet because the current
+   * PhysicalVerification model does not contain a selected-assets
+   * relationship.
+   */
+  if (data.scope === 'SELECTED_ASSETS') {
+    throw new AppError(
+      'Selected Assets scope is not implemented yet',
+      'SELECTED_ASSETS_SCOPE_NOT_IMPLEMENTED',
+    );
+  }
+
   return prisma.$transaction(async (tx) => {
     const referenceNumber = await generateNextPhysicalVerificationNumber(tx);
 
@@ -116,10 +137,6 @@ export async function createPhysicalVerification(
   });
 }
 
-/**
- * Generate verification items from the assets
- * matching the verification scope.
- */
 export async function generatePhysicalVerificationItems(
   verificationId: string,
 ) {
@@ -132,6 +149,10 @@ export async function generatePhysicalVerificationItems(
     );
   }
 
+  /*
+   * Items can only be generated once, while the verification
+   * is still in DRAFT status.
+   */
   if (verification.status !== 'DRAFT') {
     throw new AppError(
       'Verification items can only be generated for a draft verification',
@@ -141,6 +162,9 @@ export async function generatePhysicalVerificationItems(
 
   let assetWhere: Prisma.AssetWhereInput = {};
 
+  /*
+   * LOCATION scope
+   */
   if (verification.scope === 'LOCATION') {
     if (!verification.locationId) {
       throw new AppError(
@@ -154,6 +178,9 @@ export async function generatePhysicalVerificationItems(
     };
   }
 
+  /*
+   * ORGANIZATION_UNIT scope
+   */
   if (verification.scope === 'ORGANIZATION_UNIT') {
     if (!verification.organizationUnitId) {
       throw new AppError(
@@ -175,6 +202,9 @@ export async function generatePhysicalVerificationItems(
     };
   }
 
+  /*
+   * ORGANIZATION_UNIT_LOCATION scope
+   */
   if (verification.scope === 'ORGANIZATION_UNIT_LOCATION') {
     if (!verification.organizationUnitId || !verification.locationId) {
       throw new AppError(
@@ -192,6 +222,9 @@ export async function generatePhysicalVerificationItems(
     };
   }
 
+  /*
+   * SELECTED_ASSETS is intentionally not implemented yet.
+   */
   if (verification.scope === 'SELECTED_ASSETS') {
     throw new AppError(
       'Selected Assets scope is not implemented yet',
@@ -264,7 +297,9 @@ export async function generatePhysicalVerificationItems(
 
   return prisma.$transaction(async (tx) => {
     for (const asset of assets) {
-      const employee = asset.assetAssignments[0]?.employee ?? null;
+      const currentAssignment = asset.assetAssignments[0];
+
+      const employee = currentAssignment?.employee ?? null;
 
       const expectedEmployeeName = employee
         ? [employee.firstName, employee.middleName, employee.lastName]
@@ -277,25 +312,41 @@ export async function generatePhysicalVerificationItems(
 
         assetId: asset.id,
 
+        /*
+         * Expected asset snapshot
+         */
         expectedAssetCode: asset.assetCode,
         expectedAssetTag: asset.assetTag,
         expectedSerialNumber: asset.serialNumber,
         expectedAssetName: asset.name,
 
+        /*
+         * Expected employee snapshot
+         */
         expectedEmployeeId: employee?.id ?? null,
         expectedEmployeeNumber: employee?.employeeNumber ?? null,
         expectedEmployeeName,
 
+        /*
+         * Expected location snapshot
+         */
         expectedLocationId: asset.location?.id ?? null,
         expectedLocationCode: asset.location?.code ?? null,
         expectedLocationName: asset.location?.name ?? null,
 
+        /*
+         * Expected condition snapshot
+         */
         expectedConditionId: asset.condition?.id ?? null,
         expectedConditionCode: asset.condition?.code ?? null,
         expectedConditionName: asset.condition?.name ?? null,
       });
     }
 
+    /*
+     * Once items have been generated, the verification
+     * becomes IN_PROGRESS.
+     */
     await tx.physicalVerification.update({
       where: {
         id: verificationId,
@@ -314,9 +365,6 @@ export async function generatePhysicalVerificationItems(
   });
 }
 
-/**
- * Verify one physical verification item.
- */
 export async function verifyPhysicalVerificationItem(
   userId: string,
   id: string,
@@ -345,6 +393,10 @@ export async function verifyPhysicalVerificationItem(
     );
   }
 
+  /*
+   * Determine the result from the expected snapshot
+   * and the information observed during verification.
+   */
   const result = determinePhysicalVerificationResult(
     {
       expectedAssetTag: item.expectedAssetTag,
@@ -363,14 +415,90 @@ export async function verifyPhysicalVerificationItem(
   );
 
   return prisma.$transaction(async (tx) => {
+    /*
+     * Normally the verification is already IN_PROGRESS
+     * because item generation changes the status.
+     *
+     * This check keeps the service safe if an item somehow
+     * reaches this method while the verification is still DRAFT.
+     */
+    if (item.verification.status === 'DRAFT') {
+      await tx.physicalVerification.update({
+        where: {
+          id: item.verification.id,
+        },
+
+        data: {
+          status: 'IN_PROGRESS',
+          startedAt: new Date(),
+        },
+      });
+    }
+
     return updatePhysicalVerificationItemRecord(tx, id, userId, data, result);
   });
 }
+export async function completePhysicalVerification(verificationId: string) {
+  const verification = await findPhysicalVerificationById(verificationId);
 
-/**
- * Create an observation for an asset physically found
- * but not included in the registered asset list.
- */
+  if (!verification) {
+    throw new AppError(
+      'Physical Verification not found',
+      'PHYSICAL_VERIFICATION_NOT_FOUND',
+    );
+  }
+
+  if (verification.status === 'COMPLETED') {
+    throw new AppError(
+      'Physical Verification has already been completed',
+      'PHYSICAL_VERIFICATION_ALREADY_COMPLETED',
+    );
+  }
+
+  if (verification.status === 'CANCELLED') {
+    throw new AppError(
+      'Physical Verification has been cancelled',
+      'PHYSICAL_VERIFICATION_CANCELLED',
+    );
+  }
+
+  if (verification.status !== 'IN_PROGRESS') {
+    throw new AppError(
+      'Only an in-progress Physical Verification can be completed',
+      'PHYSICAL_VERIFICATION_NOT_IN_PROGRESS',
+    );
+  }
+
+  if (verification.items.length === 0) {
+    throw new AppError(
+      'Cannot complete a Physical Verification with no verification items',
+      'PHYSICAL_VERIFICATION_NO_ITEMS',
+    );
+  }
+
+  const unverifiedItemCount = verification.items.filter(
+    (item) => !item.verifiedAt,
+  ).length;
+
+  if (unverifiedItemCount > 0) {
+    throw new AppError(
+      `Cannot complete Physical Verification. ${unverifiedItemCount} verification item(s) have not been verified.`,
+      'PHYSICAL_VERIFICATION_ITEMS_NOT_VERIFIED',
+    );
+  }
+
+  return prisma.$transaction(async (tx) => {
+    return tx.physicalVerification.update({
+      where: {
+        id: verificationId,
+      },
+      data: {
+        status: 'COMPLETED',
+      },
+    });
+  });
+}
+
 export async function createUnregisteredAssetObservation(
   userId: string,
   verificationId: string,
@@ -399,7 +527,10 @@ export async function createUnregisteredAssetObservation(
     );
   }
 
-  if (data.observedLocationId) {
+  /*
+   * Validate observed location.
+   */
+  if (data.observedLocationId && data.observedLocationId !== '') {
     const location = await prisma.assetLocation.findUnique({
       where: {
         id: data.observedLocationId,
@@ -421,7 +552,10 @@ export async function createUnregisteredAssetObservation(
     }
   }
 
-  if (data.observedConditionId) {
+  /*
+   * Validate observed condition.
+   */
+  if (data.observedConditionId && data.observedConditionId !== '') {
     const condition = await prisma.assetCondition.findUnique({
       where: {
         id: data.observedConditionId,
@@ -444,82 +578,24 @@ export async function createUnregisteredAssetObservation(
   }
 
   return prisma.$transaction(async (tx) => {
+    if (verification.status === 'DRAFT') {
+      await tx.physicalVerification.update({
+        where: {
+          id: verificationId,
+        },
+
+        data: {
+          status: 'IN_PROGRESS',
+          startedAt: new Date(),
+        },
+      });
+    }
+
     return createUnregisteredAssetObservationRecord(
       tx,
       userId,
       verificationId,
       data,
     );
-  });
-}
-
-/**
- * Complete a Physical Verification.
- *
- * A verification can only be completed when:
- * - it is currently IN_PROGRESS
- * - it has at least one verification item
- * - every verification item has been verified
- *
- * Unregistered asset observations do not prevent completion.
- */
-export async function completePhysicalVerification(verificationId: string) {
-  const verification = await findPhysicalVerificationById(verificationId);
-
-  if (!verification) {
-    throw new AppError(
-      'Physical Verification not found',
-      'PHYSICAL_VERIFICATION_NOT_FOUND',
-    );
-  }
-
-  if (verification.status === 'COMPLETED') {
-    throw new AppError(
-      'Physical Verification has already been completed',
-      'PHYSICAL_VERIFICATION_COMPLETED',
-    );
-  }
-
-  if (verification.status === 'CANCELLED') {
-    throw new AppError(
-      'Physical Verification has been cancelled',
-      'PHYSICAL_VERIFICATION_CANCELLED',
-    );
-  }
-
-  if (verification.status !== 'IN_PROGRESS') {
-    throw new AppError(
-      'Only an in-progress Physical Verification can be completed',
-      'PHYSICAL_VERIFICATION_NOT_IN_PROGRESS',
-    );
-  }
-
-  if (verification.items.length === 0) {
-    throw new AppError(
-      'Physical Verification has no verification items',
-      'PHYSICAL_VERIFICATION_NO_ITEMS',
-    );
-  }
-
-  const unverifiedItems = verification.items.filter((item) => !item.verifiedAt);
-
-  if (unverifiedItems.length > 0) {
-    throw new AppError(
-      `${unverifiedItems.length} verification item(s) have not been verified`,
-      'PHYSICAL_VERIFICATION_ITEMS_REMAIN',
-    );
-  }
-
-  return prisma.$transaction(async (tx) => {
-    return tx.physicalVerification.update({
-      where: {
-        id: verificationId,
-      },
-
-      data: {
-        status: 'COMPLETED',
-        completedAt: new Date(),
-      },
-    });
   });
 }

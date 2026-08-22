@@ -1,7 +1,7 @@
 import { AppError } from '@/lib/errors';
-
 import {
   findAssetLocationByCode,
+  findAssetLocationByName,
   findAssetLocationById,
   createAssetLocationRecord,
   updateAssetLocationRecord,
@@ -22,6 +22,19 @@ export async function createAssetLocation(data: AssetLocationFormData) {
     }
 
     throw new AppError('Asset location code already exists', 'DUPLICATE_CODE');
+  }
+
+  const existingAssetLocationName = await findAssetLocationByName(data.name);
+
+  if (existingAssetLocationName) {
+    if (!existingAssetLocationName.isActive) {
+      throw new AppError(
+        'Asset location name already exists on an inactive Asset Location',
+        'NAME_EXISTS_ON_INACTIVE_RECORD',
+      );
+    }
+
+    throw new AppError('Asset location name already exists', 'DUPLICATE_NAME');
   }
 
   return createAssetLocationRecord(data);
@@ -50,9 +63,24 @@ export async function updateAssetLocation(
     throw new AppError('Asset location code already exists', 'DUPLICATE_CODE');
   }
 
+  const existingAssetLocationName = await findAssetLocationByName(
+    data.name,
+    id,
+  );
+
+  if (existingAssetLocationName) {
+    if (!existingAssetLocationName.isActive) {
+      throw new AppError(
+        'Asset location name already exists on an inactive Asset Location',
+        'NAME_EXISTS_ON_INACTIVE_RECORD',
+      );
+    }
+
+    throw new AppError('Asset location name already exists', 'DUPLICATE_NAME');
+  }
+
   return updateAssetLocationRecord(id, data);
 }
-
 export async function deactivateAssetLocation(id: string) {
   const assetLocation = await findAssetLocationById(id);
 

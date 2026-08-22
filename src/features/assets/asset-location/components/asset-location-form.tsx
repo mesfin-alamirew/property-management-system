@@ -25,11 +25,18 @@ import { TextAreaField } from '@/components/form/text-area-field';
 type AssetLocationFormProps = {
   assetLocation?: AssetLocationWithRelations | null;
 
+  organizationUnits: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+
   onSuccess?: () => void;
 };
 
 export function AssetLocationForm({
   assetLocation,
+  organizationUnits,
   onSuccess,
 }: AssetLocationFormProps) {
   const router = useRouter();
@@ -49,6 +56,7 @@ export function AssetLocationForm({
     defaultValues: {
       code: assetLocation?.code ?? '',
       name: assetLocation?.name ?? '',
+      organizationUnitId: assetLocation?.organizationUnitId ?? '',
       description: assetLocation?.description ?? '',
     },
   });
@@ -94,6 +102,32 @@ export function AssetLocationForm({
           error={errors.name?.message}
           {...register('name')}
         />
+
+        <div className="space-y-2">
+          <label htmlFor="organizationUnitId" className="text-sm font-medium">
+            Organization Unit <span className="text-red-500">*</span>
+          </label>
+
+          <select
+            id="organizationUnitId"
+            {...register('organizationUnitId')}
+            className="w-full rounded-md border px-3 py-2 text-sm"
+          >
+            <option value="">Select organization unit</option>
+
+            {organizationUnits.map((organizationUnit) => (
+              <option key={organizationUnit.id} value={organizationUnit.id}>
+                {organizationUnit.code} - {organizationUnit.name}
+              </option>
+            ))}
+          </select>
+
+          {errors.organizationUnitId?.message && (
+            <p className="text-sm text-red-500">
+              {errors.organizationUnitId.message}
+            </p>
+          )}
+        </div>
 
         <TextAreaField
           label="Description"

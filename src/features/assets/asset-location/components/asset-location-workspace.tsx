@@ -15,10 +15,17 @@ import { AssetLocationDialog } from './asset-location-dialog';
 
 type AssetLocationWorkspaceProps = {
   assetLocations: AssetLocationWithRelations[];
+
+  organizationUnits: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
 };
 
 export function AssetLocationWorkspace({
   assetLocations,
+  organizationUnits,
 }: AssetLocationWorkspaceProps) {
   const router = useRouter();
 
@@ -101,6 +108,7 @@ export function AssetLocationWorkspace({
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         assetLocation={selectedAssetLocation}
+        organizationUnits={organizationUnits}
       />
 
       <ConfirmationDialog

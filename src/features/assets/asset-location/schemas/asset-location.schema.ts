@@ -13,6 +13,8 @@ export const assetLocationSchema = z.object({
     .min(1, 'Location name is required')
     .max(100, 'Location name must not exceed 100 characters'),
 
+  organizationUnitId: z.string().trim().min(1, 'Organization Unit is required'),
+
   description: z
     .string()
     .trim()

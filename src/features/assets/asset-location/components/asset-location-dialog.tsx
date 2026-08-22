@@ -18,12 +18,19 @@ type AssetLocationDialogProps = {
   onOpenChange: (open: boolean) => void;
 
   assetLocation?: AssetLocationWithRelations | null;
+
+  organizationUnits: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
 };
 
 export function AssetLocationDialog({
   open,
   onOpenChange,
   assetLocation,
+  organizationUnits,
 }: AssetLocationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,6 +47,7 @@ export function AssetLocationDialog({
 
         <AssetLocationForm
           assetLocation={assetLocation}
+          organizationUnits={organizationUnits}
           onSuccess={() => onOpenChange(false)}
         />
       </DialogContent>

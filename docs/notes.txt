@@ -568,3 +568,22 @@ Physical Verification answers:
 Does the physical reality match the expected state?
 
 That separation is actually good PMS architecture.
+
+
+1. Confirm AssetLocation → OrganizationUnit relationship
+                    ↓
+2. Modify Prisma models
+                    ↓
+3. Generate Prisma Client
+                    ↓
+4. Create migration
+                    ↓
+5. Assign existing Locations to Organization Units
+                    ↓
+6. Update Location forms
+                    ↓
+7. Update Physical Verification generator
+                    ↓
+8. Test ORGANIZATION_UNIT
+9. Test LOCATION
+10. Test ORGANIZATION_UNIT_LOCATION

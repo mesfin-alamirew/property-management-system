@@ -11,6 +11,16 @@ export async function findAssetLocations() {
     orderBy: {
       name: 'asc',
     },
+
+    include: {
+      organizationUnit: {
+        select: {
+          id: true,
+          code: true,
+          name: true,
+        },
+      },
+    },
   });
 }
 
@@ -18,6 +28,16 @@ export async function findAssetLocationById(id: string) {
   return prisma.assetLocation.findUnique({
     where: {
       id,
+    },
+
+    include: {
+      organizationUnit: {
+        select: {
+          id: true,
+          code: true,
+          name: true,
+        },
+      },
     },
   });
 }
@@ -36,15 +56,46 @@ export async function findAssetLocationByCode(
           }
         : undefined,
     },
+
+    include: {
+      organizationUnit: {
+        select: {
+          id: true,
+          code: true,
+          name: true,
+        },
+      },
+    },
   });
 }
+export async function findAssetLocationByName(
+  name: string,
+  excludeId?: string,
+) {
+  return prisma.assetLocation.findFirst({
+    where: {
+      name,
 
+      NOT: excludeId
+        ? {
+            id: excludeId,
+          }
+        : undefined,
+    },
+  });
+}
 export async function createAssetLocationRecord(data: AssetLocationFormData) {
   return prisma.assetLocation.create({
     data: {
       code: data.code,
       name: data.name,
       description: data.description,
+
+      organizationUnit: {
+        connect: {
+          id: data.organizationUnitId,
+        },
+      },
     },
   });
 }
@@ -62,6 +113,12 @@ export async function updateAssetLocationRecord(
       code: data.code,
       name: data.name,
       description: data.description,
+
+      organizationUnit: {
+        connect: {
+          id: data.organizationUnitId,
+        },
+      },
     },
   });
 }
