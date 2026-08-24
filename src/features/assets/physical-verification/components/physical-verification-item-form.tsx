@@ -19,13 +19,11 @@ import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
 type PhysicalVerificationItemFormProps = {
-  item: Omit<PhysicalVerificationItemWithRelations, 'verification'>;
-  onSuccess?: () => void;
+  item: PhysicalVerificationItemWithRelations;
 };
 
 export function PhysicalVerificationItemForm({
   item,
-  onSuccess,
 }: PhysicalVerificationItemFormProps) {
   const router = useRouter();
 
@@ -65,7 +63,7 @@ export function PhysicalVerificationItemForm({
 
       router.refresh();
 
-      onSuccess?.();
+      // onSuccess?.();
     } else {
       toast.error(result.message);
     }

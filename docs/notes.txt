@@ -587,3 +587,27 @@ That separation is actually good PMS architecture.
 8. Test ORGANIZATION_UNIT
 9. Test LOCATION
 10. Test ORGANIZATION_UNIT_LOCATION
+
+
+| Scope                          | Short Description                                                                                                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ORGANIZATION**               | Verifies **all registered assets belonging to the entire organization**, regardless of organization unit or location.                                                                         |
+| **ORGANIZATION_UNIT**          | Verifies **all assets assigned to employees belonging to a specific organization unit**.                                                                                                      |
+| **LOCATION**                   | Verifies **all assets physically registered at a specific location**, regardless of which organization unit they belong to.                                                                   |
+| **ORGANIZATION_UNIT_LOCATION** | Verifies **all assets at a specific location that belongs to a specific organization unit**. This is the most restrictive scope based on both organizational ownership and physical location. |
+| **SELECTED_ASSETS**            | Verifies **only specifically selected assets**, regardless of their organization unit or location. Useful for targeted or special-purpose verification.                                       |
+
+
+//
+Create Verification → Generate Verification Items → Review Expected Data → Verify Each Item → Record Discrepancies → Handle Unregistered Assets
+
+///
+Current flow
+Create Physical Verification
+Generate Items
+Detail page displays the generated assets.
+Each item has a Verify button.
+Verify navigates to the item-specific verification page.
+The existing PhysicalVerificationItemForm captures the observed information.
+The service determines the verification result automatically.
+The item is saved with verifiedByUserId and verifiedAt.

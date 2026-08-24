@@ -87,6 +87,15 @@ export async function getPhysicalVerificationById(id: string) {
             },
           },
 
+          verification: {
+            select: {
+              id: true,
+              referenceNumber: true,
+              title: true,
+              status: true,
+            },
+          },
+
           verifiedByUser: {
             select: {
               id: true,

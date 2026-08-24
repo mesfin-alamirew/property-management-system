@@ -1,51 +1,3 @@
-export type PhysicalVerificationWithRelations = {
-  id: string;
-
-  referenceNumber: string;
-  title: string;
-
-  scope: string;
-
-  organizationUnitId: string | null;
-  locationId: string | null;
-
-  status: string;
-
-  scheduledAt: Date | null;
-  startedAt: Date | null;
-  completedAt: Date | null;
-
-  notes: string | null;
-
-  createdByUserId: string;
-
-  createdByUser: {
-    id: string;
-    username: string;
-    displayName: string;
-  };
-
-  organizationUnit: {
-    id: string;
-    code: string;
-    name: string;
-  } | null;
-
-  location: {
-    id: string;
-    code: string;
-    name: string;
-  } | null;
-
-  _count: {
-    items: number;
-    unregisteredObservations: number;
-  };
-
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 export type PhysicalVerificationItemWithRelations = {
   id: string;
 
@@ -85,6 +37,7 @@ export type PhysicalVerificationItemWithRelations = {
 
   // Result
   result: string;
+
   notes: string | null;
 
   verifiedAt: Date | null;
@@ -100,6 +53,7 @@ export type PhysicalVerificationItemWithRelations = {
     id: string;
     referenceNumber: string;
     title: string;
+    status: string;
   };
 
   verifiedByUser: {
@@ -111,73 +65,21 @@ export type PhysicalVerificationItemWithRelations = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-export type UnregisteredAssetObservationWithRelations = {
-  id: string;
-
-  verificationId: string;
-
-  observedAssetTag: string | null;
-  observedSerialNumber: string | null;
-  observedName: string;
-
-  observedLocationId: string | null;
-  observedLocationCode: string | null;
-  observedLocationName: string | null;
-
-  observedConditionId: string | null;
-  observedConditionCode: string | null;
-  observedConditionName: string | null;
-
-  notes: string | null;
-
-  observedByUserId: string;
-
-  observedAt: Date;
-
-  registeredAssetId: string | null;
-
-  verification: {
-    id: string;
-    referenceNumber: string;
-    title: string;
-  };
-
-  observedByUser: {
-    id: string;
-    username: string;
-    displayName: string;
-  };
-
-  registeredAsset: {
-    id: string;
-    assetCode: string;
-    assetTag: string | null;
-    name: string;
-  } | null;
-
-  createdAt: Date;
-  updatedAt: Date;
-};
 export type PhysicalVerificationDetailWithRelations = {
   id: string;
 
   referenceNumber: string;
-
   title: string;
 
   scope: string;
 
   organizationUnitId: string | null;
-
   locationId: string | null;
 
   status: string;
 
   scheduledAt: Date | null;
-
   startedAt: Date | null;
-
   completedAt: Date | null;
 
   notes: string | null;
@@ -202,64 +104,7 @@ export type PhysicalVerificationDetailWithRelations = {
     name: string;
   } | null;
 
-  items: {
-    id: string;
-
-    verificationId: string;
-
-    assetId: string;
-
-    expectedAssetCode: string;
-    expectedAssetTag: string | null;
-    expectedSerialNumber: string | null;
-    expectedAssetName: string;
-
-    expectedEmployeeId: string | null;
-    expectedEmployeeNumber: string | null;
-    expectedEmployeeName: string | null;
-
-    expectedLocationId: string | null;
-    expectedLocationCode: string | null;
-    expectedLocationName: string | null;
-
-    expectedConditionId: string | null;
-    expectedConditionCode: string | null;
-    expectedConditionName: string | null;
-
-    observedAssetTag: string | null;
-    observedSerialNumber: string | null;
-
-    observedEmployeeNumber: string | null;
-    observedEmployeeName: string | null;
-
-    observedLocationCode: string | null;
-    observedLocationName: string | null;
-
-    observedConditionCode: string | null;
-    observedConditionName: string | null;
-
-    result: string;
-
-    notes: string | null;
-
-    verifiedAt: Date | null;
-
-    asset: {
-      id: string;
-      assetCode: string;
-      assetTag: string | null;
-      name: string;
-    };
-
-    verifiedByUser: {
-      id: string;
-      username: string;
-      displayName: string;
-    } | null;
-
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
+  items: PhysicalVerificationItemWithRelations[];
 
   unregisteredObservations: {
     id: string;
@@ -311,6 +156,51 @@ export type PhysicalVerificationDetailWithRelations = {
   }[];
 
   createdAt: Date;
+  updatedAt: Date;
+};
+export type PhysicalVerificationWithRelations = {
+  id: string;
 
+  referenceNumber: string;
+  title: string;
+  scope: string;
+
+  organizationUnitId: string | null;
+  locationId: string | null;
+
+  status: string;
+
+  scheduledAt: Date | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
+
+  notes: string | null;
+
+  createdByUserId: string;
+
+  createdByUser: {
+    id: string;
+    username: string;
+    displayName: string;
+  };
+
+  organizationUnit: {
+    id: string;
+    code: string;
+    name: string;
+  } | null;
+
+  location: {
+    id: string;
+    code: string;
+    name: string;
+  } | null;
+
+  _count: {
+    items: number;
+    unregisteredObservations: number;
+  };
+
+  createdAt: Date;
   updatedAt: Date;
 };
