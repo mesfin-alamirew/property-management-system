@@ -611,3 +611,49 @@ Verify navigates to the item-specific verification page.
 The existing PhysicalVerificationItemForm captures the observed information.
 The service determines the verification result automatically.
 The item is saved with verifiedByUserId and verifiedAt.
+
+//
+
+                    Asset Found?
+                    /          \
+                  No            Yes
+                  ↓              ↓
+             NOT_FOUND     Compare values
+                                │
+                    ┌───────────┴───────────┐
+                    │                       │
+                  Match                 Mismatch
+                    │                       │
+                    ↓                       ↓
+                VERIFIED             Count categories
+                                            │
+                              ┌─────────────┴─────────────┐
+                              │                           │
+                             1                           >1
+                              │                           │
+                              ↓                           ↓
+                     Specific mismatch        MULTIPLE_DISCREPANCIES
+
+Physical Verification
+        │
+        ├── Generate Items
+        │
+        ├── Display Expected Snapshot
+        │
+        ├── Open Verification Item
+        │
+        ├── Enter Observed Information
+        │
+        ├── Asset Found
+        │
+        ├── Save Verification
+        │
+        └── Determine Result
+              │
+              ├── VERIFIED
+              ├── NOT_FOUND
+              ├── IDENTIFICATION_MISMATCH
+              ├── CUSTODIAN_MISMATCH
+              ├── LOCATION_MISMATCH
+              ├── CONDITION_MISMATCH
+              └── MULTIPLE_DISCREPANCIES

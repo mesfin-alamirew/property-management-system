@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -31,7 +31,8 @@ export function PhysicalVerificationItemForm({
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<VerifyPhysicalVerificationItemFormData>({
     resolver: zodResolver(verifyPhysicalVerificationItemSchema),
@@ -51,7 +52,10 @@ export function PhysicalVerificationItemForm({
     },
   });
 
-  const assetFound = watch('assetFound');
+  const assetFound = useWatch({
+    control,
+    name: 'assetFound',
+  });
 
   async function onSubmit(data: VerifyPhysicalVerificationItemFormData) {
     const result = await verifyPhysicalVerificationItemAction(item.id, data);
@@ -62,8 +66,6 @@ export function PhysicalVerificationItemForm({
       reset(data);
 
       router.refresh();
-
-      // onSuccess?.();
     } else {
       toast.error(result.message);
     }
@@ -165,9 +167,13 @@ export function PhysicalVerificationItemForm({
 
           <select
             id="assetFound"
-            {...register('assetFound', {
-              setValueAs: (value) => value === 'true',
-            })}
+            value={assetFound ? 'true' : 'false'}
+            onChange={(event) => {
+              setValue('assetFound', event.target.value === 'true', {
+                shouldValidate: true,
+                shouldDirty: true,
+              });
+            }}
             className="w-full rounded-md border px-3 py-2 text-sm"
           >
             <option value="true">Yes - Asset Found</option>
