@@ -561,13 +561,12 @@ model Asset {
 
   location AssetLocation? @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
-  acquisitionItem  AcquisitionItem?
-  assetMovements   AssetMovement[]
-  assetAssignments AssetAssignment[]
-
-  physicalVerificationItems PhysicalVerificationItem[]
-
+  acquisitionItem               AcquisitionItem?
+  assetMovements                AssetMovement[]
+  assetAssignments              AssetAssignment[]
+  physicalVerificationItems     PhysicalVerificationItem[]
   unregisteredAssetObservations UnregisteredAssetObservation[]
+  maintenances                  Maintenance[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -830,6 +829,12 @@ model User {
   physicalVerificationItemsVerified PhysicalVerificationItem[] @relation("PhysicalVerificationVerifiedBy")
 
   unregisteredAssetObservations UnregisteredAssetObservation[] @relation("UnregisteredAssetObservedBy")
+
+  maintenanceRequests Maintenance[] @relation("MaintenanceRequestedBy")
+
+  maintenanceAssignments Maintenance[] @relation("MaintenanceAssignedTo")
+
+  maintenanceApprovals Maintenance[] @relation("MaintenanceApprovedBy")
 
   createdAt DateTime @default(now())
 
@@ -1232,4 +1237,101 @@ enum PhysicalVerificationResult {
   CONDITION_MISMATCH
   IDENTIFICATION_MISMATCH
   MULTIPLE_DISCREPANCIES
+}
+
+enum MaintenanceType {
+  PREVENTIVE
+  CORRECTIVE
+  EMERGENCY
+  PREDICTIVE
+  INSPECTION
+}
+
+enum MaintenanceStatus {
+  DRAFT
+  REQUESTED
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model MaintenanceNumberSequence {
+  id String @id @default(cuid())
+
+  year Int @unique
+
+  lastNumber Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Maintenance {
+  id              String @id @default(cuid())
+  referenceNumber String @unique
+
+  assetId String
+  type    MaintenanceType
+  status  MaintenanceStatus @default(DRAFT)
+
+  title       String
+  description String?
+
+  requestedAt DateTime?
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  requestedByUserId String
+  assignedToUserId  String?
+  approvedByUserId  String?
+  approvedAt        DateTime?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  asset Asset @relation(fields: [assetId], references: [id])
+
+  requestedByUser User  @relation("MaintenanceRequestedBy", fields: [requestedByUserId], references: [id])
+  assignedToUser  User? @relation("MaintenanceAssignedTo", fields: [assignedToUserId], references: [id])
+  approvedByUser  User? @relation("MaintenanceApprovedBy", fields: [approvedByUserId], references: [id])
+
+  services MaintenanceService[]
+
+  @@index([assetId])
+  @@index([status])
+  @@index([type])
+  @@index([requestedByUserId])
+  @@index([assignedToUserId])
+  @@index([approvedByUserId])
+}
+
+model MaintenanceService {
+  id String @id @default(cuid())
+
+  maintenanceId String
+
+  serviceDate DateTime @default(now())
+
+  description String
+
+  serviceProvider String?
+
+  quantity  Decimal? @db.Decimal(12, 2)
+  unitCost  Decimal? @db.Decimal(12, 2)
+  totalCost Decimal? @db.Decimal(12, 2)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  maintenance Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Restrict)
+
+  @@index([maintenanceId])
+  @@index([serviceDate])
 }

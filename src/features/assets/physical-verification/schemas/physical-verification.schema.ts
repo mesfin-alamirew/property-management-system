@@ -158,9 +158,9 @@ export const createUnregisteredAssetObservationSchema = z.object({
     .min(1, 'Observed asset name is required')
     .max(200, 'Observed asset name must not exceed 200 characters'),
 
-  observedLocationId: z.string().optional().or(z.literal('')),
+  observedLocationId: z.string().trim().optional().or(z.literal('')),
 
-  observedConditionId: z.string().optional().or(z.literal('')),
+  observedConditionId: z.string().trim().optional().or(z.literal('')),
 
   notes: z
     .string()
@@ -168,15 +168,6 @@ export const createUnregisteredAssetObservationSchema = z.object({
     .max(500, 'Notes must not exceed 500 characters')
     .optional()
     .or(z.literal('')),
-
-  observedAt: z
-    .string()
-    .trim()
-    .min(1, 'Observation date is required')
-    .refine(
-      (value) => !Number.isNaN(new Date(value).getTime()),
-      'Observation date must be a valid date',
-    ),
 });
 
 export type CreatePhysicalVerificationFormData = z.infer<

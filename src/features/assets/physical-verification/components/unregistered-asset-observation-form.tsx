@@ -1,5 +1,6 @@
 'use client';
 
+import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -16,13 +17,32 @@ import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
+type AssetLocationOption = {
+  id: string;
+  code: string;
+  name: string;
+};
+
+type AssetConditionOption = {
+  id: string;
+  code: string;
+  name: string;
+};
+
 type UnregisteredAssetObservationFormProps = {
   verificationId: string;
+
+  assetLocations: AssetLocationOption[];
+
+  assetConditions: AssetConditionOption[];
+
   onSuccess?: () => void;
 };
 
 export function UnregisteredAssetObservationForm({
   verificationId,
+  assetLocations,
+  assetConditions,
   onSuccess,
 }: UnregisteredAssetObservationFormProps) {
   const router = useRouter();
@@ -32,12 +52,15 @@ export function UnregisteredAssetObservationForm({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreateUnregisteredAssetObservationFormData>({
+  } = useForm<
+    z.input<typeof createUnregisteredAssetObservationSchema>,
+    unknown,
+    z.output<typeof createUnregisteredAssetObservationSchema>
+  >({
     resolver: zodResolver(createUnregisteredAssetObservationSchema),
 
     defaultValues: {
       observedName: '',
-      observedAt: new Date().toISOString(),
       observedAssetTag: '',
       observedSerialNumber: '',
       observedLocationId: '',
@@ -55,15 +78,7 @@ export function UnregisteredAssetObservationForm({
     if (result.success) {
       toast.success('Unregistered asset observation recorded successfully');
 
-      reset({
-        observedName: '',
-        observedAt: new Date().toISOString(),
-        observedAssetTag: '',
-        observedSerialNumber: '',
-        observedLocationId: '',
-        observedConditionId: '',
-        notes: '',
-      });
+      reset();
 
       router.refresh();
 
@@ -75,67 +90,90 @@ export function UnregisteredAssetObservationForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Asset Information */}
-      <section className="space-y-4">
-        <div>
-          <h3 className="text-sm font-semibold">
-            Unregistered Asset Information
-          </h3>
+      {/* ============================================================
+          Physical Identification
+      ============================================================ */}
 
-          <p className="text-sm text-muted-foreground">
-            Record an asset that was physically found but is not included in the
-            registered asset list.
-          </p>
-        </div>
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold">Physical Identification</h3>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <TextField
-            label="Asset Name"
-            error={errors.observedName?.message}
-            {...register('observedName')}
-          />
+        <TextField
+          label="Observed Asset Name"
+          required
+          error={errors.observedName?.message}
+          {...register('observedName')}
+        />
 
-          <TextField
-            label="Observed At"
-            type="datetime-local"
-            error={errors.observedAt?.message}
-            {...register('observedAt')}
-          />
+        <TextField
+          label="Observed Asset Tag"
+          error={errors.observedAssetTag?.message}
+          {...register('observedAssetTag')}
+        />
 
-          <TextField
-            label="Asset Tag"
-            error={errors.observedAssetTag?.message}
-            {...register('observedAssetTag')}
-          />
+        <TextField
+          label="Observed Serial Number"
+          error={errors.observedSerialNumber?.message}
+          {...register('observedSerialNumber')}
+        />
+      </div>
 
-          <TextField
-            label="Serial Number"
-            error={errors.observedSerialNumber?.message}
-            {...register('observedSerialNumber')}
-          />
+      {/* ============================================================
+          Observation Details
+      ============================================================ */}
 
-          <TextField
-            label="Location ID"
-            error={errors.observedLocationId?.message}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold">Observation Details</h3>
+
+        <div className="space-y-2">
+          <label htmlFor="observedLocationId" className="text-sm font-medium">
+            Observed Location
+          </label>
+
+          <select
+            id="observedLocationId"
             {...register('observedLocationId')}
-          />
+            className="w-full rounded-md border px-3 py-2 text-sm"
+          >
+            <option value="">Select location</option>
 
-          <TextField
-            label="Condition ID"
-            error={errors.observedConditionId?.message}
-            {...register('observedConditionId')}
-          />
+            {assetLocations.map((location) => (
+              <option key={location.id} value={location.id}>
+                {location.code} - {location.name}
+              </option>
+            ))}
+          </select>
+
+          {errors.observedLocationId?.message && (
+            <p className="text-sm text-red-500">
+              {errors.observedLocationId.message}
+            </p>
+          )}
         </div>
-      </section>
 
-      {/* Notes */}
-      <section className="space-y-4">
-        <div>
-          <h3 className="text-sm font-semibold">Observation Notes</h3>
+        <div className="space-y-2">
+          <label htmlFor="observedConditionId" className="text-sm font-medium">
+            Observed Condition
+          </label>
 
-          <p className="text-sm text-muted-foreground">
-            Add any additional information about the observed asset.
-          </p>
+          <select
+            id="observedConditionId"
+            {...register('observedConditionId')}
+            className="w-full rounded-md border px-3 py-2 text-sm"
+          >
+            <option value="">Select condition</option>
+
+            {assetConditions.map((condition) => (
+              <option key={condition.id} value={condition.id}>
+                {condition.code} - {condition.name}
+              </option>
+            ))}
+          </select>
+
+          {errors.observedConditionId?.message && (
+            <p className="text-sm text-red-500">
+              {errors.observedConditionId.message}
+            </p>
+          )}
         </div>
 
         <TextAreaField
@@ -143,26 +181,11 @@ export function UnregisteredAssetObservationForm({
           error={errors.notes?.message}
           {...register('notes')}
         />
-      </section>
-
-      {/* Actions */}
-      <div className="flex justify-end gap-2">
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={isSubmitting}
-          onClick={() => {
-            reset();
-            onSuccess?.();
-          }}
-        >
-          Cancel
-        </Button>
-
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Saving...' : 'Record Observation'}
-        </Button>
       </div>
+
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Saving...' : 'Record Observation'}
+      </Button>
     </form>
   );
 }

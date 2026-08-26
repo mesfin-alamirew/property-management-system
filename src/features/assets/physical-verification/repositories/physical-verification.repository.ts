@@ -9,6 +9,23 @@ import type {
 } from '../schemas/physical-verification.schema';
 import { PhysicalVerificationResult } from '@/generated/prisma/client';
 
+type CreateUnregisteredAssetObservationRecordData = Omit<
+  CreateUnregisteredAssetObservationFormData,
+  'observedLocationId' | 'observedConditionId'
+> & {
+  verificationId: string;
+
+  observedLocationId: string | null;
+  observedLocationCode: string | null;
+  observedLocationName: string | null;
+
+  observedConditionId: string | null;
+  observedConditionCode: string | null;
+  observedConditionName: string | null;
+
+  observedByUserId: string;
+  observedAt: Date;
+};
 export async function findPhysicalVerifications() {
   return prisma.physicalVerification.findMany({
     orderBy: {
@@ -328,25 +345,28 @@ export async function updatePhysicalVerificationItemRecord(
 
 export async function createUnregisteredAssetObservationRecord(
   tx: Prisma.TransactionClient,
-  userId: string,
-  verificationId: string,
-  data: CreateUnregisteredAssetObservationFormData,
+  data: CreateUnregisteredAssetObservationRecordData,
 ) {
   return tx.unregisteredAssetObservation.create({
     data: {
-      verificationId,
+      verificationId: data.verificationId,
 
       observedAssetTag: data.observedAssetTag || null,
       observedSerialNumber: data.observedSerialNumber || null,
       observedName: data.observedName,
 
-      observedLocationId: data.observedLocationId || null,
-      observedConditionId: data.observedConditionId || null,
+      observedLocationId: data.observedLocationId,
+      observedLocationCode: data.observedLocationCode,
+      observedLocationName: data.observedLocationName,
+
+      observedConditionId: data.observedConditionId,
+      observedConditionCode: data.observedConditionCode,
+      observedConditionName: data.observedConditionName,
 
       notes: data.notes || null,
 
-      observedByUserId: userId,
-      observedAt: new Date(data.observedAt),
+      observedByUserId: data.observedByUserId,
+      observedAt: data.observedAt,
     },
   });
 }

@@ -657,3 +657,177 @@ Physical Verification
               ├── LOCATION_MISMATCH
               ├── CONDITION_MISMATCH
               └── MULTIPLE_DISCREPANCIES
+
+      Complete Verification
+
+The business flow should now be:
+
+DRAFT
+  │
+  ├── Generate Items
+  │
+  ↓
+IN_PROGRESS
+  │
+  ├── Verify items
+  ├── Record discrepancies
+  └── Record unregistered observations
+  │
+  ↓
+COMPLETED
+
+RULE
+A Physical Verification can be completed only when all generated verification items have been processed and 
+the verification has no outstanding required work.
+
+DRAFT
+  ↓
+Generate Items
+  ↓
+IN_PROGRESS
+  ↓
+Verify item 1
+  ↓
+Verify item 2
+  ↓
+...
+  ↓
+All items verified
+  ↓
+Complete Verification
+  ↓
+COMPLETED
+
+Our corrected current implementation map is:
+PMS
+│
+├── LEVEL 0 — Foundation
+│   ├── OrganizationUnit       ✓
+│   ├── User                   ✓
+│   └── Employee               ✓
+│
+├── LEVEL 1 — Master Data
+│   ├── AssetType              ✓
+│   ├── AssetStatus            ✓
+│   ├── AssetCondition         ✓
+│   ├── AssetCategory          ✓
+│   └── AcquisitionMethod      ✓
+│
+├── LEVEL 2 — Core
+│   ├── Asset                  ✓
+│   ├── Acquisition            ✓
+│   └── AcquisitionItem        ✓
+│
+├── LEVEL 3 — Accountability
+│   ├── AssetAssignment        ✓
+│   ├── AssetLocation          ✓
+│   └── AssetMovement          ✓
+│
+├── LEVEL 4 — Verification
+│   ├── PhysicalVerification          ✓
+│   ├── PhysicalVerificationItem     ✓
+│   └── UnregisteredAssetObservation ✓
+│
+├── LEVEL 5 — Operations
+│   ├── Maintenance
+│   ├── MaintenanceService
+│   ├── Incident
+│   └── IncidentResolution
+│
+├── LEVEL 6 — Lifecycle
+│   ├── Retirement
+│   ├── Disposal
+│   └── DisposalItem
+│
+└── LEVEL 7 — Reporting
+    ├── Audit
+    ├── Reporting
+    └── Administration
+
+Maintenance
+│
+├── 1. Purpose
+├── 2. Scope
+├── 3. Business Concepts
+├── 4. Actors / Responsibilities
+├── 5. Maintenance Types
+├── 6. Maintenance Statuses
+├── 7. Data Model
+├── 8. Business Rules
+├── 9. Workflow
+├── 10. MaintenanceService relationship
+├── 11. Validation Rules
+└── 12. Reporting / History Requirements
+
+I propose the handbook structure
+PMS DOCUMENTATION HANDBOOK
+│
+├── 1. System Overview
+│
+├── 2. Architecture
+│
+├── 3. Foundation
+│   ├── OrganizationUnit
+│   ├── User
+│   └── Employee
+│
+├── 4. Master Data
+│   ├── AssetType
+│   ├── AssetStatus
+│   ├── AssetCondition
+│   ├── AssetCategory
+│   └── AcquisitionMethod
+│
+├── 5. Core Asset Management
+│   ├── Asset
+│   ├── Acquisition
+│   └── AcquisitionItem
+│
+├── 6. Accountability
+│   ├── AssetAssignment
+│   ├── AssetLocation
+│   └── AssetMovement
+│
+├── 7. Physical Verification
+│   ├── PhysicalVerification
+│   ├── PhysicalVerificationItem
+│   └── UnregisteredAssetObservation
+│
+├── 8. Operations
+│   ├── Maintenance
+│   ├── MaintenanceService
+│   ├── Incident
+│   └── IncidentResolution
+│
+├── 9. Asset Lifecycle
+│   ├── Retirement
+│   ├── Disposal
+│   └── DisposalItem
+│
+├── 10. Reporting
+│   ├── Audit
+│   ├── Reporting
+│   └── Administration
+│
+├── 11. Cross-Cutting Business Rules
+├── 12. Security and Authorization
+├── 13. Database Design
+├── 14. Application Architecture
+├── 15. Testing Strategy
+└── 16. Deployment and Operations
+
+Maintenance
+├── Prisma model                  ✓
+├── Types                         ✓
+├── Schemas                       ✓
+├── Repositories                  ✓
+│   ├── maintenance.repository.ts
+│   └── maintenance-service.repository.ts
+├── Reference number service      ✓
+│   └── maintenance-reference-number.service.ts
+├── Basic commands                ✓
+│   ├── createMaintenance()
+│   ├── updateMaintenance()
+│   ├── createMaintenanceService()
+│   └── updateMaintenanceService()
+└── Workflow commands             ← Next session

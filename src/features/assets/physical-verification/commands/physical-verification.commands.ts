@@ -6,7 +6,6 @@ import {
   createPhysicalVerificationRecord,
   createPhysicalVerificationItemRecord,
   updatePhysicalVerificationItemRecord,
-  createUnregisteredAssetObservationRecord,
   findPhysicalVerificationById,
   findPhysicalVerificationItemById,
 } from '../repositories/physical-verification.repository';
@@ -20,6 +19,10 @@ import type {
 } from '../schemas/physical-verification.schema';
 
 import { generateNextPhysicalVerificationNumber } from '../services/physical-verification-number.service';
+import { findAssetLocationById } from '@/features/assets/asset-location/repositories/asset-location.repository';
+
+import { findAssetConditionById } from '@/features/assets/asset-condition/repositories/asset-condition.repository';
+import { createUnregisteredAssetObservationRecord } from '../repositories/physical-verification.repository';
 
 /**
  * Create a new Physical Verification.
@@ -399,57 +402,74 @@ export async function createUnregisteredAssetObservation(
     );
   }
 
+  if (verification.status !== 'IN_PROGRESS') {
+    throw new AppError(
+      'Unregistered asset observations can only be recorded for an in-progress verification',
+      'PHYSICAL_VERIFICATION_NOT_IN_PROGRESS',
+    );
+  }
+
+  let location = null;
+
   if (data.observedLocationId) {
-    const location = await prisma.assetLocation.findUnique({
-      where: {
-        id: data.observedLocationId,
-      },
-    });
+    location = await findAssetLocationById(data.observedLocationId);
 
     if (!location) {
       throw new AppError(
-        'Observed Asset Location not found',
+        'Selected asset location was not found',
         'ASSET_LOCATION_NOT_FOUND',
       );
     }
 
     if (!location.isActive) {
       throw new AppError(
-        'Observed Asset Location is inactive',
+        'Selected asset location is inactive',
         'ASSET_LOCATION_INACTIVE',
       );
     }
   }
 
+  let condition = null;
+
   if (data.observedConditionId) {
-    const condition = await prisma.assetCondition.findUnique({
-      where: {
-        id: data.observedConditionId,
-      },
-    });
+    condition = await findAssetConditionById(data.observedConditionId);
 
     if (!condition) {
       throw new AppError(
-        'Observed Asset Condition not found',
+        'Selected asset condition was not found',
         'ASSET_CONDITION_NOT_FOUND',
       );
     }
 
     if (!condition.isActive) {
       throw new AppError(
-        'Observed Asset Condition is inactive',
+        'Selected asset condition is inactive',
         'ASSET_CONDITION_INACTIVE',
       );
     }
   }
 
   return prisma.$transaction(async (tx) => {
-    return createUnregisteredAssetObservationRecord(
-      tx,
-      userId,
+    return createUnregisteredAssetObservationRecord(tx, {
       verificationId,
-      data,
-    );
+
+      observedAssetTag: data.observedAssetTag,
+      observedSerialNumber: data.observedSerialNumber,
+      observedName: data.observedName,
+
+      observedLocationId: location?.id ?? null,
+      observedLocationCode: location?.code ?? null,
+      observedLocationName: location?.name ?? null,
+
+      observedConditionId: condition?.id ?? null,
+      observedConditionCode: condition?.code ?? null,
+      observedConditionName: condition?.name ?? null,
+
+      notes: data.notes,
+
+      observedByUserId: userId,
+      observedAt: new Date(),
+    });
   });
 }
 

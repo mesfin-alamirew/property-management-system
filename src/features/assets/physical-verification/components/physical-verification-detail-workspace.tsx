@@ -1,34 +1,55 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 
 import type { PhysicalVerificationDetailWithRelations } from '../types/physical-verification.types';
 
-import { generatePhysicalVerificationItemsAction } from '../actions/physical-verification.actions';
-
+import {
+  generatePhysicalVerificationItemsAction,
+  completePhysicalVerificationAction,
+} from '../actions/physical-verification.actions';
 import { PhysicalVerificationItemTable } from './physical-verification-item-table';
+import { UnregisteredAssetObservationTable } from './unregistered-asset-observation-table';
+import { UnregisteredAssetObservationDialog } from './unregistered-asset-observation-dialog';
 
 type PhysicalVerificationDetailWorkspaceProps = {
   verification: PhysicalVerificationDetailWithRelations;
-};
 
+  assetLocations: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+
+  assetConditions: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+};
 export function PhysicalVerificationDetailWorkspace({
   verification,
+  assetLocations,
+  assetConditions,
 }: PhysicalVerificationDetailWorkspaceProps) {
   const [isGeneratingItems, setIsGeneratingItems] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [isObservationDialogOpen, setIsObservationDialogOpen] = useState(false);
+  const verifiedItemCount = verification.items.filter(
+    (item) => item.verifiedAt,
+  ).length;
 
+  const totalItemCount = verification.items.length;
+
+  const verificationProgress =
+    totalItemCount > 0 ? (verifiedItemCount / totalItemCount) * 100 : 0;
+
+  const router = useRouter();
   async function handleGenerateItems() {
     setIsGeneratingItems(true);
 
@@ -42,15 +63,34 @@ export function PhysicalVerificationDetailWorkspace({
           `${result.data.itemCount} verification item(s) generated successfully`,
         );
 
-        window.location.reload();
+        router.refresh();
       } else {
         toast.error(result.message);
       }
+    } catch {
+      toast.error('Something went wrong');
     } finally {
       setIsGeneratingItems(false);
     }
   }
+  async function handleCompleteVerification() {
+    setIsCompleting(true);
 
+    try {
+      const result = await completePhysicalVerificationAction(verification.id);
+
+      if (result.success) {
+        toast.success('Physical verification completed successfully');
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    } catch {
+      toast.error('Something went wrong');
+    } finally {
+      setIsCompleting(false);
+    }
+  }
   return (
     <MasterDataLayout
       title={verification.title}
@@ -66,6 +106,28 @@ export function PhysicalVerificationDetailWorkspace({
               {isGeneratingItems ? 'Generating...' : 'Generate Items'}
             </Button>
           )}
+
+          {verification.status === 'IN_PROGRESS' && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsObservationDialogOpen(true)}
+            >
+              Record Unregistered Asset
+            </Button>
+          )}
+
+          {verification.status === 'IN_PROGRESS' &&
+            totalItemCount > 0 &&
+            verifiedItemCount === totalItemCount && (
+              <Button
+                type="button"
+                onClick={handleCompleteVerification}
+                disabled={isCompleting}
+              >
+                {isCompleting ? 'Completing...' : 'Complete Verification'}
+              </Button>
+            )}
         </div>
       }
     >
@@ -94,6 +156,15 @@ export function PhysicalVerificationDetailWorkspace({
               <p className="text-sm text-muted-foreground">Status</p>
 
               <p className="font-medium">{verification.status}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Completed At</p>
+
+              <p className="font-medium">
+                {verification.completedAt
+                  ? verification.completedAt.toLocaleString()
+                  : '-'}
+              </p>
             </div>
 
             <div>
@@ -165,10 +236,32 @@ export function PhysicalVerificationDetailWorkspace({
               )}
             </div>
           ) : (
-            <PhysicalVerificationItemTable
-              items={verification.items}
-              verificationId={verification.id}
-            />
+            <>
+              {/* Verification Progress */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium">Verification Progress</span>
+
+                  <span className="text-muted-foreground">
+                    {verifiedItemCount} of {totalItemCount} items verified
+                  </span>
+                </div>
+
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{
+                      width: `${verificationProgress}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <PhysicalVerificationItemTable
+                items={verification.items}
+                verificationId={verification.id}
+              />
+            </>
           )}
         </section>
 
@@ -195,58 +288,19 @@ export function PhysicalVerificationDetailWorkspace({
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Asset Name</TableHead>
-                    <TableHead>Asset Tag</TableHead>
-                    <TableHead>Serial Number</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Condition</TableHead>
-                    <TableHead>Observed At</TableHead>
-                    <TableHead>Observed By</TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {verification.unregisteredObservations.map((observation) => (
-                    <TableRow key={observation.id}>
-                      <TableCell className="font-medium">
-                        {observation.observedName}
-                      </TableCell>
-
-                      <TableCell>
-                        {observation.observedAssetTag || '-'}
-                      </TableCell>
-
-                      <TableCell>
-                        {observation.observedSerialNumber || '-'}
-                      </TableCell>
-
-                      <TableCell>
-                        {observation.observedLocationId || '-'}
-                      </TableCell>
-
-                      <TableCell>
-                        {observation.observedConditionId || '-'}
-                      </TableCell>
-
-                      <TableCell>
-                        {observation.observedAt.toLocaleDateString()}
-                      </TableCell>
-
-                      <TableCell>
-                        {observation.observedByUser.displayName}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <UnregisteredAssetObservationTable
+              observations={verification.unregisteredObservations}
+            />
           )}
         </section>
       </div>
+      <UnregisteredAssetObservationDialog
+        open={isObservationDialogOpen}
+        onOpenChange={setIsObservationDialogOpen}
+        verificationId={verification.id}
+        assetLocations={assetLocations}
+        assetConditions={assetConditions}
+      />
     </MasterDataLayout>
   );
 }

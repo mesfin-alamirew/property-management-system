@@ -129,40 +129,34 @@ export async function verifyPhysicalVerificationItemAction(
 
 export async function createUnregisteredAssetObservationAction(
   verificationId: string,
-  formData: unknown,
-): Promise<ActionResult<PhysicalVerificationActionData>> {
+  input: unknown,
+) {
   try {
-    const data = createUnregisteredAssetObservationSchema.parse(formData);
-
     const user = await requireCurrentUser();
 
-    const result = await createUnregisteredAssetObservation(
+    const data = createUnregisteredAssetObservationSchema.parse(input);
+
+    const observation = await createUnregisteredAssetObservation(
       user.id,
       verificationId,
       data,
     );
 
     revalidatePath('/physical-verifications');
-
     revalidatePath(`/physical-verifications/${verificationId}`);
 
     return {
-      success: true,
-      data: {
-        id: result.id,
-      },
+      success: true as const,
+      data: observation,
+      message: 'Unregistered asset observation recorded successfully',
     };
   } catch (error) {
-    if (error instanceof AppError) {
-      return {
-        success: false,
-        message: error.message,
-      };
-    }
-
     return {
-      success: false,
-      message: 'Something went wrong',
+      success: false as const,
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to record unregistered asset observation',
     };
   }
 }

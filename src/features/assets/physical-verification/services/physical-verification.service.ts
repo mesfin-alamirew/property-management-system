@@ -528,10 +528,12 @@ export async function createUnregisteredAssetObservation(
   }
 
   /*
-   * Validate observed location.
+   * Resolve and validate observed location.
    */
+  let location = null;
+
   if (data.observedLocationId && data.observedLocationId !== '') {
-    const location = await prisma.assetLocation.findUnique({
+    location = await prisma.assetLocation.findUnique({
       where: {
         id: data.observedLocationId,
       },
@@ -553,10 +555,12 @@ export async function createUnregisteredAssetObservation(
   }
 
   /*
-   * Validate observed condition.
+   * Resolve and validate observed condition.
    */
+  let condition = null;
+
   if (data.observedConditionId && data.observedConditionId !== '') {
-    const condition = await prisma.assetCondition.findUnique({
+    condition = await prisma.assetCondition.findUnique({
       where: {
         id: data.observedConditionId,
       },
@@ -578,6 +582,11 @@ export async function createUnregisteredAssetObservation(
   }
 
   return prisma.$transaction(async (tx) => {
+    /*
+     * If the verification has not generated its items yet,
+     * move it from DRAFT to IN_PROGRESS when an observation
+     * is recorded.
+     */
     if (verification.status === 'DRAFT') {
       await tx.physicalVerification.update({
         where: {
@@ -591,11 +600,25 @@ export async function createUnregisteredAssetObservation(
       });
     }
 
-    return createUnregisteredAssetObservationRecord(
-      tx,
-      userId,
+    return createUnregisteredAssetObservationRecord(tx, {
       verificationId,
-      data,
-    );
+
+      observedAssetTag: data.observedAssetTag,
+      observedSerialNumber: data.observedSerialNumber,
+      observedName: data.observedName,
+
+      observedLocationId: location?.id ?? null,
+      observedLocationCode: location?.code ?? null,
+      observedLocationName: location?.name ?? null,
+
+      observedConditionId: condition?.id ?? null,
+      observedConditionCode: condition?.code ?? null,
+      observedConditionName: condition?.name ?? null,
+
+      notes: data.notes,
+
+      observedByUserId: userId,
+      observedAt: new Date(),
+    });
   });
 }
