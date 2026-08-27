@@ -3,12 +3,20 @@ import { z } from 'zod';
 export const maintenanceSchema = z.object({
   assetId: z.string().min(1, 'Asset is required'),
 
-  type: z.enum(
-    ['PREVENTIVE', 'CORRECTIVE', 'EMERGENCY', 'PREDICTIVE', 'INSPECTION'],
-    {
+  type: z
+    .union([
+      z.enum([
+        'PREVENTIVE',
+        'CORRECTIVE',
+        'EMERGENCY',
+        'PREDICTIVE',
+        'INSPECTION',
+      ]),
+      z.literal(''),
+    ])
+    .refine((value) => value !== '', {
       message: 'Maintenance type is required',
-    },
-  ),
+    }),
 
   title: z
     .string()

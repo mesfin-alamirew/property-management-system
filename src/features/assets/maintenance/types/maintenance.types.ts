@@ -1,3 +1,7 @@
+import type {
+  MaintenanceType,
+  MaintenanceStatus,
+} from '@/generated/prisma/client';
 export type MaintenanceServiceWithRelations = {
   id: string;
 
@@ -29,9 +33,9 @@ export type MaintenanceWithRelations = {
 
   assetId: string;
 
-  type: string;
+  type: MaintenanceType;
 
-  status: string;
+  status: MaintenanceStatus;
 
   title: string;
 
@@ -88,10 +92,6 @@ export type MaintenanceWithRelations = {
 
     displayName: string;
   } | null;
-
-  _count: {
-    services: number;
-  };
 
   createdAt: Date;
 

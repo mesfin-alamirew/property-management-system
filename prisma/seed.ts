@@ -19,6 +19,20 @@ async function main() {
       isActive: true,
     },
   });
+  const devApprover = await prisma.user.upsert({
+    where: {
+      username: 'dev.approver',
+    },
+    update: {
+      displayName: 'Development Approver',
+      isActive: true,
+    },
+    create: {
+      username: 'dev.approver',
+      displayName: 'Development Approver',
+      isActive: true,
+    },
+  });
 
   await prisma.userIdentity.upsert({
     where: {
@@ -36,7 +50,22 @@ async function main() {
       externalId: 'dev-local-user-001',
     },
   });
-
+  await prisma.userIdentity.upsert({
+    where: {
+      provider_externalId: {
+        provider: AuthProvider.LOCAL,
+        externalId: 'dev-local-approver-001',
+      },
+    },
+    update: {
+      userId: devApprover.id,
+    },
+    create: {
+      userId: devApprover.id,
+      provider: AuthProvider.LOCAL,
+      externalId: 'dev-local-approver-001',
+    },
+  });
   const systemAdminRole = await prisma.role.upsert({
     where: {
       code: 'SYSTEM_ADMIN',

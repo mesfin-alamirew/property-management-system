@@ -15,6 +15,7 @@ export async function findMaintenances() {
         select: {
           id: true,
           assetCode: true,
+          assetTag: true,
           name: true,
         },
       },
@@ -63,6 +64,7 @@ export async function findMaintenanceById(id: string) {
         select: {
           id: true,
           assetCode: true,
+          assetTag: true,
           name: true,
         },
       },
@@ -170,6 +172,89 @@ export async function updateMaintenanceRecord(
       scheduledAt: data.scheduledAt,
       assignedToUserId: data.assignedToUserId || undefined,
       notes: data.notes,
+    },
+  });
+}
+export async function findAssets() {
+  return prisma.asset.findMany({
+    orderBy: {
+      assetCode: 'asc',
+    },
+
+    select: {
+      id: true,
+      assetCode: true,
+      name: true,
+    },
+  });
+}
+
+export async function findActiveUsers() {
+  return prisma.user.findMany({
+    where: {
+      isActive: true,
+    },
+
+    orderBy: {
+      displayName: 'asc',
+    },
+
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+    },
+  });
+}
+export async function requestMaintenanceRecord(id: string) {
+  return prisma.maintenance.update({
+    where: {
+      id,
+    },
+
+    data: {
+      status: 'REQUESTED',
+      requestedAt: new Date(),
+    },
+  });
+}
+export async function approveMaintenanceRecord(
+  id: string,
+  approvedByUserId: string,
+) {
+  return prisma.maintenance.update({
+    where: {
+      id,
+    },
+
+    data: {
+      status: 'APPROVED',
+      approvedByUserId,
+      approvedAt: new Date(),
+    },
+  });
+}
+export async function startMaintenanceRecord(id: string) {
+  return prisma.maintenance.update({
+    where: {
+      id,
+    },
+
+    data: {
+      status: 'IN_PROGRESS',
+      startedAt: new Date(),
+    },
+  });
+}
+export async function completeMaintenanceRecord(id: string) {
+  return prisma.maintenance.update({
+    where: {
+      id,
+    },
+
+    data: {
+      status: 'COMPLETED',
+      completedAt: new Date(),
     },
   });
 }
