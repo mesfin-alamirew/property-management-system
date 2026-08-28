@@ -57,7 +57,6 @@ export function MaintenanceDialog({
         <MaintenanceForm
           maintenance={maintenance}
           assets={assets}
-          users={users}
           onSuccess={() => onOpenChange(false)}
         />
       </DialogContent>

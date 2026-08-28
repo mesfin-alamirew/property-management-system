@@ -39,19 +39,11 @@ type MaintenanceFormProps = {
     name: string;
   }[];
 
-  users: {
-    id: string;
-    username: string;
-    displayName: string;
-  }[];
-
   onSuccess?: () => void;
 };
-
 export function MaintenanceForm({
   maintenance,
   assets,
-  users,
   onSuccess,
 }: MaintenanceFormProps) {
   const router = useRouter();
@@ -76,7 +68,6 @@ export function MaintenanceForm({
       scheduledAt: maintenance?.scheduledAt
         ? maintenance.scheduledAt.toISOString().slice(0, 16)
         : '',
-      assignedToUserId: maintenance?.assignedToUserId ?? '',
       notes: maintenance?.notes ?? '',
     },
   });
@@ -180,33 +171,6 @@ export function MaintenanceForm({
           error={errors.scheduledAt?.message}
           {...register('scheduledAt')}
         />
-
-        {/* Assigned User */}
-        <div className="space-y-2">
-          <label htmlFor="assignedToUserId" className="text-sm font-medium">
-            Assigned To
-          </label>
-
-          <select
-            id="assignedToUserId"
-            {...register('assignedToUserId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Assigned User</option>
-
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.displayName} ({user.username})
-              </option>
-            ))}
-          </select>
-
-          {errors.assignedToUserId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.assignedToUserId.message}
-            </p>
-          )}
-        </div>
       </div>
 
       {/* Details */}

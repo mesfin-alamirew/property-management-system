@@ -1,0 +1,51 @@
+export const AUDIT_ENTITY_TYPES = {
+  MAINTENANCE: 'MAINTENANCE',
+} as const;
+
+export type AuditEntityType =
+  (typeof AUDIT_ENTITY_TYPES)[keyof typeof AUDIT_ENTITY_TYPES];
+
+export const AUDIT_ACTIONS = {
+  MAINTENANCE_CREATED: 'MAINTENANCE_CREATED',
+
+  MAINTENANCE_UPDATED: 'MAINTENANCE_UPDATED',
+
+  MAINTENANCE_REQUESTED: 'MAINTENANCE_REQUESTED',
+
+  MAINTENANCE_ASSIGNED: 'MAINTENANCE_ASSIGNED',
+
+  MAINTENANCE_APPROVED: 'MAINTENANCE_APPROVED',
+
+  MAINTENANCE_STARTED: 'MAINTENANCE_STARTED',
+
+  MAINTENANCE_COMPLETED: 'MAINTENANCE_COMPLETED',
+
+  MAINTENANCE_CANCELLED: 'MAINTENANCE_CANCELLED',
+
+  MAINTENANCE_SERVICE_CREATED: 'MAINTENANCE_SERVICE_CREATED',
+
+  MAINTENANCE_SERVICE_UPDATED: 'MAINTENANCE_SERVICE_UPDATED',
+
+  MAINTENANCE_SERVICE_DELETED: 'MAINTENANCE_SERVICE_DELETED',
+} as const;
+
+export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];
+export type AuditJsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | AuditJsonValue[]
+  | {
+      [key: string]: AuditJsonValue;
+    };
+
+export type CreateAuditLogInput = {
+  userId: string;
+  action: AuditAction;
+  entityType: AuditEntityType;
+  entityId: string;
+  description: string;
+  oldValue?: AuditJsonValue;
+  newValue?: AuditJsonValue;
+};

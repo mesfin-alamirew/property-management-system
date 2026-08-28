@@ -21,6 +21,8 @@ type MaintenanceTableProps = {
 
   onRequest: (maintenance: MaintenanceWithRelations) => void;
 
+  onAssign: (maintenance: MaintenanceWithRelations) => void;
+
   onApprove: (maintenance: MaintenanceWithRelations) => void;
 
   onStart: (maintenance: MaintenanceWithRelations) => void;
@@ -31,6 +33,7 @@ export function MaintenanceTable({
   maintenances,
   onEdit,
   onRequest,
+  onAssign,
   onApprove,
   onStart,
   onComplete,
@@ -103,7 +106,7 @@ export function MaintenanceTable({
                 </button>
               )}
 
-              {maintenance.status === 'REQUESTED' && (
+              {maintenance.status === 'ASSIGNED' && (
                 <button
                   type="button"
                   onClick={() => onApprove(maintenance)}
@@ -112,7 +115,15 @@ export function MaintenanceTable({
                   Approve
                 </button>
               )}
-
+              {maintenance.status === 'REQUESTED' && (
+                <button
+                  type="button"
+                  onClick={() => onAssign(maintenance)}
+                  className="ml-2 rounded-md border px-3 py-1 text-sm"
+                >
+                  Assign
+                </button>
+              )}
               {maintenance.status === 'APPROVED' && (
                 <button
                   type="button"

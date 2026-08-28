@@ -10,6 +10,7 @@ import {
   createMaintenance,
   updateMaintenance,
   requestMaintenance,
+  assignMaintenance,
   approveMaintenance,
   startMaintenance,
   completeMaintenance,
@@ -61,7 +62,9 @@ export async function updateMaintenanceAction(
   try {
     const data = maintenanceSchema.parse(formData);
 
-    const result = await updateMaintenance(id, data);
+    const user = await requireCurrentUser();
+
+    const result = await updateMaintenance(user.id, id, data);
 
     revalidatePath('/maintenances');
     revalidatePath(`/maintenances/${id}`);
@@ -198,6 +201,48 @@ export async function completeMaintenanceAction(
       },
     };
   } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
+    return {
+      success: false,
+      message: 'Something went wrong',
+    };
+  }
+}
+export async function assignMaintenanceAction(
+  maintenanceId: string,
+  assignedToUserId: string,
+): Promise<ActionResult<MaintenanceActionData>> {
+  try {
+    const user = await requireCurrentUser();
+    console.log('ASSIGN ACTION:', {
+      userId: user.id,
+      maintenanceId,
+      assignedToUserId,
+    });
+
+    const result = await assignMaintenance(
+      user.id,
+      maintenanceId,
+      assignedToUserId,
+    );
+
+    revalidatePath('/maintenances');
+    revalidatePath(`/maintenances/${maintenanceId}`);
+
+    return {
+      success: true,
+      data: {
+        id: result.id,
+      },
+    };
+  } catch (error) {
+    console.error('ASSIGN MAINTENANCE ERROR:', error);
     if (error instanceof AppError) {
       return {
         success: false,

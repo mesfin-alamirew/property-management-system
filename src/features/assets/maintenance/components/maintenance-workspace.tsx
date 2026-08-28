@@ -15,6 +15,7 @@ import {
   startMaintenanceAction,
   completeMaintenanceAction,
 } from '../actions/maintenance.actions';
+import { MaintenanceAssignmentDialog } from './maintenance-assignment-dialog';
 
 type MaintenanceWorkspaceProps = {
   maintenances: MaintenanceWithRelations[];
@@ -43,6 +44,12 @@ export function MaintenanceWorkspace({
     useState<MaintenanceWithRelations | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [maintenanceToAssign, setMaintenanceToAssign] =
+    useState<MaintenanceWithRelations | null>(null);
+
+  const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
+
   function handleCreate() {
     setSelectedMaintenance(null);
     setIsDialogOpen(true);
@@ -51,6 +58,10 @@ export function MaintenanceWorkspace({
   function handleEdit(maintenance: MaintenanceWithRelations) {
     setSelectedMaintenance(maintenance);
     setIsDialogOpen(true);
+  }
+  function handleAssign(maintenance: MaintenanceWithRelations) {
+    setMaintenanceToAssign(maintenance);
+    setIsAssignmentDialogOpen(true);
   }
 
   async function handleRequest(maintenance: MaintenanceWithRelations) {
@@ -124,6 +135,7 @@ export function MaintenanceWorkspace({
         maintenances={maintenances}
         onEdit={handleEdit}
         onRequest={handleRequest}
+        onAssign={handleAssign}
         onApprove={handleApprove}
         onStart={handleStart}
         onComplete={handleComplete}
@@ -135,6 +147,13 @@ export function MaintenanceWorkspace({
         onOpenChange={setIsDialogOpen}
         maintenance={selectedMaintenance}
         assets={assets}
+        users={users}
+      />
+      {/*. Assignment Dialog */}
+      <MaintenanceAssignmentDialog
+        open={isAssignmentDialogOpen}
+        onOpenChange={setIsAssignmentDialogOpen}
+        maintenance={maintenanceToAssign}
         users={users}
       />
     </div>

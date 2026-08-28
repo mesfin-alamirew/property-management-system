@@ -7,6 +7,7 @@ type WorkflowStatusBadgeProps = {
 const statusLabels: Record<MaintenanceStatus, string> = {
   DRAFT: 'Draft',
   REQUESTED: 'Requested',
+  ASSIGNED: 'Assigned',
   APPROVED: 'Approved',
   IN_PROGRESS: 'In Progress',
   COMPLETED: 'Completed',

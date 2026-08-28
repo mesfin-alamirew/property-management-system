@@ -843,3 +843,157 @@ Maintenance
 7. Record Maintenance Service
 8. Complete
 9. Close
+
+Workflow
+                    ┌───────────────┐
+                    │     DRAFT     │
+                    └───────┬───────┘
+                            │
+                         Request
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │   REQUESTED   │
+                    └───────┬───────┘
+                            │
+                         Approve
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │   APPROVED    │
+                    └───────┬───────┘
+                            │
+                          Start
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │ IN_PROGRESS   │
+                    └───────────────┘
+
+Development User
+       │
+       ▼
+     DRAFT
+       │
+       │ Request
+       ▼
+   REQUESTED
+       │
+       │ Approve
+       ▼
+    APPROVED
+       │
+       │ Start
+       ▼
+  IN_PROGRESS
+       │
+       │ Complete
+       ▼
+   COMPLETED
+
+┌─────────────────────────────────────────────────────────┐
+│                  MAINTENANCE LIFECYCLE                  │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  CREATED ──► UPDATED ──► REQUESTED ──► APPROVED       │
+│                                           │             │
+│                                           ▼             │
+│                                      IN_PROGRESS        │
+│                                           │             │
+│                                           ▼             │
+│                                       COMPLETED         │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+
+Revised WorkflowDRAFT
+  │
+  │ Submit
+  ▼
+REQUESTED
+  │
+  │ Focal Person receives/reviews
+  ▼
+ASSIGNED
+  │
+  │ Approval
+  ▼
+APPROVED
+  │
+  │ Start
+  ▼
+IN_PROGRESS
+  │
+  │ Complete
+  ▼
+COMPLETED
+
+                    ┌─────────┐
+                    │  DRAFT  │
+                    └────┬────┘
+                         │
+                       Submit
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │  REQUESTED   │
+                  └──────┬──────┘
+                         │
+                  Focal Person
+                    reviews
+                         │
+                    Assign Officer
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │   ASSIGNED  │
+                  └──────┬──────┘
+                         │
+                       Approve
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │   APPROVED  │
+                  └──────┬──────┘
+                         │
+                       Start
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │ IN_PROGRESS │
+                  └──────┬──────┘
+                         │
+                      Complete
+                         │
+                         ▼
+                  ┌─────────────┐
+                  │  COMPLETED  │
+                  └─────────────┘
+
+DRAFT
+  │
+  ├─ MAINTENANCE_CREATED
+  │
+  ▼
+REQUESTED
+  │
+  ├─ MAINTENANCE_REQUESTED
+  │
+  ▼
+ASSIGNED
+  │
+  ├─ MAINTENANCE_ASSIGNED
+  │
+  ▼
+APPROVED
+  │
+  ├─ MAINTENANCE_APPROVED
+  │
+  ▼
+IN_PROGRESS
+  │
+  ├─ MAINTENANCE_STARTED
+  │
+  ▼
+COMPLETED
+  │
+  └─ MAINTENANCE_COMPLETED

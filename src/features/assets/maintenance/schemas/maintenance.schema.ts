@@ -33,8 +33,6 @@ export const maintenanceSchema = z.object({
 
   scheduledAt: z.coerce.date().optional(),
 
-  assignedToUserId: z.string().optional().or(z.literal('')),
-
   notes: z
     .string()
     .optional()
