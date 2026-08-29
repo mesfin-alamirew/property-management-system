@@ -997,3 +997,48 @@ IN_PROGRESS
 COMPLETED
   │
   └─ MAINTENANCE_COMPLETED
+
+| Maintenance Status | Delete Service |
+| ------------------ | -------------- |
+| DRAFT              | ❌              |
+| REQUESTED          | ❌              |
+| ASSIGNED           | ❌              |
+| APPROVED           | ❌              |
+| IN_PROGRESS        | ✅              |
+| COMPLETED          | ❌              |
+| CANCELLED          | ❌              |
+
+
+MaintenanceService
+│
+├── Create
+│   ├── Validate user                  ✅
+│   ├── Validate maintenance           ✅
+│   ├── Require IN_PROGRESS            ✅
+│   ├── Calculate totalCost            ✅
+│   ├── Create record                  ✅
+│   └── Create audit                   ✅
+│
+├── Update
+│   ├── Validate user                  ✅
+│   ├── Validate maintenance           ✅
+│   ├── Preserve maintenanceId         ✅
+│   ├── Calculate totalCost            ✅
+│   ├── Update record                  ✅
+│   └── Create audit                   ✅
+│
+└── Delete
+    ├── Validate user                  ✅
+    ├── Validate maintenance           ✅
+    ├── Require IN_PROGRESS            ✅
+    ├── Capture old values             ✅
+    ├── Create audit                   ✅
+    └── Delete record                  ✅
+
+Create/Update/Delete
+        ↓
+   Transaction
+      ↙     ↘
+ Database    Audit
+      ↘     ↙
+       Commit

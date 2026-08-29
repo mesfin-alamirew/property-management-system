@@ -397,3 +397,20 @@ export async function createMaintenanceAssignmentAudit(
     },
   });
 }
+export async function findMaintenancesForService() {
+  return prisma.maintenance.findMany({
+    where: {
+      status: 'IN_PROGRESS',
+    },
+
+    orderBy: {
+      referenceNumber: 'desc',
+    },
+
+    select: {
+      id: true,
+      referenceNumber: true,
+      title: true,
+    },
+  });
+}
