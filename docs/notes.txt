@@ -729,8 +729,8 @@ PMS
 │   └── UnregisteredAssetObservation ✓
 │
 ├── LEVEL 5 — Operations
-│   ├── Maintenance
-│   ├── MaintenanceService
+│   ├── Maintenance      ✓
+│   ├── MaintenanceService ✓
 │   ├── Incident
 │   └── IncidentResolution
 │
