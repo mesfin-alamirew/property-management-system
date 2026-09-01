@@ -115,6 +115,10 @@ export const navigationSections: NavigationSection[] = [
         title: 'Maintenance Services',
         href: '/assets/maintenance/services',
       },
+      {
+        title: 'Incidents',
+        href: '/incidents',
+      },
     ],
   },
 ];
