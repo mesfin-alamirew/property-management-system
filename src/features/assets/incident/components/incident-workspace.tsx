@@ -9,12 +9,11 @@ import type { IncidentWithRelations } from '../types/incident.types';
 import { IncidentTable } from './incident-table';
 import { IncidentDialog } from './incident-dialog';
 import { IncidentAssignmentDialog } from './incident-assignment-dialog';
+import { IncidentResolutionDialog } from '@/features/assets/incident-resolution/components/incident-resolution-dialog';
 
 import {
   reportIncidentAction,
-  assignIncidentAction,
   startIncidentAction,
-  resolveIncidentAction,
   closeIncidentAction,
   cancelIncidentAction,
 } from '../actions/incident.actions';
@@ -52,6 +51,11 @@ export function IncidentWorkspace({
 
   const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
 
+  const [incidentToResolve, setIncidentToResolve] =
+    useState<IncidentWithRelations | null>(null);
+
+  const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false);
+
   function handleCreate() {
     setSelectedIncident(null);
     setIsDialogOpen(true);
@@ -67,12 +71,16 @@ export function IncidentWorkspace({
     setIsAssignmentDialogOpen(true);
   }
 
+  function handleResolve(incident: IncidentWithRelations) {
+    setIncidentToResolve(incident);
+    setIsResolutionDialogOpen(true);
+  }
+
   async function handleReport(incident: IncidentWithRelations) {
     const result = await reportIncidentAction(incident.id);
 
     if (result.success) {
       toast.success('Incident reported successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -84,19 +92,6 @@ export function IncidentWorkspace({
 
     if (result.success) {
       toast.success('Incident started successfully');
-
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  }
-
-  async function handleResolve(incident: IncidentWithRelations) {
-    const result = await resolveIncidentAction(incident.id);
-
-    if (result.success) {
-      toast.success('Incident resolved successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -108,7 +103,6 @@ export function IncidentWorkspace({
 
     if (result.success) {
       toast.success('Incident closed successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -120,7 +114,6 @@ export function IncidentWorkspace({
 
     if (result.success) {
       toast.success('Incident cancelled successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -174,6 +167,21 @@ export function IncidentWorkspace({
         onOpenChange={setIsAssignmentDialogOpen}
         incident={incidentToAssign}
         users={users}
+      />
+
+      {/* Incident Resolution Dialog */}
+      <IncidentResolutionDialog
+        open={isResolutionDialogOpen}
+        onOpenChange={setIsResolutionDialogOpen}
+        incident={
+          incidentToResolve
+            ? {
+                id: incidentToResolve.id,
+                referenceNumber: incidentToResolve.referenceNumber,
+                title: incidentToResolve.title,
+              }
+            : null
+        }
       />
     </div>
   );

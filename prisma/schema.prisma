@@ -840,6 +840,8 @@ model User {
   incidentsReported Incident[] @relation("IncidentReportedBy")
   incidentsAssigned Incident[] @relation("IncidentAssignedTo")
 
+  incidentResolutions IncidentResolution[] @relation("IncidentResolvedBy")
+
   auditLogs AuditLog[] @relation("AuditLogPerformedBy")
 
   createdAt DateTime @default(now())
@@ -1445,6 +1447,8 @@ model Incident {
 
   assignedToUser User? @relation("IncidentAssignedTo", fields: [assignedToUserId], references: [id])
 
+  resolution IncidentResolution?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -1455,4 +1459,30 @@ model Incident {
   @@index([reportedByUserId])
   @@index([assignedToUserId])
   @@index([incidentDate])
+}
+
+model IncidentResolution {
+  id String @id @default(cuid())
+
+  incidentId String @unique
+
+  rootCause String
+
+  resolution String
+
+  correctiveAction String?
+
+  resolvedByUserId String
+
+  notes String?
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Restrict)
+
+  resolvedByUser User @relation("IncidentResolvedBy", fields: [resolvedByUserId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([resolvedByUserId])
 }
