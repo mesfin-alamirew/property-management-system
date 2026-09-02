@@ -570,9 +570,10 @@ model Asset {
   maintenances                  Maintenance[]
   incidents                     Incident[]
 
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  retirement Retirement?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  retirement    Retirement?
+  disposalItems DisposalItem[]
 
   @@index([assetTypeId])
   @@index([statusId])
@@ -848,10 +849,14 @@ model User {
 
   retirementsApproved  Retirement[] @relation("RetirementApprovedBy")
   cancelledRetirements Retirement[] @relation("RetirementCancelledBy")
-  auditLogs            AuditLog[]   @relation("AuditLogPerformedBy")
+
+  auditLogs AuditLog[] @relation("AuditLogPerformedBy")
+
+  requestedDisposals Disposal[] @relation("DisposalRequestedBy")
+  approvedDisposals  Disposal[] @relation("DisposalApprovedBy")
+  cancelledDisposals Disposal[] @relation("DisposalCancelledBy")
 
   createdAt DateTime @default(now())
-
   updatedAt DateTime @updatedAt
 
   @@index([isActive])
@@ -1545,8 +1550,9 @@ model Retirement {
 
   approvedByUser User? @relation("RetirementApprovedBy", fields: [approvedByUserId], references: [id])
 
-  cancelledByUser User?    @relation("RetirementCancelledBy", fields: [cancelledByUserId], references: [id])
-  createdAt       DateTime @default(now())
+  cancelledByUser User? @relation("RetirementCancelledBy", fields: [cancelledByUserId], references: [id])
+
+  createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
 
@@ -1557,4 +1563,80 @@ model Retirement {
   @@index([approvedByUserId])
   @@index([cancelledByUserId])
   @@index([retirementDate])
+}
+
+model DisposalNumberSequence {
+  id String @id @default(cuid())
+
+  year       Int @unique
+  lastNumber Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum DisposalStatus {
+  DRAFT
+  REQUESTED
+  APPROVED
+  CANCELLED
+}
+
+model Disposal {
+  id String @id @default(cuid())
+
+  referenceNumber String @unique
+
+  disposalDate DateTime
+
+  method String
+
+  reason String?
+
+  status DisposalStatus @default(DRAFT)
+
+  requestedByUserId String
+
+  approvedByUserId String?
+  approvedAt       DateTime?
+
+  cancelledByUserId  String?
+  cancelledAt        DateTime?
+  cancellationReason String?
+
+  notes String?
+
+  requestedByUser User @relation("DisposalRequestedBy", fields: [requestedByUserId], references: [id])
+
+  approvedByUser User? @relation("DisposalApprovedBy", fields: [approvedByUserId], references: [id])
+
+  cancelledByUser User? @relation("DisposalCancelledBy", fields: [cancelledByUserId], references: [id])
+
+  items DisposalItem[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([requestedByUserId])
+  @@index([approvedByUserId])
+  @@index([cancelledByUserId])
+  @@index([disposalDate])
+}
+
+model DisposalItem {
+  id String @id @default(cuid())
+
+  disposalId String
+  assetId    String
+
+  disposal Disposal @relation(fields: [disposalId], references: [id], onDelete: Restrict)
+  asset    Asset    @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([disposalId, assetId])
+  @@index([assetId])
 }

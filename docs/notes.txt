@@ -1100,11 +1100,109 @@ PMS
 │   └── IncidentResolution       ✓
 │
 ├── LEVEL 6 — Lifecycle
-│   ├── Retirement
-│   ├── Disposal
-│   └── DisposalItem
+│   ├── Retirement               ✓
+│   ├── Disposal                 ✓
+│   └── DisposalItem             ✓
 │
 └── LEVEL 7 — Reporting
     ├── Audit
     ├── Reporting
     └── Administration
+
+
+Retirement
+   ↓
+identifies that an asset is being retired
+
+Disposal
+   ↓
+represents the actual disposal transaction
+
+DisposalItem
+   ↓
+identifies each asset included in that transaction
+
+CREATE DISPOSAL
+      │
+      ▼
+DRAFT
+      │
+      ├── Add assets
+      │      ├── Asset A
+      │      ├── Asset B
+      │      └── Asset C
+      │
+      ├── Edit disposal information
+      │
+      ├── Cancel ───────────────► CANCELLED
+      │
+      └── Request
+             │
+             ▼
+        Validate items
+             │
+             ▼
+         REQUESTED
+             │
+             ├── Cancel ────────► CANCELLED
+             │
+             └── Approve
+                    │
+                    ▼
+                APPROVED
+
+
+
+Recommended implementation order from here
+We should now modify the Disposal feature in this order:
+1. DisposalItem Types       ← establish clean dedicated types
+2. DisposalItem Schema      ← validate asset/disposal selection
+3. DisposalItem Commands    ← enforce business rules
+4. DisposalItem Actions     ← server mutations
+5. DisposalItem Form        ← add asset to disposal
+6. DisposalItem Dialog      ← UI
+7. DisposalItem Table       ← show assets in disposal
+8. Disposal Request Rule    ← require ≥ 1 item
+9. Disposal Workspace       ← integrate item management
+10. Disposal Test           ← test complete workflow
+
+DRAFT + 0 items
+      │
+      └── Request ❌
+
+DRAFT + 1 or more items
+      │
+      └── Request ✅
+
+Disposal end-to-end test
+
+| #  | Test                                             | Expected result                                     |
+| -- | ------------------------------------------------ | --------------------------------------------------- |
+| 1  | Open `/disposals`                                | Disposal page loads successfully                    |
+| 2  | Click **Create Disposal**                        | Create Disposal dialog opens                        |
+| 3  | Submit empty form                                | Validation errors appear                            |
+| 4  | Enter valid disposal information                 | Disposal is created as `DRAFT`                      |
+| 5  | Verify reference number                          | New unique disposal reference is displayed          |
+| 6  | Verify audit log                                 | `DISPOSAL_CREATED` is recorded                      |
+| 7  | Click **Add Asset** on the draft                 | DisposalItem dialog opens                           |
+| 8  | Select an available asset and save               | DisposalItem is created successfully                |
+| 9  | Verify Disposal row                              | Asset appears under **Items**                       |
+| 10 | Add a second asset                               | Second asset appears under the same Disposal        |
+| 11 | Try adding the same asset again                  | Operation is rejected                               |
+| 12 | Try adding an unavailable/already-disposed asset | Operation is rejected                               |
+| 13 | Click **Request** with items                     | Disposal changes `DRAFT → REQUESTED`                |
+| 14 | Verify audit log                                 | `DISPOSAL_REQUESTED` is recorded                    |
+| 15 | Create another draft with **zero items**         | Disposal remains `DRAFT`                            |
+| 16 | Click **Request** with zero items                | Request is rejected with the items-required message |
+| 17 | Click **Cancel** on draft                        | Cancellation dialog opens                           |
+| 18 | Submit empty cancellation reason                 | Validation error appears                            |
+| 19 | Submit valid cancellation reason                 | Disposal changes `DRAFT → CANCELLED`                |
+| 20 | Verify cancellation data                         | User, timestamp, and reason are stored              |
+| 21 | Create/request another disposal                  | Disposal reaches `REQUESTED`                        |
+| 22 | Click **Approve**                                | Disposal changes `REQUESTED → APPROVED`             |
+| 23 | Verify approval data                             | `approvedByUserId` and `approvedAt` are populated   |
+| 24 | Verify audit log                                 | `DISPOSAL_APPROVED` is recorded                     |
+| 25 | Try Request on APPROVED                          | No Request action available / command rejects       |
+| 26 | Try Approve on APPROVED                          | No Approve action available / command rejects       |
+| 27 | Try Cancel on APPROVED                           | No Cancel action available / command rejects        |
+| 28 | Refresh page                                     | All Disposal and DisposalItem data remains correct  |
