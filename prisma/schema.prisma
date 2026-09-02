@@ -531,8 +531,9 @@ model AssetCondition {
 
   unregisteredAssetObservations UnregisteredAssetObservation[] @relation("UnregisteredAssetObservedCondition")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  retirements Retirement[]
 
   @@index([isActive])
 }
@@ -569,8 +570,9 @@ model Asset {
   maintenances                  Maintenance[]
   incidents                     Incident[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  retirement Retirement?
 
   @@index([assetTypeId])
   @@index([statusId])
@@ -842,7 +844,11 @@ model User {
 
   incidentResolutions IncidentResolution[] @relation("IncidentResolvedBy")
 
-  auditLogs AuditLog[] @relation("AuditLogPerformedBy")
+  retirementsRequested Retirement[] @relation("RetirementRequestedBy")
+
+  retirementsApproved  Retirement[] @relation("RetirementApprovedBy")
+  cancelledRetirements Retirement[] @relation("RetirementCancelledBy")
+  auditLogs            AuditLog[]   @relation("AuditLogPerformedBy")
 
   createdAt DateTime @default(now())
 
@@ -1485,4 +1491,70 @@ model IncidentResolution {
   updatedAt DateTime @updatedAt
 
   @@index([resolvedByUserId])
+}
+
+enum RetirementStatus {
+  DRAFT
+  REQUESTED
+  APPROVED
+  CANCELLED
+}
+
+model RetirementNumberSequence {
+  id   String @id @default(cuid())
+  year Int    @unique
+
+  lastNumber Int
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Retirement {
+  id String @id @default(cuid())
+
+  referenceNumber String @unique
+
+  assetId String
+
+  retirementDate DateTime
+
+  reason String
+
+  conditionId String
+
+  status RetirementStatus @default(DRAFT)
+
+  requestedByUserId String
+
+  approvedByUserId String?
+
+  approvedAt         DateTime?
+  cancelledByUserId  String?
+  cancelledAt        DateTime?
+  cancellationReason String?
+
+  notes String?
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  condition AssetCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
+
+  requestedByUser User @relation("RetirementRequestedBy", fields: [requestedByUserId], references: [id])
+
+  approvedByUser User? @relation("RetirementApprovedBy", fields: [approvedByUserId], references: [id])
+
+  cancelledByUser User?    @relation("RetirementCancelledBy", fields: [cancelledByUserId], references: [id])
+  createdAt       DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([assetId])
+  @@index([status])
+  @@index([conditionId])
+  @@index([requestedByUserId])
+  @@index([approvedByUserId])
+  @@index([cancelledByUserId])
+  @@index([retirementDate])
 }
