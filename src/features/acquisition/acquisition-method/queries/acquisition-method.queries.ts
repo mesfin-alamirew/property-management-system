@@ -21,19 +21,3 @@ export async function getAcquisitionMethodById(id: string) {
     },
   });
 }
-
-// export async function getActiveAcquisitionMethods() {
-//   return prisma.acquisitionMethod.findMany({
-//     where: {
-//       isActive: true,
-//     },
-//     orderBy: {
-//       name: 'asc',
-//     },
-//     select: {
-//       id: true,
-//       code: true,
-//       name: true,
-//     },
-//   });
-// }
