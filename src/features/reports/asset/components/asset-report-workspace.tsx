@@ -1,93 +1,88 @@
 'use client';
 
-import { useState } from 'react';
-
-import type { AssetReportFilters, AssetReportRow } from '../types/asset.types';
+import { useState, useTransition } from 'react';
 
 import { getAssetReportAction } from '../actions/asset.actions';
-
-import { AssetReportFilters as AssetReportFiltersComponent } from './asset-report-filters';
+import { AssetReportFilters } from './asset-report-filters';
 import { AssetReportTable } from './asset-report-table';
+import type {
+  AssetReportFilters as AssetReportFiltersType,
+  AssetReportRow,
+} from '../types/asset.types';
+
+type LookupOption = {
+  id: string;
+  code: string;
+  name: string;
+};
 
 type AssetReportWorkspaceProps = {
-  assets: AssetReportRow[];
-
-  assetTypes: {
-    id: string;
-    code: string;
-    name: string;
-  }[];
-
-  assetStatuses: {
-    id: string;
-    code: string;
-    name: string;
-  }[];
-
-  assetConditions: {
-    id: string;
-    code: string;
-    name: string;
-  }[];
+  assetTypes: LookupOption[];
+  assetCategories: LookupOption[];
+  statuses: LookupOption[];
+  conditions: LookupOption[];
+  organizationUnits: LookupOption[];
+  locations: LookupOption[];
+  acquisitionMethods: LookupOption[];
+  initialRows: AssetReportRow[];
 };
 
 export function AssetReportWorkspace({
-  assets,
   assetTypes,
-  assetStatuses,
-  assetConditions,
+  assetCategories,
+  statuses,
+  conditions,
+  organizationUnits,
+  locations,
+  acquisitionMethods,
+  initialRows,
 }: AssetReportWorkspaceProps) {
-  const [reportRows, setReportRows] = useState<AssetReportRow[]>(assets);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [rows, setRows] = useState<AssetReportRow[]>(initialRows);
 
-  async function handleFilter(filters: AssetReportFilters) {
-    setIsLoading(true);
-    setErrorMessage(null);
+  const [error, setError] = useState<string | null>(null);
 
-    try {
+  const [isPending, startTransition] = useTransition();
+
+  function handleApply(filters: AssetReportFiltersType) {
+    setError(null);
+
+    startTransition(async () => {
       const result = await getAssetReportAction(filters);
 
       if (!result.success) {
-        setErrorMessage(result.message);
+        setError(result.message);
         return;
       }
 
-      setReportRows(result.data);
-    } catch {
-      setErrorMessage('Something went wrong');
-    } finally {
-      setIsLoading(false);
-    }
+      setRows(result.data);
+    });
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Asset Report</h1>
-
-        <p className="text-sm text-muted-foreground">
-          View and filter registered organizational assets.
-        </p>
-      </div>
-
-      <AssetReportFiltersComponent
+      <AssetReportFilters
         assetTypes={assetTypes}
-        statuses={assetStatuses}
-        conditions={assetConditions}
-        onFilter={handleFilter}
+        assetCategories={assetCategories}
+        statuses={statuses}
+        conditions={conditions}
+        organizationUnits={organizationUnits}
+        locations={locations}
+        acquisitionMethods={acquisitionMethods}
+        onApply={handleApply}
       />
 
-      {errorMessage && (
-        <div className="rounded-md border p-3 text-sm">{errorMessage}</div>
+      {error && (
+        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
       )}
 
-      {isLoading ? (
-        <div className="rounded-md border p-6 text-center text-sm">
-          Loading report...
+      {isPending ? (
+        <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-sm text-gray-500">
+          Loading asset report...
         </div>
       ) : (
-        <AssetReportTable assets={reportRows} />
+        <AssetReportTable rows={rows} />
       )}
     </div>
   );
