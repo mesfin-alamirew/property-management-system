@@ -1,4 +1,8 @@
-import type { AuthenticatedUser, AuthProviderAdapter } from './auth.types';
+import type {
+  AuthenticatedUser,
+  AuthIdentity,
+  AuthProviderAdapter,
+} from './auth.types';
 
 import { resolveAuthenticatedUser } from './identity-mapping.service';
 
@@ -12,6 +16,12 @@ export class AuthenticationService {
       return null;
     }
 
+    return this.resolveIdentity(identity);
+  }
+
+  async resolveIdentity(
+    identity: AuthIdentity,
+  ): Promise<AuthenticatedUser | null> {
     return resolveAuthenticatedUser(identity);
   }
 }

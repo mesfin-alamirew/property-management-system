@@ -12,6 +12,7 @@
     "test:building-action": "tsx scripts/test-building-action.ts"
   },
   "dependencies": {
+    "@azure/msal-node": "^6.0.0",
     "@hookform/resolvers": "^5.7.1",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",

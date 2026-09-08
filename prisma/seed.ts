@@ -130,24 +130,24 @@ async function main() {
     });
   }
 
-  // Assign SYSTEM_ADMIN to the development user.
-  const existingUserRole = await prisma.userRole.findFirst({
-    where: {
-      userId: devUser.id,
-      roleId: systemAdminRole.id,
-      removedAt: null,
-    },
-  });
+  // // Assign SYSTEM_ADMIN to the development user.
+  // const existingUserRole = await prisma.userRole.findFirst({
+  //   where: {
+  //     userId: devUser.id,
+  //     roleId: systemAdminRole.id,
+  //     removedAt: null,
+  //   },
+  // });
 
-  if (!existingUserRole) {
-    await prisma.userRole.create({
-      data: {
-        userId: devUser.id,
-        roleId: systemAdminRole.id,
-        assignedByUserId: devUser.id,
-      },
-    });
-  }
+  // if (!existingUserRole) {
+  //   await prisma.userRole.create({
+  //     data: {
+  //       userId: devUser.id,
+  //       roleId: systemAdminRole.id,
+  //       assignedByUserId: devUser.id,
+  //     },
+  //   });
+  // }
   const statuses = [
     {
       code: 'ACTIVE',
