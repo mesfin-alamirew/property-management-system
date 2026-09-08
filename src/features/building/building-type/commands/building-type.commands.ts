@@ -10,8 +10,16 @@ import {
 import type { BuildingTypeFormData } from '../schemas/building-type.schema';
 
 import { getBuildingTypeById } from '../queries/building-type.queries';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-export async function createBuildingType(data: BuildingTypeFormData) {
+export async function createBuildingType(
+  userId: string,
+  data: BuildingTypeFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_TYPE:CREATE',
+  });
   const existingCode = await findBuildingTypeByCode(data.code);
 
   if (existingCode) {
@@ -22,9 +30,14 @@ export async function createBuildingType(data: BuildingTypeFormData) {
 }
 
 export async function updateBuildingType(
+  userId: string,
   id: string,
   data: BuildingTypeFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_TYPE:UPDATE',
+  });
   await getBuildingTypeById(id);
 
   const existingCode = await findBuildingTypeByCode(data.code, id);
@@ -36,7 +49,11 @@ export async function updateBuildingType(
   return updateBuildingTypeRecord(id, data);
 }
 
-export async function deactivateBuildingType(id: string) {
+export async function deactivateBuildingType(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_TYPE:DEACTIVATE',
+  });
   const buildingType = await getBuildingTypeById(id);
 
   if (!buildingType.isActive) {

@@ -9,18 +9,22 @@ import {
   updateWoreda,
   deactivateWoreda,
 } from '../commands/woreda.commands';
-import { AppError } from '@/lib/errors';
-import type { ActionResult } from '@/types/action-result';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
+import type { ActionResult } from '@/types/action-result';
 import type { Woreda } from '@/generated/prisma/client';
 
 export async function createWoredaAction(
   formData: unknown,
 ): Promise<ActionResult<Woreda>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = woredaSchema.parse(formData);
 
-    const result = await createWoreda(data);
+    const result = await createWoreda(user.id, data);
 
     revalidatePath('/woredas');
 
@@ -48,9 +52,11 @@ export async function updateWoredaAction(
   formData: unknown,
 ): Promise<ActionResult<Woreda>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = woredaSchema.parse(formData);
 
-    const result = await updateWoreda(id, data);
+    const result = await updateWoreda(user.id, id, data);
 
     revalidatePath('/woredas');
 
@@ -77,7 +83,9 @@ export async function deactivateWoredaAction(
   id: string,
 ): Promise<ActionResult<Woreda>> {
   try {
-    const result = await deactivateWoreda(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateWoreda(user.id, id);
 
     revalidatePath('/woredas');
 

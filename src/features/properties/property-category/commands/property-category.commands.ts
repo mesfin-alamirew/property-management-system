@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -21,7 +22,16 @@ export async function getPropertyCategoryById(id: string) {
 
   return propertyCategory;
 }
-export async function createPropertyCategory(data: PropertyCategoryFormData) {
+
+export async function createPropertyCategory(
+  userId: string,
+  data: PropertyCategoryFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_CATEGORY:CREATE',
+  });
+
   const existingCode = await findPropertyCategoryByCode(data.code);
 
   if (existingCode) {
@@ -46,9 +56,15 @@ export async function createPropertyCategory(data: PropertyCategoryFormData) {
 }
 
 export async function updatePropertyCategory(
+  userId: string,
   id: string,
   data: PropertyCategoryFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_CATEGORY:UPDATE',
+  });
+
   await getPropertyCategoryById(id);
 
   const existingCode = await findPropertyCategoryByCode(data.code, id);
@@ -122,7 +138,12 @@ async function validateParentCategoryForUpdate(id: string, parentId?: string) {
   }
 }
 
-export async function deactivatePropertyCategory(id: string) {
+export async function deactivatePropertyCategory(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_CATEGORY:DEACTIVATE',
+  });
+
   const propertyCategory = await getPropertyCategoryById(id);
 
   if (!propertyCategory.isActive) {

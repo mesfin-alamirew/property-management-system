@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -12,7 +13,12 @@ import { findAssetCategoryById } from '@/features/assets/asset-category/reposito
 
 import type { AssetTypeFormData } from '../schemas/asset-type.schema';
 
-export async function createAssetType(data: AssetTypeFormData) {
+export async function createAssetType(userId: string, data: AssetTypeFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_TYPE:CREATE',
+  });
+
   const category = await findAssetCategoryById(data.categoryId);
 
   if (!category) {
@@ -39,7 +45,16 @@ export async function createAssetType(data: AssetTypeFormData) {
   return createAssetTypeRecord(data);
 }
 
-export async function updateAssetType(id: string, data: AssetTypeFormData) {
+export async function updateAssetType(
+  userId: string,
+  id: string,
+  data: AssetTypeFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_TYPE:UPDATE',
+  });
+
   const assetType = await findAssetTypeById(id);
 
   if (!assetType) {
@@ -72,7 +87,12 @@ export async function updateAssetType(id: string, data: AssetTypeFormData) {
   return updateAssetTypeRecord(id, data);
 }
 
-export async function deactivateAssetType(id: string) {
+export async function deactivateAssetType(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_TYPE:DEACTIVATE',
+  });
+
   const assetType = await findAssetTypeById(id);
 
   if (!assetType) {

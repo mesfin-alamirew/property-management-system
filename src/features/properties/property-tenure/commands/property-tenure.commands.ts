@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -21,7 +22,15 @@ export async function getPropertyTenureById(id: string) {
   return propertyTenure;
 }
 
-export async function createPropertyTenure(data: PropertyTenureFormData) {
+export async function createPropertyTenure(
+  userId: string,
+  data: PropertyTenureFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_TENURE:CREATE',
+  });
+
   const existingCode = await findPropertyTenureByCode(data.code);
 
   if (existingCode) {
@@ -38,9 +47,15 @@ export async function createPropertyTenure(data: PropertyTenureFormData) {
 }
 
 export async function updatePropertyTenure(
+  userId: string,
   id: string,
   data: PropertyTenureFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_TENURE:UPDATE',
+  });
+
   await getPropertyTenureById(id);
 
   const existingCode = await findPropertyTenureByCode(data.code, id);
@@ -58,7 +73,12 @@ export async function updatePropertyTenure(
   return updatePropertyTenureRecord(id, data);
 }
 
-export async function deactivatePropertyTenure(id: string) {
+export async function deactivatePropertyTenure(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_TENURE:DEACTIVATE',
+  });
+
   const propertyTenure = await getPropertyTenureById(id);
 
   if (!propertyTenure.isActive) {

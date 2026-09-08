@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -20,9 +21,11 @@ export async function createAcquisitionItemAction(
   formData: unknown,
 ): Promise<ActionResult<AcquisitionItemActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = acquisitionItemSchema.parse(formData);
 
-    const result = await createAcquisitionItem(data);
+    const result = await createAcquisitionItem(user.id, data);
 
     revalidatePath('/acquisitions');
 
@@ -52,9 +55,11 @@ export async function updateAcquisitionItemAction(
   formData: unknown,
 ): Promise<ActionResult<AcquisitionItemActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = acquisitionItemSchema.parse(formData);
 
-    const result = await updateAcquisitionItem(id, data);
+    const result = await updateAcquisitionItem(user.id, id, data);
 
     revalidatePath('/acquisitions');
 

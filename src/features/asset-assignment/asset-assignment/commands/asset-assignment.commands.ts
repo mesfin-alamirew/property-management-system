@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -19,6 +20,11 @@ export async function createAssetAssignment(
   userId: string,
   data: CreateAssetAssignmentFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_ASSIGNMENT:CREATE',
+  });
+
   const asset = await findAssetById(data.assetId);
 
   if (!asset) {
@@ -51,6 +57,11 @@ export async function returnAssetAssignment(
   id: string,
   data: ReturnAssetAssignmentFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_ASSIGNMENT:RETURN',
+  });
+
   const assignment = await findAssetAssignmentById(id);
 
   if (!assignment) {

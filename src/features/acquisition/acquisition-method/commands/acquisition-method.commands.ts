@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -15,8 +16,14 @@ type CreateAcquisitionMethodInput = AcquisitionMethodFormValues;
 type UpdateAcquisitionMethodInput = AcquisitionMethodFormValues;
 
 export async function createAcquisitionMethod(
+  userId: string,
   input: CreateAcquisitionMethodInput,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_METHOD:CREATE',
+  });
+
   const existingByCode = await findAcquisitionMethodByCode(input.code);
 
   if (existingByCode) {
@@ -42,9 +49,15 @@ export async function createAcquisitionMethod(
 }
 
 export async function updateAcquisitionMethod(
+  userId: string,
   id: string,
   input: UpdateAcquisitionMethodInput,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_METHOD:UPDATE',
+  });
+
   const existing = await findAcquisitionMethodById(id);
 
   if (!existing) {
@@ -75,7 +88,12 @@ export async function updateAcquisitionMethod(
   });
 }
 
-export async function deactivateAcquisitionMethod(id: string) {
+export async function deactivateAcquisitionMethod(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_METHOD:DEACTIVATE',
+  });
+
   const existing = await findAcquisitionMethodById(id);
 
   if (!existing) {

@@ -1,11 +1,14 @@
 'use server';
 
 import { organizationUnitSchema } from '../schemas/organization-unit.schema';
+
 import {
   createOrganizationUnit,
   updateOrganizationUnit,
   deactivateOrganizationUnit,
 } from '../commands/organization-unit.commands';
+
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 import type { OrganizationUnit } from '@/generated/prisma/client';
 
@@ -15,9 +18,11 @@ export async function createOrganizationUnitAction(
   input: unknown,
 ): Promise<ActionResult<OrganizationUnit>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = organizationUnitSchema.parse(input);
 
-    const organizationUnit = await createOrganizationUnit(data);
+    const organizationUnit = await createOrganizationUnit(user.id, data);
 
     return {
       success: true,
@@ -33,9 +38,11 @@ export async function updateOrganizationUnitAction(
   input: unknown,
 ): Promise<ActionResult<OrganizationUnit>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = organizationUnitSchema.parse(input);
 
-    const organizationUnit = await updateOrganizationUnit(id, data);
+    const organizationUnit = await updateOrganizationUnit(user.id, id, data);
 
     return {
       success: true,
@@ -50,7 +57,9 @@ export async function deactivateOrganizationUnitAction(
   id: string,
 ): Promise<ActionResult<OrganizationUnit>> {
   try {
-    const organizationUnit = await deactivateOrganizationUnit(id);
+    const user = await requireCurrentUser();
+
+    const organizationUnit = await deactivateOrganizationUnit(user.id, id);
 
     return {
       success: true,

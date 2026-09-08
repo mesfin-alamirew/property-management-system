@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { AppError } from '@/lib/errors';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import type { ActionResult } from '@/types/action-result';
 
 import {
@@ -21,9 +22,11 @@ export async function createOwnershipAction(
   formData: unknown,
 ): Promise<ActionResult<OwnershipActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = ownershipSchema.parse(formData);
 
-    const result = await createOwnership(data);
+    const result = await createOwnership(user.id, data);
 
     revalidatePath('/ownership');
 
@@ -53,9 +56,11 @@ export async function updateOwnershipAction(
   formData: unknown,
 ): Promise<ActionResult<OwnershipActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = ownershipSchema.parse(formData);
 
-    const result = await updateOwnership(id, data);
+    const result = await updateOwnership(user.id, id, data);
 
     revalidatePath('/ownership');
 
@@ -84,7 +89,9 @@ export async function deactivateOwnershipAction(
   id: string,
 ): Promise<ActionResult<OwnershipActionData>> {
   try {
-    const result = await deactivateOwnership(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateOwnership(user.id, id);
 
     revalidatePath('/ownership');
 

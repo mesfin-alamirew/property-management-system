@@ -2,6 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import type { ActionResult } from '@/types/action-result';
+
 import { propertyTypeSchema } from '../schemas/property-type.schema';
 
 import {
@@ -10,17 +14,17 @@ import {
   deactivatePropertyType,
 } from '../commands/property-type.commands';
 
-import { AppError } from '@/lib/errors';
-import { ActionResult } from '@/types/action-result';
-import { PropertyType } from '@/generated/prisma/client';
+import type { PropertyType } from '@/generated/prisma/client';
 
 export async function createPropertyTypeAction(
   formData: unknown,
 ): Promise<ActionResult<PropertyType>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = propertyTypeSchema.parse(formData);
 
-    const result = await createPropertyType(data);
+    const result = await createPropertyType(user.id, data);
 
     revalidatePath('/property-types');
 
@@ -48,9 +52,11 @@ export async function updatePropertyTypeAction(
   formData: unknown,
 ): Promise<ActionResult<PropertyType>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = propertyTypeSchema.parse(formData);
 
-    const result = await updatePropertyType(id, data);
+    const result = await updatePropertyType(user.id, id, data);
 
     revalidatePath('/property-types');
 
@@ -77,7 +83,9 @@ export async function deactivatePropertyTypeAction(
   id: string,
 ): Promise<ActionResult<PropertyType>> {
   try {
-    const result = await deactivatePropertyType(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivatePropertyType(user.id, id);
 
     revalidatePath('/property-types');
 

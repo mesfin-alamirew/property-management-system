@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -10,7 +11,15 @@ import {
 
 import type { AssetStatusFormData } from '../schemas/asset-status.schema';
 
-export async function createAssetStatus(data: AssetStatusFormData) {
+export async function createAssetStatus(
+  userId: string,
+  data: AssetStatusFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_STATUS:CREATE',
+  });
+
   const existingAssetStatus = await findAssetStatusByCode(data.code);
 
   if (existingAssetStatus) {
@@ -27,7 +36,16 @@ export async function createAssetStatus(data: AssetStatusFormData) {
   return createAssetStatusRecord(data);
 }
 
-export async function updateAssetStatus(id: string, data: AssetStatusFormData) {
+export async function updateAssetStatus(
+  userId: string,
+  id: string,
+  data: AssetStatusFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_STATUS:UPDATE',
+  });
+
   const assetStatus = await findAssetStatusById(id);
 
   if (!assetStatus) {
@@ -50,7 +68,12 @@ export async function updateAssetStatus(id: string, data: AssetStatusFormData) {
   return updateAssetStatusRecord(id, data);
 }
 
-export async function deactivateAssetStatus(id: string) {
+export async function deactivateAssetStatus(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_STATUS:DEACTIVATE',
+  });
+
   const assetStatus = await findAssetStatusById(id);
 
   if (!assetStatus) {

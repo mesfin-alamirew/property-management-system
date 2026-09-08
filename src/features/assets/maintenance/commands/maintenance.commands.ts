@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -30,6 +31,11 @@ export async function createMaintenance(
   userId: string,
   data: MaintenanceFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:CREATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -84,6 +90,11 @@ export async function updateMaintenance(
   id: string,
   data: MaintenanceFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:UPDATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -93,6 +104,7 @@ export async function updateMaintenance(
   if (!user.isActive) {
     throw new AppError('User is inactive', 'USER_INACTIVE');
   }
+
   const maintenance = await findMaintenanceById(id);
 
   if (!maintenance) {
@@ -153,6 +165,11 @@ export async function requestMaintenance(
   userId: string,
   maintenanceId: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:REQUEST',
+  });
+
   const maintenance = await findMaintenanceById(maintenanceId);
 
   if (!maintenance) {
@@ -202,10 +219,16 @@ export async function requestMaintenance(
     return updatedMaintenance;
   });
 }
+
 export async function approveMaintenance(
   userId: string,
   maintenanceId: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:APPROVE',
+  });
+
   const maintenance = await findMaintenanceById(maintenanceId);
 
   if (!maintenance) {
@@ -253,7 +276,13 @@ export async function approveMaintenance(
     return approvedMaintenance;
   });
 }
+
 export async function startMaintenance(userId: string, maintenanceId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:START',
+  });
+
   const maintenance = await findMaintenanceById(maintenanceId);
 
   if (!maintenance) {
@@ -298,10 +327,16 @@ export async function startMaintenance(userId: string, maintenanceId: string) {
     return startedMaintenance;
   });
 }
+
 export async function completeMaintenance(
   userId: string,
   maintenanceId: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:COMPLETE',
+  });
+
   const maintenance = await findMaintenanceById(maintenanceId);
 
   if (!maintenance) {
@@ -346,11 +381,17 @@ export async function completeMaintenance(
     return completedMaintenance;
   });
 }
+
 export async function assignMaintenance(
   focalPersonUserId: string,
   maintenanceId: string,
   assignedToUserId: string,
 ) {
+  await requirePermission({
+    userId: focalPersonUserId,
+    permissionCode: 'MAINTENANCE:ASSIGN',
+  });
+
   const maintenance = await findMaintenanceById(maintenanceId);
 
   if (!maintenance) {

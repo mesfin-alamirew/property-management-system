@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -12,7 +13,15 @@ import {
 
 import type { AcquisitionItemFormData } from '../schemas/acquisition-item.schema';
 
-export async function createAcquisitionItem(data: AcquisitionItemFormData) {
+export async function createAcquisitionItem(
+  userId: string,
+  data: AcquisitionItemFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_ITEM:CREATE',
+  });
+
   const acquisition = await findAcquisitionById(data.acquisitionId);
 
   if (!acquisition) {
@@ -40,9 +49,15 @@ export async function createAcquisitionItem(data: AcquisitionItemFormData) {
 }
 
 export async function updateAcquisitionItem(
+  userId: string,
   id: string,
   data: AcquisitionItemFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_ITEM:UPDATE',
+  });
+
   const acquisitionItem = await findAcquisitionItemById(id);
 
   if (!acquisitionItem) {

@@ -1,6 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -18,8 +20,10 @@ export async function createPropertyTenureAction(
   formData: unknown,
 ): Promise<ActionResult<PropertyTenure>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = propertyTenureSchema.parse(formData);
-    const result = await createPropertyTenure(data);
+    const result = await createPropertyTenure(user.id, data);
 
     revalidatePath('/property-tenure');
 
@@ -28,6 +32,7 @@ export async function createPropertyTenureAction(
     if (error instanceof AppError) {
       return { success: false, message: error.message };
     }
+
     return { success: false, message: 'Something went wrong' };
   }
 }
@@ -37,8 +42,10 @@ export async function updatePropertyTenureAction(
   formData: unknown,
 ): Promise<ActionResult<PropertyTenure>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = propertyTenureSchema.parse(formData);
-    const result = await updatePropertyTenure(id, data);
+    const result = await updatePropertyTenure(user.id, id, data);
 
     revalidatePath('/property-tenure');
 
@@ -47,6 +54,7 @@ export async function updatePropertyTenureAction(
     if (error instanceof AppError) {
       return { success: false, message: error.message };
     }
+
     return { success: false, message: 'Something went wrong' };
   }
 }
@@ -55,7 +63,9 @@ export async function deactivatePropertyTenureAction(
   id: string,
 ): Promise<ActionResult<PropertyTenure>> {
   try {
-    const result = await deactivatePropertyTenure(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivatePropertyTenure(user.id, id);
 
     revalidatePath('/property-tenure');
 
@@ -64,6 +74,7 @@ export async function deactivatePropertyTenureAction(
     if (error instanceof AppError) {
       return { success: false, message: error.message };
     }
+
     return { success: false, message: 'Something went wrong' };
   }
 }

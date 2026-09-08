@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
 import {
@@ -121,6 +121,7 @@ export async function requestMaintenanceAction(
     };
   }
 }
+
 export async function approveMaintenanceAction(
   maintenanceId: string,
 ): Promise<ActionResult<MaintenanceActionData>> {
@@ -152,6 +153,7 @@ export async function approveMaintenanceAction(
     };
   }
 }
+
 export async function startMaintenanceAction(
   maintenanceId: string,
 ): Promise<ActionResult<MaintenanceActionData>> {
@@ -183,6 +185,7 @@ export async function startMaintenanceAction(
     };
   }
 }
+
 export async function completeMaintenanceAction(
   maintenanceId: string,
 ): Promise<ActionResult<MaintenanceActionData>> {
@@ -214,17 +217,13 @@ export async function completeMaintenanceAction(
     };
   }
 }
+
 export async function assignMaintenanceAction(
   maintenanceId: string,
   assignedToUserId: string,
 ): Promise<ActionResult<MaintenanceActionData>> {
   try {
     const user = await requireCurrentUser();
-    console.log('ASSIGN ACTION:', {
-      userId: user.id,
-      maintenanceId,
-      assignedToUserId,
-    });
 
     const result = await assignMaintenance(
       user.id,
@@ -242,7 +241,6 @@ export async function assignMaintenanceAction(
       },
     };
   } catch (error) {
-    console.error('ASSIGN MAINTENANCE ERROR:', error);
     if (error instanceof AppError) {
       return {
         success: false,

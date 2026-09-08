@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -22,7 +23,9 @@ export async function createDisposalItemAction(
   try {
     const data = disposalItemSchema.parse(formData);
 
-    const result = await createDisposalItem(data);
+    const user = await requireCurrentUser();
+
+    const result = await createDisposalItem(user.id, data);
 
     revalidatePath('/disposals');
 
@@ -54,7 +57,9 @@ export async function updateDisposalItemAction(
   try {
     const data = disposalItemSchema.parse(formData);
 
-    const result = await updateDisposalItem(id, data);
+    const user = await requireCurrentUser();
+
+    const result = await updateDisposalItem(user.id, id, data);
 
     revalidatePath('/disposals');
 

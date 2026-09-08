@@ -12,6 +12,7 @@ import {
 } from '../commands/building-space-type.commands';
 
 import { buildingSpaceTypeSchema } from '../schemas/building-space-type.schema';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 type BuildingSpaceTypeActionData = {
   id: string;
@@ -22,8 +23,8 @@ export async function createBuildingSpaceTypeAction(
 ): Promise<ActionResult<BuildingSpaceTypeActionData>> {
   try {
     const data = buildingSpaceTypeSchema.parse(formData);
-
-    const result = await createBuildingSpaceType(data);
+    const user = await requireCurrentUser();
+    const result = await createBuildingSpaceType(user.id, data);
 
     revalidatePath('/building-space-types');
 
@@ -54,8 +55,8 @@ export async function updateBuildingSpaceTypeAction(
 ): Promise<ActionResult<BuildingSpaceTypeActionData>> {
   try {
     const data = buildingSpaceTypeSchema.parse(formData);
-
-    const result = await updateBuildingSpaceType(id, data);
+    const user = await requireCurrentUser();
+    const result = await updateBuildingSpaceType(user.id, id, data);
 
     revalidatePath('/building-space-types');
 
@@ -84,7 +85,8 @@ export async function deactivateBuildingSpaceTypeAction(
   id: string,
 ): Promise<ActionResult<BuildingSpaceTypeActionData>> {
   try {
-    const result = await deactivateBuildingSpaceType(id);
+    const user = await requireCurrentUser();
+    const result = await deactivateBuildingSpaceType(user.id, id);
 
     revalidatePath('/building-space-types');
 

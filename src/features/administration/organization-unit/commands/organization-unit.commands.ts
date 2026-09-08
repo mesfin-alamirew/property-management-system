@@ -13,9 +13,20 @@ import {
 } from '../repositories/organization-unit.repository';
 
 import type { OrganizationUnitFormData } from '../schemas/organization-unit.schema';
+
 import { getOrganizationUnitById } from '../queries/organization-unit.queries';
 
-export async function createOrganizationUnit(data: OrganizationUnitFormData) {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
+export async function createOrganizationUnit(
+  userId: string,
+  data: OrganizationUnitFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ORGANIZATION_UNIT:CREATE',
+  });
+
   const existingCode = await findOrganizationUnitByCode(data.code);
 
   if (existingCode) {
@@ -62,9 +73,15 @@ async function validateParentOrganizationUnit(parentId?: string) {
 }
 
 export async function updateOrganizationUnit(
+  userId: string,
   id: string,
   data: OrganizationUnitFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ORGANIZATION_UNIT:UPDATE',
+  });
+
   await getOrganizationUnitById(id);
 
   const existingCode = await findOrganizationUnitByCode(data.code, id);
@@ -116,7 +133,13 @@ async function validateParentOrganizationUnitForUpdate(
     );
   }
 }
-export async function deactivateOrganizationUnit(id: string) {
+
+export async function deactivateOrganizationUnit(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ORGANIZATION_UNIT:DEACTIVATE',
+  });
+
   await getOrganizationUnitById(id);
 
   const children = await findActiveOrganizationUnitChildren(id);

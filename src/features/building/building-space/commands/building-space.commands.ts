@@ -12,8 +12,17 @@ import { findBuildingById } from '@/features/building/building/repositories/buil
 import { findBuildingSpaceTypeById } from '@/features/building/building-space-type/repositories/building-space-type.repository';
 
 import type { BuildingSpaceFormData } from '../schemas/building-space.schema';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-export async function createBuildingSpace(data: BuildingSpaceFormData) {
+export async function createBuildingSpace(
+  userId: string,
+  data: BuildingSpaceFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_SPACE_TYPE:CREATE',
+  });
+
   const building = await findBuildingById(data.buildingId);
 
   if (!building) {
@@ -56,9 +65,14 @@ export async function createBuildingSpace(data: BuildingSpaceFormData) {
 }
 
 export async function updateBuildingSpace(
+  userId: string,
   id: string,
   data: BuildingSpaceFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_SPACE_TYPE:UPDATE',
+  });
   const space = await findBuildingSpaceById(id);
 
   if (!space) {
@@ -107,7 +121,11 @@ export async function updateBuildingSpace(
   return updateBuildingSpaceRecord(id, data);
 }
 
-export async function deactivateBuildingSpace(id: string) {
+export async function deactivateBuildingSpace(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_SPACE_TYPE:DEACTIVATE',
+  });
   const space = await findBuildingSpaceById(id);
 
   if (!space) {

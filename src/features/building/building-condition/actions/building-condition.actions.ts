@@ -12,6 +12,8 @@ import {
 } from '../commands/building-condition.commands';
 
 import { buildingConditionSchema } from '../schemas/building-condition.schema';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+
 import { BuildingCondition } from '@/generated/prisma/browser';
 
 export async function createBuildingConditionAction(
@@ -19,8 +21,9 @@ export async function createBuildingConditionAction(
 ): Promise<ActionResult<BuildingCondition>> {
   try {
     const data = buildingConditionSchema.parse(formData);
+    const user = await requireCurrentUser();
 
-    const result = await createBuildingCondition(data);
+    const result = await createBuildingCondition(user.id, data);
 
     revalidatePath('/building-condition');
 
@@ -49,8 +52,8 @@ export async function updateBuildingConditionAction(
 ): Promise<ActionResult<BuildingCondition>> {
   try {
     const data = buildingConditionSchema.parse(formData);
-
-    const result = await updateBuildingCondition(id, data);
+    const user = await requireCurrentUser();
+    const result = await updateBuildingCondition(user.id, id, data);
 
     revalidatePath('/building-condition');
 
@@ -77,7 +80,8 @@ export async function deactivateBuildingConditionAction(
   id: string,
 ): Promise<ActionResult<BuildingCondition>> {
   try {
-    const result = await deactivateBuildingCondition(id);
+    const user = await requireCurrentUser();
+    const result = await deactivateBuildingCondition(user.id, id);
 
     revalidatePath('/building-condition');
 

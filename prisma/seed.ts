@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { prisma } from '../src/lib/prisma';
 import { AuthProvider } from '../src/generated/prisma/client';
-
+import { PERMISSION_CATALOG } from '../src/lib/authorization/permission-catalog';
 async function main() {
   console.log('Starting PMS seed...');
 
@@ -66,65 +66,49 @@ async function main() {
       externalId: 'dev-local-approver-001',
     },
   });
+  // ============================================================
+  // Authorization
+  // ============================================================
+
   const systemAdminRole = await prisma.role.upsert({
-    where: {
-      code: 'SYSTEM_ADMIN',
-    },
+    where: { code: 'SYSTEM_ADMIN' },
     update: {
       name: 'System Administrator',
-      description: 'Development and system administration role',
+      description: 'Full system administration role',
       isActive: true,
     },
     create: {
       code: 'SYSTEM_ADMIN',
       name: 'System Administrator',
-      description: 'Development and system administration role',
+      description: 'Full system administration role',
       isActive: true,
     },
   });
 
-  const buildingPermissions = [
-    {
-      code: 'BUILDING:CREATE',
-      resource: 'BUILDING',
-      action: 'CREATE',
-      description: 'Create a building',
-    },
-    {
-      code: 'BUILDING:READ',
-      resource: 'BUILDING',
-      action: 'READ',
-      description: 'View building information',
-    },
-    {
-      code: 'BUILDING:UPDATE',
-      resource: 'BUILDING',
-      action: 'UPDATE',
-      description: 'Update building information',
-    },
-    {
-      code: 'BUILDING:DEACTIVATE',
-      resource: 'BUILDING',
-      action: 'DEACTIVATE',
-      description: 'Deactivate a building',
-    },
-  ];
-
-  for (const permission of buildingPermissions) {
+  // Seed the authoritative permission catalog.
+  for (const permission of PERMISSION_CATALOG) {
     await prisma.permission.upsert({
-      where: {
-        code: permission.code,
+      where: { code: permission.code },
+      update: {
+        resource: permission.resource,
+        action: permission.action,
+        description: permission.description,
+        isActive: true,
       },
-      update: permission,
-      create: permission,
+      create: {
+        code: permission.code,
+        resource: permission.resource,
+        action: permission.action,
+        description: permission.description,
+        isActive: true,
+      },
     });
   }
 
-  for (const permission of buildingPermissions) {
+  // SYSTEM_ADMIN receives every permission in the catalog.
+  for (const permission of PERMISSION_CATALOG) {
     const dbPermission = await prisma.permission.findUnique({
-      where: {
-        code: permission.code,
-      },
+      where: { code: permission.code },
     });
 
     if (!dbPermission) {
@@ -146,6 +130,7 @@ async function main() {
     });
   }
 
+  // Assign SYSTEM_ADMIN to the development user.
   const existingUserRole = await prisma.userRole.findFirst({
     where: {
       userId: devUser.id,

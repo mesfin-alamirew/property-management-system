@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
 import {
@@ -17,7 +17,6 @@ import {
   cancelIncident,
 } from '../commands/incident.commands';
 
-import { incidentSchema } from '../schemas/incident.schema';
 import type { IncidentFormData } from '../schemas/incident.schema';
 
 type IncidentActionData = {
@@ -47,8 +46,6 @@ export async function createIncidentAction(
         message: error.message,
       };
     }
-
-    console.error('CREATE INCIDENT ERROR:', error);
 
     return {
       success: false,
@@ -82,8 +79,6 @@ export async function updateIncidentAction(
         message: error.message,
       };
     }
-
-    console.error('UPDATE INCIDENT ERROR:', error);
 
     return {
       success: false,

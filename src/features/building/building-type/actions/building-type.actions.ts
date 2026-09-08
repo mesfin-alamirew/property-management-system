@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 import {
   createBuildingType,
@@ -12,6 +13,7 @@ import {
 } from '../commands/building-type.commands';
 
 import { buildingTypeSchema } from '../schemas/building-type.schema';
+
 import { BuildingType } from '@/generated/prisma/browser';
 
 export async function createBuildingTypeAction(
@@ -19,8 +21,9 @@ export async function createBuildingTypeAction(
 ): Promise<ActionResult<BuildingType>> {
   try {
     const data = buildingTypeSchema.parse(formData);
+    const user = await requireCurrentUser();
 
-    const result = await createBuildingType(data);
+    const result = await createBuildingType(user.id, data);
 
     revalidatePath('/building-type');
 
@@ -49,8 +52,9 @@ export async function updateBuildingTypeAction(
 ): Promise<ActionResult<BuildingType>> {
   try {
     const data = buildingTypeSchema.parse(formData);
+    const user = await requireCurrentUser();
 
-    const result = await updateBuildingType(id, data);
+    const result = await updateBuildingType(user.id, id, data);
 
     revalidatePath('/building-type');
 
@@ -77,7 +81,9 @@ export async function deactivateBuildingTypeAction(
   id: string,
 ): Promise<ActionResult<BuildingType>> {
   try {
-    const result = await deactivateBuildingType(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateBuildingType(user.id, id);
 
     revalidatePath('/building-type');
 

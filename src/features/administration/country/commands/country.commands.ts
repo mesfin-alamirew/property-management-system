@@ -9,9 +9,17 @@ import {
 } from '../repositories/country.repository';
 
 import type { CountryFormData } from '../schemas/country.schema';
+
 import { getCountryById } from '../queries/country.queries';
 
-export async function createCountry(data: CountryFormData) {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
+export async function createCountry(userId: string, data: CountryFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'COUNTRY:CREATE',
+  });
+
   const existingCode = await findCountryByCode(data.code);
 
   if (existingCode) {
@@ -27,7 +35,16 @@ export async function createCountry(data: CountryFormData) {
   return createCountryRecord(data);
 }
 
-export async function updateCountry(id: string, data: CountryFormData) {
+export async function updateCountry(
+  userId: string,
+  id: string,
+  data: CountryFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'COUNTRY:UPDATE',
+  });
+
   await getCountryById(id);
 
   const existingCode = await findCountryByCode(data.code, id);
@@ -45,7 +62,12 @@ export async function updateCountry(id: string, data: CountryFormData) {
   return updateCountryRecord(id, data);
 }
 
-export async function deactivateCountry(id: string) {
+export async function deactivateCountry(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'COUNTRY:DEACTIVATE',
+  });
+
   const country = await getCountryById(id);
 
   if (!country.isActive) {

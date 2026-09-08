@@ -1206,3 +1206,270 @@ Disposal end-to-end test
 | 26 | Try Approve on APPROVED                          | No Approve action available / command rejects       |
 | 27 | Try Cancel on APPROVED                           | No Cancel action available / command rejects        |
 | 28 | Refresh page                                     | All Disposal and DisposalItem data remains correct  |
+
+
+
+Phase 1 — Role & Permission Design
+
+Identify PMS functional areas
+Define roles
+Define permissions
+Decide whether permissions are assigned directly or through roles
+Define administrator responsibilities
+Define behavior for users with no role
+Define authorization rules for server actions/routes
+Approve the model
+
+Phase 2 — Database
+9. Review existing User model
+10. Add Role/Permission models if needed
+11. Add relationships and constraints
+12. Migration
+
+Phase 3 — Authorization Infrastructure
+13. Extend authorization.types.ts
+14. Repository
+15. Authorization service
+16. Server-side authorization helpers
+17. Integrate with requireCurrentUser()
+
+Phase 4 — Administration UI
+18. User administration
+19. Role management
+20. Permission management, if exposed to administrators
+21. Assign/revoke roles
+22. Handle users awaiting authorization
+
+Phase 5 — Application Enforcement
+23. Navigation filtering
+24. Page/route protection
+25. Server Action protection
+26. Feature-level authorization
+27. Audit role/permission changes
+
+Phase 6 — E2E
+28. No-role user
+29. Authorized user
+30. Administrator
+31. Unauthorized direct server request
+32. Role changes
+33. Disabled user
+34. Regression testing
+
+| Role                             | Primary responsibility                                                  |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| **PMS Administrator**            | System administration, users, roles, configuration, and full PMS access |
+| **Property Officer**             | Properties, buildings, spaces, ownership and related master data        |
+| **Asset Officer**                | Asset registration, classification, acquisition and asset records       |
+| **Asset Accountability Officer** | Assignments, locations, movements and physical verification             |
+| **Maintenance Officer**          | Maintenance operations and maintenance records                          |
+| **Incident Officer**             | Incident management and resolutions                                     |
+| **Lifecycle Officer**            | Retirement and disposal processes                                       |
+| **Management / Viewer**          | Read-only operational and management reporting                          |
+
+
+
+1. Complete Permission Catalog
+Administration
+COUNTRY:CREATE
+COUNTRY:READ
+COUNTRY:UPDATE
+COUNTRY:DEACTIVATE
+
+ORGANIZATION_UNIT:CREATE
+ORGANIZATION_UNIT:READ
+ORGANIZATION_UNIT:UPDATE
+ORGANIZATION_UNIT:DEACTIVATE
+
+REGION:CREATE
+REGION:READ
+REGION:UPDATE
+REGION:DEACTIVATE
+
+ZONE:CREATE
+ZONE:READ
+ZONE:UPDATE
+ZONE:DEACTIVATE
+
+WOREDA:CREATE
+WOREDA:READ
+WOREDA:UPDATE
+WOREDA:DEACTIVATE
+Building
+BUILDING:CREATE
+BUILDING:READ
+BUILDING:UPDATE
+BUILDING:DEACTIVATE
+Ownership
+OWNERSHIP:CREATE
+OWNERSHIP:READ
+OWNERSHIP:UPDATE
+OWNERSHIP:DEACTIVATE
+
+OWNERSHIP_TYPE:CREATE
+OWNERSHIP_TYPE:READ
+OWNERSHIP_TYPE:UPDATE
+OWNERSHIP_TYPE:DEACTIVATE
+Property
+PROPERTY:CREATE
+PROPERTY:READ
+PROPERTY:UPDATE
+PROPERTY:DEACTIVATE
+
+PROPERTY_CATEGORY:CREATE
+PROPERTY_CATEGORY:READ
+PROPERTY_CATEGORY:UPDATE
+PROPERTY_CATEGORY:DEACTIVATE
+
+PROPERTY_STATUS:CREATE
+PROPERTY_STATUS:READ
+PROPERTY_STATUS:UPDATE
+PROPERTY_STATUS:DEACTIVATE
+
+PROPERTY_TENURE:CREATE
+PROPERTY_TENURE:READ
+PROPERTY_TENURE:UPDATE
+PROPERTY_TENURE:DEACTIVATE
+
+PROPERTY_TYPE:CREATE
+PROPERTY_TYPE:READ
+PROPERTY_TYPE:UPDATE
+PROPERTY_TYPE:DEACTIVATE
+Asset Master Data
+ASSET_TYPE:CREATE
+ASSET_TYPE:READ
+ASSET_TYPE:UPDATE
+ASSET_TYPE:DEACTIVATE
+
+ASSET_CATEGORY:CREATE
+ASSET_CATEGORY:READ
+ASSET_CATEGORY:UPDATE
+ASSET_CATEGORY:DEACTIVATE
+
+ASSET_STATUS:CREATE
+ASSET_STATUS:READ
+ASSET_STATUS:UPDATE
+ASSET_STATUS:DEACTIVATE
+
+ASSET_CONDITION:CREATE
+ASSET_CONDITION:READ
+ASSET_CONDITION:UPDATE
+ASSET_CONDITION:DEACTIVATE
+
+ASSET_LOCATION:CREATE
+ASSET_LOCATION:READ
+ASSET_LOCATION:UPDATE
+ASSET_LOCATION:DEACTIVATE
+Asset
+ASSET:CREATE
+ASSET:READ
+ASSET:UPDATE
+Employee
+EMPLOYEE:CREATE
+EMPLOYEE:READ
+EMPLOYEE:UPDATE
+EMPLOYEE:DEACTIVATE
+Acquisition
+ACQUISITION:CREATE
+ACQUISITION:READ
+ACQUISITION:UPDATE
+
+ACQUISITION_ITEM:CREATE
+ACQUISITION_ITEM:READ
+ACQUISITION_ITEM:UPDATE
+
+ACQUISITION_METHOD:CREATE
+ACQUISITION_METHOD:READ
+ACQUISITION_METHOD:UPDATE
+ACQUISITION_METHOD:DEACTIVATE
+Asset Accountability
+ASSET_ASSIGNMENT:CREATE
+ASSET_ASSIGNMENT:READ
+ASSET_ASSIGNMENT:RETURN
+
+ASSET_MOVEMENT:READ
+ASSET_MOVEMENT:MOVE
+
+Notice the deliberate distinction:
+
+ASSET_ASSIGNMENT:CREATE
+ASSET_ASSIGNMENT:RETURN
+
+rather than UPDATE, and:
+
+ASSET_MOVEMENT:MOVE
+
+rather than ASSET_MOVEMENT:CREATE.
+
+These represent the business operations, not merely database operations.
+
+Maintenance
+MAINTENANCE:CREATE
+MAINTENANCE:READ
+MAINTENANCE:UPDATE
+MAINTENANCE:REQUEST
+MAINTENANCE:ASSIGN
+MAINTENANCE:APPROVE
+MAINTENANCE:START
+MAINTENANCE:COMPLETE
+
+MAINTENANCE_SERVICE:CREATE
+MAINTENANCE_SERVICE:READ
+MAINTENANCE_SERVICE:UPDATE
+MAINTENANCE_SERVICE:DELETE
+Incident
+INCIDENT:CREATE
+INCIDENT:READ
+INCIDENT:UPDATE
+INCIDENT:REPORT
+INCIDENT:ASSIGN
+INCIDENT:START
+INCIDENT:RESOLVE
+INCIDENT:CLOSE
+INCIDENT:CANCEL
+
+No separate INCIDENT_RESOLUTION:CREATE; INCIDENT:RESOLVE owns that business operation.
+
+Physical Verification
+PHYSICAL_VERIFICATION:CREATE
+PHYSICAL_VERIFICATION:READ
+PHYSICAL_VERIFICATION:GENERATE
+PHYSICAL_VERIFICATION:VERIFY
+PHYSICAL_VERIFICATION:COMPLETE
+
+UNREGISTERED_ASSET_OBSERVATION:CREATE
+UNREGISTERED_ASSET_OBSERVATION:READ
+Retirement
+RETIREMENT:CREATE
+RETIREMENT:READ
+RETIREMENT:REQUEST
+RETIREMENT:APPROVE
+RETIREMENT:CANCEL
+Disposal
+DISPOSAL:CREATE
+DISPOSAL:READ
+DISPOSAL:REQUEST
+DISPOSAL:APPROVE
+DISPOSAL:CANCEL
+
+DISPOSAL_ITEM:CREATE
+DISPOSAL_ITEM:READ
+DISPOSAL_ITEM:UPDATE
+
+ Implementation Sequence
+ 
+1. Permission Catalog
+       ↓
+2. Permission Seed
+       ↓
+3. SYSTEM_ADMIN → all permissions
+       ↓
+4. requirePermission()
+       ↓
+5. Apply authorization to Commands
+       ↓
+6. Role management Commands
+       ↓
+7. Role/Permission/User-role UI
+       ↓
+8. End-to-end authorization testing

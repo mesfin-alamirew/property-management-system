@@ -1,11 +1,11 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
-import { createAssetMovementRecord } from '../repositories/asset-movement.repository';
-
 import { findAssetById } from '@/features/assets/asset/repositories/asset.repository';
-
 import { findAssetLocationById } from '@/features/assets/asset-location/repositories/asset-location.repository';
+
+import { createAssetMovementRecord } from '../repositories/asset-movement.repository';
 
 import type { AssetMovementFormData } from '../schemas/asset-movement.schema';
 
@@ -13,6 +13,11 @@ export async function createAssetMovement(
   userId: string,
   data: AssetMovementFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_MOVEMENT:MOVE',
+  });
+
   const asset = await findAssetById(data.assetId);
 
   if (!asset) {

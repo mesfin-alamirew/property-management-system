@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -10,7 +11,15 @@ import {
 
 import type { OwnershipTypeFormData } from '../schemas/ownership-type.schema';
 
-export async function createOwnershipType(data: OwnershipTypeFormData) {
+export async function createOwnershipType(
+  userId: string,
+  data: OwnershipTypeFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'OWNERSHIP_TYPE:CREATE',
+  });
+
   const existingOwnershipType = await findOwnershipTypeByCode(data.code);
 
   if (existingOwnershipType) {
@@ -21,9 +30,15 @@ export async function createOwnershipType(data: OwnershipTypeFormData) {
 }
 
 export async function updateOwnershipType(
+  userId: string,
   id: string,
   data: OwnershipTypeFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'OWNERSHIP_TYPE:UPDATE',
+  });
+
   const ownershipType = await findOwnershipTypeById(id);
 
   if (!ownershipType) {
@@ -39,7 +54,12 @@ export async function updateOwnershipType(
   return updateOwnershipTypeRecord(id, data);
 }
 
-export async function deactivateOwnershipType(id: string) {
+export async function deactivateOwnershipType(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'OWNERSHIP_TYPE:DEACTIVATE',
+  });
+
   const ownershipType = await findOwnershipTypeById(id);
 
   if (!ownershipType) {

@@ -1,4 +1,6 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
+
 import {
   findAssetLocationByCode,
   findAssetLocationByName,
@@ -10,7 +12,15 @@ import {
 
 import type { AssetLocationFormData } from '../schemas/asset-location.schema';
 
-export async function createAssetLocation(data: AssetLocationFormData) {
+export async function createAssetLocation(
+  userId: string,
+  data: AssetLocationFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_LOCATION:CREATE',
+  });
+
   const existingAssetLocation = await findAssetLocationByCode(data.code);
 
   if (existingAssetLocation) {
@@ -41,9 +51,15 @@ export async function createAssetLocation(data: AssetLocationFormData) {
 }
 
 export async function updateAssetLocation(
+  userId: string,
   id: string,
   data: AssetLocationFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_LOCATION:UPDATE',
+  });
+
   const assetLocation = await findAssetLocationById(id);
 
   if (!assetLocation) {
@@ -81,7 +97,13 @@ export async function updateAssetLocation(
 
   return updateAssetLocationRecord(id, data);
 }
-export async function deactivateAssetLocation(id: string) {
+
+export async function deactivateAssetLocation(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_LOCATION:DEACTIVATE',
+  });
+
   const assetLocation = await findAssetLocationById(id);
 
   if (!assetLocation) {

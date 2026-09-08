@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -16,7 +17,12 @@ import type { AssetFormData } from '../schemas/asset.schema';
 
 import { generateNextAssetCode } from '../services/asset-code.service';
 
-export async function createAsset(data: AssetFormData) {
+export async function createAsset(userId: string, data: AssetFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET:CREATE',
+  });
+
   const assetType = await findAssetTypeById(data.assetTypeId);
 
   if (!assetType) {
@@ -83,7 +89,16 @@ export async function createAsset(data: AssetFormData) {
   });
 }
 
-export async function updateAsset(id: string, data: AssetFormData) {
+export async function updateAsset(
+  userId: string,
+  id: string,
+  data: AssetFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET:UPDATE',
+  });
+
   const asset = await findAssetById(id);
 
   if (!asset) {

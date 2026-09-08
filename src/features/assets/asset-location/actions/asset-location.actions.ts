@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -21,9 +22,11 @@ export async function createAssetLocationAction(
   formData: unknown,
 ): Promise<ActionResult<AssetLocationActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetLocationSchema.parse(formData);
 
-    const result = await createAssetLocation(data);
+    const result = await createAssetLocation(user.id, data);
 
     revalidatePath('/asset-locations');
 
@@ -53,9 +56,11 @@ export async function updateAssetLocationAction(
   formData: unknown,
 ): Promise<ActionResult<AssetLocationActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetLocationSchema.parse(formData);
 
-    const result = await updateAssetLocation(id, data);
+    const result = await updateAssetLocation(user.id, id, data);
 
     revalidatePath('/asset-locations');
 
@@ -84,7 +89,9 @@ export async function deactivateAssetLocationAction(
   id: string,
 ): Promise<ActionResult<AssetLocationActionData>> {
   try {
-    const result = await deactivateAssetLocation(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateAssetLocation(user.id, id);
 
     revalidatePath('/asset-locations');
 

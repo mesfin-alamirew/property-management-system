@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -21,9 +22,11 @@ export async function createAssetConditionAction(
   formData: unknown,
 ): Promise<ActionResult<AssetConditionActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetConditionSchema.parse(formData);
 
-    const result = await createAssetCondition(data);
+    const result = await createAssetCondition(user.id, data);
 
     revalidatePath('/asset-conditions');
 
@@ -53,9 +56,11 @@ export async function updateAssetConditionAction(
   formData: unknown,
 ): Promise<ActionResult<AssetConditionActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetConditionSchema.parse(formData);
 
-    const result = await updateAssetCondition(id, data);
+    const result = await updateAssetCondition(user.id, id, data);
 
     revalidatePath('/asset-conditions');
 
@@ -84,7 +89,9 @@ export async function deactivateAssetConditionAction(
   id: string,
 ): Promise<ActionResult<AssetConditionActionData>> {
   try {
-    const result = await deactivateAssetCondition(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateAssetCondition(user.id, id);
 
     revalidatePath('/asset-conditions');
 

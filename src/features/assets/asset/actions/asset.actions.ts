@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -18,9 +19,11 @@ export async function createAssetAction(
   formData: unknown,
 ): Promise<ActionResult<AssetActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetSchema.parse(formData);
 
-    const result = await createAsset(data);
+    const result = await createAsset(user.id, data);
 
     revalidatePath('/assets');
 
@@ -51,9 +54,11 @@ export async function updateAssetAction(
   formData: unknown,
 ): Promise<ActionResult<AssetActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetSchema.parse(formData);
 
-    const result = await updateAsset(id, data);
+    const result = await updateAsset(user.id, id, data);
 
     revalidatePath('/assets');
 

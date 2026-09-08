@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -10,7 +11,15 @@ import {
 
 import type { AssetConditionFormData } from '../schemas/asset-condition.schema';
 
-export async function createAssetCondition(data: AssetConditionFormData) {
+export async function createAssetCondition(
+  userId: string,
+  data: AssetConditionFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CONDITION:CREATE',
+  });
+
   const existingAssetCondition = await findAssetConditionByCode(data.code);
 
   if (existingAssetCondition) {
@@ -28,9 +37,15 @@ export async function createAssetCondition(data: AssetConditionFormData) {
 }
 
 export async function updateAssetCondition(
+  userId: string,
   id: string,
   data: AssetConditionFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CONDITION:UPDATE',
+  });
+
   const assetCondition = await findAssetConditionById(id);
 
   if (!assetCondition) {
@@ -56,7 +71,12 @@ export async function updateAssetCondition(
   return updateAssetConditionRecord(id, data);
 }
 
-export async function deactivateAssetCondition(id: string) {
+export async function deactivateAssetCondition(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CONDITION:DEACTIVATE',
+  });
+
   const assetCondition = await findAssetConditionById(id);
 
   if (!assetCondition) {

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -21,9 +22,11 @@ export async function createAssetTypeAction(
   formData: unknown,
 ): Promise<ActionResult<AssetTypeActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetTypeSchema.parse(formData);
 
-    const result = await createAssetType(data);
+    const result = await createAssetType(user.id, data);
 
     revalidatePath('/asset-types');
 
@@ -53,9 +56,11 @@ export async function updateAssetTypeAction(
   formData: unknown,
 ): Promise<ActionResult<AssetTypeActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = assetTypeSchema.parse(formData);
 
-    const result = await updateAssetType(id, data);
+    const result = await updateAssetType(user.id, id, data);
 
     revalidatePath('/asset-types');
 
@@ -84,7 +89,9 @@ export async function deactivateAssetTypeAction(
   id: string,
 ): Promise<ActionResult<AssetTypeActionData>> {
   try {
-    const result = await deactivateAssetType(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateAssetType(user.id, id);
 
     revalidatePath('/asset-types');
 

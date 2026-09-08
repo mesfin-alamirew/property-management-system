@@ -9,18 +9,22 @@ import {
   updateRegion,
   deactivateRegion,
 } from '../commands/region.commands';
-import { AppError } from '@/lib/errors';
-import { ActionResult } from '@/types/action-result';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
+import type { ActionResult } from '@/types/action-result';
 import type { Region } from '@/generated/prisma/client';
 
 export async function createRegionAction(
   formData: unknown,
 ): Promise<ActionResult<Region>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = regionSchema.parse(formData);
 
-    const result = await createRegion(data);
+    const result = await createRegion(user.id, data);
 
     revalidatePath('/regions');
 
@@ -48,9 +52,11 @@ export async function updateRegionAction(
   formData: unknown,
 ): Promise<ActionResult<Region>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = regionSchema.parse(formData);
 
-    const result = await updateRegion(id, data);
+    const result = await updateRegion(user.id, id, data);
 
     revalidatePath('/regions');
 
@@ -77,7 +83,9 @@ export async function deactivateRegionAction(
   id: string,
 ): Promise<ActionResult<Region>> {
   try {
-    const result = await deactivateRegion(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateRegion(user.id, id);
 
     revalidatePath('/regions');
 

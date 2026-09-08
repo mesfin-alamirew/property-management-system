@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -12,7 +13,12 @@ import { findOrganizationUnitById } from '@/features/administration/organization
 
 import type { EmployeeFormData } from '../schemas/employee.schema';
 
-export async function createEmployee(data: EmployeeFormData) {
+export async function createEmployee(userId: string, data: EmployeeFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'EMPLOYEE:CREATE',
+  });
+
   const organizationUnit = await findOrganizationUnitById(
     data.organizationUnitId,
   );
@@ -43,7 +49,16 @@ export async function createEmployee(data: EmployeeFormData) {
   return createEmployeeRecord(data);
 }
 
-export async function updateEmployee(id: string, data: EmployeeFormData) {
+export async function updateEmployee(
+  userId: string,
+  id: string,
+  data: EmployeeFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'EMPLOYEE:UPDATE',
+  });
+
   const employee = await findEmployeeById(id);
 
   if (!employee) {
@@ -80,7 +95,12 @@ export async function updateEmployee(id: string, data: EmployeeFormData) {
   return updateEmployeeRecord(id, data);
 }
 
-export async function deactivateEmployee(id: string) {
+export async function deactivateEmployee(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'EMPLOYEE:DEACTIVATE',
+  });
+
   const employee = await findEmployeeById(id);
 
   if (!employee) {

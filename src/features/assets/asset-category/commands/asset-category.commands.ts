@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -10,7 +11,15 @@ import {
 
 import type { AssetCategoryFormData } from '../schemas/asset-category.schema';
 
-export async function createAssetCategory(data: AssetCategoryFormData) {
+export async function createAssetCategory(
+  userId: string,
+  data: AssetCategoryFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CATEGORY:CREATE',
+  });
+
   if (data.parentId) {
     const parent = await findAssetCategoryById(data.parentId);
 
@@ -39,9 +48,15 @@ export async function createAssetCategory(data: AssetCategoryFormData) {
 }
 
 export async function updateAssetCategory(
+  userId: string,
   id: string,
   data: AssetCategoryFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CATEGORY:UPDATE',
+  });
+
   const category = await findAssetCategoryById(id);
 
   if (!category) {
@@ -82,7 +97,12 @@ export async function updateAssetCategory(
   return updateAssetCategoryRecord(id, data);
 }
 
-export async function deactivateAssetCategory(id: string) {
+export async function deactivateAssetCategory(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CATEGORY:DEACTIVATE',
+  });
+
   const category = await findAssetCategoryById(id);
 
   if (!category) {

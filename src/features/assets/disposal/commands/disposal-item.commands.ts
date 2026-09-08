@@ -11,8 +11,17 @@ import {
 } from '../repositories/disposal-item.repository';
 
 import type { DisposalItemFormData } from '../schemas/disposal-item.schema';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-export async function createDisposalItem(data: DisposalItemFormData) {
+export async function createDisposalItem(
+  userId: string,
+  data: DisposalItemFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL_ITEM:CREATE',
+  });
+
   const disposal = await findDisposalById(data.disposalId);
 
   if (!disposal) {
@@ -40,9 +49,15 @@ export async function createDisposalItem(data: DisposalItemFormData) {
 }
 
 export async function updateDisposalItem(
+  userId: string,
   id: string,
   data: DisposalItemFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL_ITEM:UPDATE',
+  });
+
   const disposalItem = await findDisposalItemById(id);
 
   if (!disposalItem) {

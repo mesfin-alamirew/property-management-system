@@ -10,8 +10,16 @@ import {
 import type { BuildingConditionFormData } from '../schemas/building-condition.schema';
 
 import { getBuildingConditionById } from '../queries/building-condition.queries';
+import { requirePermission } from '@/lib/authorization/authorization.service';
+export async function createBuildingCondition(
+  userId: string,
+  data: BuildingConditionFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_CONDITION:CREATE',
+  });
 
-export async function createBuildingCondition(data: BuildingConditionFormData) {
   const existingCode = await findBuildingConditionByCode(data.code);
 
   if (existingCode) {
@@ -25,9 +33,14 @@ export async function createBuildingCondition(data: BuildingConditionFormData) {
 }
 
 export async function updateBuildingCondition(
+  userId: string,
   id: string,
   data: BuildingConditionFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_CONDITION:UPDATE',
+  });
   await getBuildingConditionById(id);
 
   const existingCode = await findBuildingConditionByCode(data.code, id);
@@ -42,7 +55,11 @@ export async function updateBuildingCondition(
   return updateBuildingConditionRecord(id, data);
 }
 
-export async function deactivateBuildingCondition(id: string) {
+export async function deactivateBuildingCondition(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_CONDITION:DEACTIVATE',
+  });
   const buildingCondition = await getBuildingConditionById(id);
 
   if (!buildingCondition.isActive) {

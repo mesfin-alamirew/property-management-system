@@ -1,3 +1,6 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -19,11 +22,12 @@ import type { IncidentFormData } from '../schemas/incident.schema';
 
 import { generateNextIncidentReferenceNumber } from '../services/incident-reference-number.service';
 
-import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
-
-import { recordAuditEvent } from '@/lib/audit/audit.service';
-
 export async function createIncident(userId: string, data: IncidentFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:CREATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -70,11 +74,17 @@ export async function createIncident(userId: string, data: IncidentFormData) {
     return incident;
   });
 }
+
 export async function updateIncident(
   userId: string,
   id: string,
   data: IncidentFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:UPDATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -138,7 +148,13 @@ export async function updateIncident(
     return updatedIncident;
   });
 }
+
 export async function reportIncident(userId: string, incidentId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:REPORT',
+  });
+
   const incident = await findIncidentById(incidentId);
 
   if (!incident) {
@@ -193,11 +209,17 @@ export async function reportIncident(userId: string, incidentId: string) {
     return reportedIncident;
   });
 }
+
 export async function assignIncident(
   focalPersonUserId: string,
   incidentId: string,
   assignedToUserId: string,
 ) {
+  await requirePermission({
+    userId: focalPersonUserId,
+    permissionCode: 'INCIDENT:ASSIGN',
+  });
+
   const incident = await findIncidentById(incidentId);
 
   if (!incident) {
@@ -266,7 +288,13 @@ export async function assignIncident(
     return assignedIncident;
   });
 }
+
 export async function startIncident(userId: string, incidentId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:START',
+  });
+
   const incident = await findIncidentById(incidentId);
 
   if (!incident) {
@@ -322,7 +350,13 @@ export async function startIncident(userId: string, incidentId: string) {
     return startedIncident;
   });
 }
+
 export async function resolveIncident(userId: string, incidentId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:RESOLVE',
+  });
+
   const incident = await findIncidentById(incidentId);
 
   if (!incident) {
@@ -380,7 +414,13 @@ export async function resolveIncident(userId: string, incidentId: string) {
     return resolvedIncident;
   });
 }
+
 export async function closeIncident(userId: string, incidentId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:CLOSE',
+  });
+
   const incident = await findIncidentById(incidentId);
 
   if (!incident) {
@@ -432,7 +472,13 @@ export async function closeIncident(userId: string, incidentId: string) {
     return closedIncident;
   });
 }
+
 export async function cancelIncident(userId: string, incidentId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:CANCEL',
+  });
+
   const incident = await findIncidentById(incidentId);
 
   if (!incident) {

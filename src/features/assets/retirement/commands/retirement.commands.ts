@@ -20,11 +20,16 @@ import {
   cancelRetirementRecord,
 } from '../repositories/retirement.repository';
 import type { RetirementFormData } from '../types/retirement.types';
-
+import { requirePermission } from '@/lib/authorization/authorization.service';
 export async function createRetirement(
   userId: string,
   data: RetirementFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'RETIREMENT:CREATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -86,6 +91,11 @@ export async function createRetirement(
 }
 
 export async function requestRetirement(userId: string, retirementId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'RETIREMENT:REQUEST',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -133,6 +143,11 @@ export async function requestRetirement(userId: string, retirementId: string) {
 }
 
 export async function approveRetirement(userId: string, retirementId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'RETIREMENT:APPROVE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -187,6 +202,11 @@ export async function cancelRetirement(
   retirementId: string,
   cancellationReason: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'RETIREMENT:CANCEL',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {

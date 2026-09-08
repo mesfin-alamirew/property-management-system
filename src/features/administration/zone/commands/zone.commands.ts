@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -12,7 +13,12 @@ import { getZoneById } from '../queries/zone.queries';
 
 import type { ZoneFormData } from '../schemas/zone.schema';
 
-export async function createZone(data: ZoneFormData) {
+export async function createZone(userId: string, data: ZoneFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ZONE:CREATE',
+  });
+
   const existingCode = await findZoneByCode(data.regionId, data.code);
 
   if (existingCode) {
@@ -34,7 +40,16 @@ export async function createZone(data: ZoneFormData) {
   return createZoneRecord(data);
 }
 
-export async function updateZone(id: string, data: ZoneFormData) {
+export async function updateZone(
+  userId: string,
+  id: string,
+  data: ZoneFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ZONE:UPDATE',
+  });
+
   await getZoneById(id);
 
   const existingCode = await findZoneByCode(data.regionId, data.code, id);
@@ -58,7 +73,12 @@ export async function updateZone(id: string, data: ZoneFormData) {
   return updateZoneRecord(id, data);
 }
 
-export async function deactivateZone(id: string) {
+export async function deactivateZone(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ZONE:DEACTIVATE',
+  });
+
   const zone = await getZoneById(id);
 
   if (!zone.isActive) {

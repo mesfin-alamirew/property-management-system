@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -21,7 +22,15 @@ export async function getPropertyStatusById(id: string) {
   return propertyStatus;
 }
 
-export async function createPropertyStatus(data: PropertyStatusFormData) {
+export async function createPropertyStatus(
+  userId: string,
+  data: PropertyStatusFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_STATUS:CREATE',
+  });
+
   const existingCode = await findPropertyStatusByCode(data.code);
 
   if (existingCode) {
@@ -38,9 +47,15 @@ export async function createPropertyStatus(data: PropertyStatusFormData) {
 }
 
 export async function updatePropertyStatus(
+  userId: string,
   id: string,
   data: PropertyStatusFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_STATUS:UPDATE',
+  });
+
   await getPropertyStatusById(id);
 
   const existingCode = await findPropertyStatusByCode(data.code, id);
@@ -58,7 +73,12 @@ export async function updatePropertyStatus(
   return updatePropertyStatusRecord(id, data);
 }
 
-export async function deactivatePropertyStatus(id: string) {
+export async function deactivatePropertyStatus(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_STATUS:DEACTIVATE',
+  });
+
   const propertyStatus = await getPropertyStatusById(id);
 
   if (!propertyStatus.isActive) {

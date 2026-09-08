@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -26,7 +27,15 @@ export async function getPropertyTypeById(id: string) {
   return propertyType;
 }
 
-export async function createPropertyType(data: PropertyTypeFormData) {
+export async function createPropertyType(
+  userId: string,
+  data: PropertyTypeFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_TYPE:CREATE',
+  });
+
   const existingCode = await findPropertyTypeByCode(data.code);
 
   if (existingCode) {
@@ -43,9 +52,15 @@ export async function createPropertyType(data: PropertyTypeFormData) {
 }
 
 export async function updatePropertyType(
+  userId: string,
   id: string,
   data: PropertyTypeFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_TYPE:UPDATE',
+  });
+
   await getPropertyTypeById(id);
 
   const existingCode = await findPropertyTypeByCode(data.code, id);
@@ -63,7 +78,12 @@ export async function updatePropertyType(
   return updatePropertyTypeRecord(id, data);
 }
 
-export async function deactivatePropertyType(id: string) {
+export async function deactivatePropertyType(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY_TYPE:DEACTIVATE',
+  });
+
   const propertyType = await getPropertyTypeById(id);
 
   if (!propertyType.isActive) {

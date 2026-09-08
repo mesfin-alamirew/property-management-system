@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -21,9 +22,11 @@ export async function createEmployeeAction(
   formData: unknown,
 ): Promise<ActionResult<EmployeeActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = employeeSchema.parse(formData);
 
-    const result = await createEmployee(data);
+    const result = await createEmployee(user.id, data);
 
     revalidatePath('/employees');
 
@@ -53,9 +56,11 @@ export async function updateEmployeeAction(
   formData: unknown,
 ): Promise<ActionResult<EmployeeActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = employeeSchema.parse(formData);
 
-    const result = await updateEmployee(id, data);
+    const result = await updateEmployee(user.id, id, data);
 
     revalidatePath('/employees');
 
@@ -84,7 +89,9 @@ export async function deactivateEmployeeAction(
   id: string,
 ): Promise<ActionResult<EmployeeActionData>> {
   try {
-    const result = await deactivateEmployee(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateEmployee(user.id, id);
 
     revalidatePath('/employees');
 

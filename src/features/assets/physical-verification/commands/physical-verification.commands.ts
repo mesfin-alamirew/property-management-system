@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@/generated/prisma/client';
@@ -20,7 +21,6 @@ import type {
 
 import { generateNextPhysicalVerificationNumber } from '../services/physical-verification-number.service';
 import { findAssetLocationById } from '@/features/assets/asset-location/repositories/asset-location.repository';
-
 import { findAssetConditionById } from '@/features/assets/asset-condition/repositories/asset-condition.repository';
 import { createUnregisteredAssetObservationRecord } from '../repositories/physical-verification.repository';
 
@@ -31,6 +31,11 @@ export async function createPhysicalVerification(
   userId: string,
   data: CreatePhysicalVerificationFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:CREATE',
+  });
+
   if (
     data.scope === 'ORGANIZATION_UNIT' ||
     data.scope === 'ORGANIZATION_UNIT_LOCATION'
@@ -124,8 +129,14 @@ export async function createPhysicalVerification(
  * matching the verification scope.
  */
 export async function generatePhysicalVerificationItems(
+  userId: string,
   verificationId: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:GENERATE',
+  });
+
   const verification = await findPhysicalVerificationById(verificationId);
 
   if (!verification) {
@@ -325,6 +336,11 @@ export async function verifyPhysicalVerificationItem(
   id: string,
   data: VerifyPhysicalVerificationItemFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:VERIFY',
+  });
+
   const item = await findPhysicalVerificationItemById(id);
 
   if (!item) {
@@ -379,6 +395,11 @@ export async function createUnregisteredAssetObservation(
   verificationId: string,
   data: CreateUnregisteredAssetObservationFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'UNREGISTERED_ASSET_OBSERVATION:CREATE',
+  });
+
   const verification = await findPhysicalVerificationById(verificationId);
 
   if (!verification) {
@@ -483,7 +504,15 @@ export async function createUnregisteredAssetObservation(
  *
  * Unregistered asset observations do not prevent completion.
  */
-export async function completePhysicalVerification(verificationId: string) {
+export async function completePhysicalVerification(
+  userId: string,
+  verificationId: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:COMPLETE',
+  });
+
   const verification = await findPhysicalVerificationById(verificationId);
 
   if (!verification) {

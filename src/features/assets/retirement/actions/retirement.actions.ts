@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
 import {
@@ -86,6 +86,7 @@ export async function requestRetirementAction(
     };
   }
 }
+
 export async function approveRetirementAction(
   retirementId: string,
 ): Promise<ActionResult<RetirementActionData>> {
@@ -117,6 +118,7 @@ export async function approveRetirementAction(
     };
   }
 }
+
 export async function cancelRetirementAction(
   formData: unknown,
 ): Promise<ActionResult<RetirementActionData>> {

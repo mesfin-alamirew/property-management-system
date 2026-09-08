@@ -5,12 +5,17 @@ import { prisma } from '@/lib/prisma';
 import { recordAuditEvent } from '@/lib/audit/audit.service';
 
 import type { IncidentResolutionFormData } from '../types/incident-resolution.types';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
 export async function resolveIncident(
   userId: string,
   incidentId: string,
   data: IncidentResolutionFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:RESOLVE',
+  });
   return prisma.$transaction(async (tx) => {
     const incident = await tx.incident.findUnique({
       where: {

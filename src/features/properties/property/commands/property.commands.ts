@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -16,7 +17,12 @@ import { findPropertyStatusById } from '@/features/properties/property-status/re
 
 import type { PropertyFormData } from '../schemas/property.schema';
 
-export async function createProperty(data: PropertyFormData) {
+export async function createProperty(userId: string, data: PropertyFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY:CREATE',
+  });
+
   const existingProperty = await findPropertyByCode(data.propertyCode);
 
   if (existingProperty) {
@@ -109,7 +115,17 @@ export async function createProperty(data: PropertyFormData) {
 
   return createPropertyRecord(data);
 }
-export async function updateProperty(id: string, data: PropertyFormData) {
+
+export async function updateProperty(
+  userId: string,
+  id: string,
+  data: PropertyFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY:UPDATE',
+  });
+
   const existingProperty = await findPropertyByCode(data.propertyCode, id);
 
   if (existingProperty) {
@@ -203,7 +219,12 @@ export async function updateProperty(id: string, data: PropertyFormData) {
   return updatePropertyRecord(id, data);
 }
 
-export async function deactivateProperty(id: string) {
+export async function deactivateProperty(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY:DEACTIVATE',
+  });
+
   const property = await findPropertyById(id);
 
   if (!property) {

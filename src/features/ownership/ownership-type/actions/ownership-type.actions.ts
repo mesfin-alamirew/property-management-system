@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -21,9 +22,11 @@ export async function createOwnershipTypeAction(
   formData: unknown,
 ): Promise<ActionResult<OwnershipTypeActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = ownershipTypeSchema.parse(formData);
 
-    const result = await createOwnershipType(data);
+    const result = await createOwnershipType(user.id, data);
 
     revalidatePath('/ownership-types');
 
@@ -53,9 +56,11 @@ export async function updateOwnershipTypeAction(
   formData: unknown,
 ): Promise<ActionResult<OwnershipTypeActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = ownershipTypeSchema.parse(formData);
 
-    const result = await updateOwnershipType(id, data);
+    const result = await updateOwnershipType(user.id, id, data);
 
     revalidatePath('/ownership-types');
 
@@ -84,7 +89,9 @@ export async function deactivateOwnershipTypeAction(
   id: string,
 ): Promise<ActionResult<OwnershipTypeActionData>> {
   try {
-    const result = await deactivateOwnershipType(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateOwnershipType(user.id, id);
 
     revalidatePath('/ownership-types');
 

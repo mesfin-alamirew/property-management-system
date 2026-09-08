@@ -15,8 +15,12 @@ import {
 import type { DisposalFormData } from '../schemas/disposal.schema';
 
 import { generateNextDisposalReferenceNumber } from '../services/disposal-reference-number.service';
-
+import { requirePermission } from '@/lib/authorization/authorization.service';
 export async function createDisposal(userId: string, data: DisposalFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL:CREATE',
+  });
   const user = await findUserById(userId);
 
   if (!user) {
@@ -58,6 +62,10 @@ export async function createDisposal(userId: string, data: DisposalFormData) {
 }
 
 export async function requestDisposal(userId: string, disposalId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL:REQUEST',
+  });
   const user = await findUserById(userId);
 
   if (!user) {
@@ -111,6 +119,10 @@ export async function requestDisposal(userId: string, disposalId: string) {
 }
 
 export async function approveDisposal(userId: string, disposalId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL:APPROVE',
+  });
   const user = await findUserById(userId);
 
   if (!user) {
@@ -168,6 +180,10 @@ export async function cancelDisposal(
   disposalId: string,
   cancellationReason: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL:CANCEL',
+  });
   const user = await findUserById(userId);
 
   if (!user) {

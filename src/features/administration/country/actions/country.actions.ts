@@ -11,6 +11,7 @@ import {
 } from '../commands/country.commands';
 
 import { AppError } from '@/lib/errors';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { ActionResult } from '@/types/action-result';
 
 import type { Country } from '@/generated/prisma/client';
@@ -19,9 +20,11 @@ export async function createCountryAction(
   formData: unknown,
 ): Promise<ActionResult<Country>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = countrySchema.parse(formData);
 
-    const result = await createCountry(data);
+    const result = await createCountry(user.id, data);
 
     revalidatePath('/countries');
 
@@ -49,9 +52,11 @@ export async function updateCountryAction(
   formData: unknown,
 ): Promise<ActionResult<Country>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = countrySchema.parse(formData);
 
-    const result = await updateCountry(id, data);
+    const result = await updateCountry(user.id, id, data);
 
     revalidatePath('/countries');
 
@@ -78,7 +83,9 @@ export async function deactivateCountryAction(
   id: string,
 ): Promise<ActionResult<Country>> {
   try {
-    const result = await deactivateCountry(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateCountry(user.id, id);
 
     revalidatePath('/countries');
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -14,8 +15,6 @@ import {
   createAssetAssignmentSchema,
   returnAssetAssignmentSchema,
 } from '../schemas/asset-assignment.schema';
-
-import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 type AssetAssignmentActionData = {
   id: string;

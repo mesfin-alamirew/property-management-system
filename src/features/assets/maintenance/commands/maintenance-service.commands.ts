@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -18,6 +19,11 @@ export async function createMaintenanceService(
   userId: string,
   data: MaintenanceServiceFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE_SERVICE:CREATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -27,6 +33,7 @@ export async function createMaintenanceService(
   if (!user.isActive) {
     throw new AppError('User is inactive', 'USER_INACTIVE');
   }
+
   const maintenance = await findMaintenanceById(data.maintenanceId);
 
   if (!maintenance) {
@@ -70,6 +77,11 @@ export async function updateMaintenanceService(
   id: string,
   data: MaintenanceServiceFormData,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE_SERVICE:UPDATE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {
@@ -79,6 +91,7 @@ export async function updateMaintenanceService(
   if (!user.isActive) {
     throw new AppError('User is inactive', 'USER_INACTIVE');
   }
+
   const maintenanceService = await findMaintenanceServiceById(id);
 
   if (!maintenanceService) {
@@ -136,7 +149,13 @@ export async function updateMaintenanceService(
     return updatedService;
   });
 }
+
 export async function deleteMaintenanceService(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE_SERVICE:DELETE',
+  });
+
   const user = await findUserById(userId);
 
   if (!user) {

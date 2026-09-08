@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
 import {
@@ -13,6 +13,7 @@ import {
   createUnregisteredAssetObservation,
   completePhysicalVerification,
 } from '../commands/physical-verification.commands';
+
 import {
   createPhysicalVerificationSchema,
   verifyPhysicalVerificationItemSchema,
@@ -62,11 +63,10 @@ export async function generatePhysicalVerificationItemsAction(
   try {
     const user = await requireCurrentUser();
 
-    // Keep authorization available for future policy checks.
-    // The command remains responsible for the business operation.
-    void user;
-
-    const result = await generatePhysicalVerificationItems(verificationId);
+    const result = await generatePhysicalVerificationItems(
+      user.id,
+      verificationId,
+    );
 
     revalidatePath('/physical-verifications');
     revalidatePath(`/physical-verifications/${verificationId}`);
@@ -160,16 +160,14 @@ export async function createUnregisteredAssetObservationAction(
     };
   }
 }
+
 export async function completePhysicalVerificationAction(
   verificationId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const user = await requireCurrentUser();
 
-    // Keep authorization available for future policy checks.
-    void user;
-
-    const result = await completePhysicalVerification(verificationId);
+    const result = await completePhysicalVerification(user.id, verificationId);
 
     revalidatePath('/physical-verifications');
     revalidatePath(`/physical-verifications/${verificationId}`);

@@ -9,18 +9,22 @@ import {
   updateZone,
   deactivateZone,
 } from '../commands/zone.commands';
-import { AppError } from '@/lib/errors';
-import { ActionResult } from '@/types/action-result';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
+import type { ActionResult } from '@/types/action-result';
 import type { Zone } from '@/generated/prisma/client';
 
 export async function createZoneAction(
   formData: unknown,
 ): Promise<ActionResult<Zone>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = zoneSchema.parse(formData);
 
-    const result = await createZone(data);
+    const result = await createZone(user.id, data);
 
     revalidatePath('/zones');
 
@@ -48,9 +52,11 @@ export async function updateZoneAction(
   formData: unknown,
 ): Promise<ActionResult<Zone>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = zoneSchema.parse(formData);
 
-    const result = await updateZone(id, data);
+    const result = await updateZone(user.id, id, data);
 
     revalidatePath('/zones');
 
@@ -77,7 +83,9 @@ export async function deactivateZoneAction(
   id: string,
 ): Promise<ActionResult<Zone>> {
   try {
-    const result = await deactivateZone(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateZone(user.id, id);
 
     revalidatePath('/zones');
 

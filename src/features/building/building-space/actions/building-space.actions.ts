@@ -12,6 +12,7 @@ import {
 } from '../commands/building-space.commands';
 
 import { buildingSpaceSchema } from '../schemas/building-space.schema';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 type BuildingSpaceActionData = {
   id: string;
@@ -22,8 +23,8 @@ export async function createBuildingSpaceAction(
 ): Promise<ActionResult<BuildingSpaceActionData>> {
   try {
     const data = buildingSpaceSchema.parse(formData);
-
-    const result = await createBuildingSpace(data);
+    const user = await requireCurrentUser();
+    const result = await createBuildingSpace(user.id, data);
 
     revalidatePath('/building-spaces');
 
@@ -54,8 +55,8 @@ export async function updateBuildingSpaceAction(
 ): Promise<ActionResult<BuildingSpaceActionData>> {
   try {
     const data = buildingSpaceSchema.parse(formData);
-
-    const result = await updateBuildingSpace(id, data);
+    const user = await requireCurrentUser();
+    const result = await updateBuildingSpace(user.id, id, data);
 
     revalidatePath('/building-spaces');
 
@@ -84,7 +85,8 @@ export async function deactivateBuildingSpaceAction(
   id: string,
 ): Promise<ActionResult<BuildingSpaceActionData>> {
   try {
-    const result = await deactivateBuildingSpace(id);
+    const user = await requireCurrentUser();
+    const result = await deactivateBuildingSpace(user.id, id);
 
     revalidatePath('/building-spaces');
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
@@ -22,9 +23,11 @@ export async function createAcquisitionMethodAction(
   formData: unknown,
 ): Promise<ActionResult<AcquisitionMethodActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = acquisitionMethodSchema.parse(formData);
 
-    const result = await createAcquisitionMethod(data);
+    const result = await createAcquisitionMethod(user.id, data);
 
     revalidatePath('/acquisition-methods');
 
@@ -55,9 +58,11 @@ export async function updateAcquisitionMethodAction(
   formData: unknown,
 ): Promise<ActionResult<AcquisitionMethodActionData>> {
   try {
+    const user = await requireCurrentUser();
+
     const data = acquisitionMethodSchema.parse(formData);
 
-    const result = await updateAcquisitionMethod(id, data);
+    const result = await updateAcquisitionMethod(user.id, id, data);
 
     revalidatePath('/acquisition-methods');
 
@@ -87,7 +92,9 @@ export async function deactivateAcquisitionMethodAction(
   id: string,
 ): Promise<ActionResult<AcquisitionMethodActionData>> {
   try {
-    const result = await deactivateAcquisitionMethod(id);
+    const user = await requireCurrentUser();
+
+    const result = await deactivateAcquisitionMethod(user.id, id);
 
     revalidatePath('/acquisition-methods');
 

@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -12,7 +13,12 @@ import { getWoredaById } from '../queries/woreda.queries';
 
 import type { WoredaFormData } from '../schemas/woreda.schema';
 
-export async function createWoreda(data: WoredaFormData) {
+export async function createWoreda(userId: string, data: WoredaFormData) {
+  await requirePermission({
+    userId,
+    permissionCode: 'WOREDA:CREATE',
+  });
+
   const existingCode = await findWoredaByCode(data.zoneId, data.code);
 
   if (existingCode) {
@@ -34,7 +40,16 @@ export async function createWoreda(data: WoredaFormData) {
   return createWoredaRecord(data);
 }
 
-export async function updateWoreda(id: string, data: WoredaFormData) {
+export async function updateWoreda(
+  userId: string,
+  id: string,
+  data: WoredaFormData,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'WOREDA:UPDATE',
+  });
+
   await getWoredaById(id);
 
   const existingCode = await findWoredaByCode(data.zoneId, data.code, id);
@@ -58,7 +73,12 @@ export async function updateWoreda(id: string, data: WoredaFormData) {
   return updateWoredaRecord(id, data);
 }
 
-export async function deactivateWoreda(id: string) {
+export async function deactivateWoreda(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'WOREDA:DEACTIVATE',
+  });
+
   const woreda = await getWoredaById(id);
 
   if (!woreda.isActive) {
