@@ -1,31 +1,19 @@
 import { prisma } from '@/lib/prisma';
 
-export async function getAcquisitions() {
-  const acquisitions = await prisma.acquisition.findMany({
-    orderBy: {
-      acquisitionDate: 'desc',
-    },
-    include: {
-      acquisitionMethod: {
-        select: {
-          id: true,
-          code: true,
-          name: true,
-        },
-      },
-      items: {
-        include: {
-          asset: {
-            select: {
-              id: true,
-              assetCode: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
+import {
+  findAcquisitions,
+  findAcquisitionById,
+} from '../repositories/acquisition.repository';
+
+export async function getAcquisitions(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION:READ',
   });
+
+  const acquisitions = await findAcquisitions();
 
   return acquisitions.map((acquisition) => ({
     ...acquisition,
@@ -41,32 +29,13 @@ export async function getAcquisitions() {
   }));
 }
 
-export async function getAcquisitionById(id: string) {
-  return prisma.acquisition.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      acquisitionMethod: {
-        select: {
-          id: true,
-          code: true,
-          name: true,
-        },
-      },
-      items: {
-        include: {
-          asset: {
-            select: {
-              id: true,
-              assetCode: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
+export async function getAcquisitionById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION:READ',
   });
+
+  return findAcquisitionById(id);
 }
 
 export async function getActiveAcquisitionMethods() {

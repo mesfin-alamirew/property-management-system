@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getAssets() {
+export async function getAssets(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET:READ',
+  });
+
   return prisma.asset.findMany({
     orderBy: {
       name: 'asc',
@@ -31,7 +37,12 @@ export async function getAssets() {
   });
 }
 
-export async function getAssetById(id: string) {
+export async function getAssetById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET:READ',
+  });
+
   return prisma.asset.findUnique({
     where: {
       id,

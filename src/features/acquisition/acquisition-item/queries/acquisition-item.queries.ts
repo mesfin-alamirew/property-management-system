@@ -1,6 +1,11 @@
 import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
+export async function getAcquisitionItems(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_ITEM:READ',
+  });
 
-export async function getAcquisitionItems() {
   const acquisitionItems = await prisma.acquisitionItem.findMany({
     orderBy: {
       createdAt: 'desc',
@@ -29,7 +34,12 @@ export async function getAcquisitionItems() {
   }));
 }
 
-export async function getAcquisitionItemById(id: string) {
+export async function getAcquisitionItemById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_ITEM:READ',
+  });
+
   const acquisitionItem = await prisma.acquisitionItem.findUnique({
     where: {
       id,
@@ -63,8 +73,14 @@ export async function getAcquisitionItemById(id: string) {
 }
 
 export async function getAcquisitionItemsByAcquisitionId(
+  userId: string,
   acquisitionId: string,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_ITEM:READ',
+  });
+
   const acquisitionItems = await prisma.acquisitionItem.findMany({
     where: {
       acquisitionId,

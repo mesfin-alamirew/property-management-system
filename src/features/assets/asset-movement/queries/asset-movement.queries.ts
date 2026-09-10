@@ -1,6 +1,11 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getAssetMovements() {
+export async function getAssetMovements(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_MOVEMENT:READ',
+  });
   return prisma.assetMovement.findMany({
     orderBy: {
       movedAt: 'desc',
@@ -43,7 +48,11 @@ export async function getAssetMovements() {
   });
 }
 
-export async function getAssetMovementById(id: string) {
+export async function getAssetMovementById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_MOVEMENT:READ',
+  });
   return prisma.assetMovement.findUnique({
     where: {
       id,
@@ -86,7 +95,14 @@ export async function getAssetMovementById(id: string) {
   });
 }
 
-export async function getAssetMovementsByAssetId(assetId: string) {
+export async function getAssetMovementsByAssetId(
+  userId: string,
+  assetId: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_MOVEMENT:READ',
+  });
   return prisma.assetMovement.findMany({
     where: {
       assetId,

@@ -19,7 +19,7 @@ export const navigationSections: NavigationSection[] = [
   },
 
   {
-    title: 'Organization',
+    title: 'Administration',
     items: [
       {
         title: 'Organization Units',
@@ -33,12 +33,6 @@ export const navigationSections: NavigationSection[] = [
         title: 'Countries',
         href: '/countries',
       },
-    ],
-  },
-
-  {
-    title: 'Locations',
-    items: [
       {
         title: 'Regions',
         href: '/regions',
@@ -50,6 +44,10 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Woredas',
         href: '/woredas',
+      },
+      {
+        title: 'Role',
+        href: '/administration/roles',
       },
     ],
   },
@@ -118,6 +116,56 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Incidents',
         href: '/incidents',
+      },
+    ],
+  },
+  {
+    title: 'Reports',
+    items: [
+      {
+        title: 'Accountability',
+        href: '/reports/accountability',
+      },
+      {
+        title: 'Acquisitions',
+        href: '/reports/acquisitions',
+      },
+      {
+        title: 'Assets',
+        href: '/reports/assets',
+      },
+      {
+        title: 'Assignments',
+        href: '/reports/assignments',
+      },
+      {
+        title: 'Audits',
+        href: '/reports/audits',
+      },
+      {
+        title: 'Dashboard',
+        href: '/reports/dashboard',
+      },
+      {
+        title: 'Incidents',
+        href: '/reports/incidents',
+      },
+
+      {
+        title: 'Maintenances',
+        href: '/reports/maintenances',
+      },
+      {
+        title: 'Movements',
+        href: '/reports/movements',
+      },
+      {
+        title: 'Retirements',
+        href: '/reports/retirements',
+      },
+      {
+        title: 'Verifications',
+        href: '/reports/verifications',
       },
     ],
   },

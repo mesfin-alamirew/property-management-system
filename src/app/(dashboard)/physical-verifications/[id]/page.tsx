@@ -8,6 +8,10 @@ import { findAssetConditions } from '@/features/assets/asset-condition/repositor
 
 import { PhysicalVerificationDetailWorkspace } from '@/features/assets/physical-verification/components/physical-verification-detail-workspace';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
+
 type PhysicalVerificationDetailPageProps = {
   params: Promise<{
     id: string;
@@ -19,11 +23,25 @@ export default async function PhysicalVerificationDetailPage({
 }: PhysicalVerificationDetailPageProps) {
   const { id } = await params;
 
-  const [verification, assetLocations, assetConditions] = await Promise.all([
-    getPhysicalVerificationById(id),
-    findAssetLocations(),
-    findAssetConditions(),
-  ]);
+  const user = await requireCurrentUser();
+
+  let data;
+
+  try {
+    data = await Promise.all([
+      getPhysicalVerificationById(user.id, id),
+      findAssetLocations(),
+      findAssetConditions(),
+    ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [verification, assetLocations, assetConditions] = data;
 
   if (!verification) {
     notFound();

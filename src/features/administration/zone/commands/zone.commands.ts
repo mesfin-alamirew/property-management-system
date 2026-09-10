@@ -2,14 +2,13 @@ import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
+  findZoneById,
   findZoneByCode,
   findZoneByName,
   createZoneRecord,
   updateZoneRecord,
   deactivateZoneRecord,
 } from '../repositories/zone.repository';
-
-import { getZoneById } from '../queries/zone.queries';
 
 import type { ZoneFormData } from '../schemas/zone.schema';
 
@@ -50,7 +49,11 @@ export async function updateZone(
     permissionCode: 'ZONE:UPDATE',
   });
 
-  await getZoneById(id);
+  const zone = await findZoneById(id);
+
+  if (!zone) {
+    throw new AppError('Zone not found', 'NOT_FOUND');
+  }
 
   const existingCode = await findZoneByCode(data.regionId, data.code, id);
 
@@ -79,7 +82,11 @@ export async function deactivateZone(userId: string, id: string) {
     permissionCode: 'ZONE:DEACTIVATE',
   });
 
-  const zone = await getZoneById(id);
+  const zone = await findZoneById(id);
+
+  if (!zone) {
+    throw new AppError('Zone not found', 'NOT_FOUND');
+  }
 
   if (!zone.isActive) {
     throw new AppError('Zone is already inactive', 'ALREADY_INACTIVE');

@@ -1,3 +1,7 @@
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
 import {
   getAcquisitions,
   getActiveAcquisitionMethods,
@@ -6,10 +10,23 @@ import {
 import { AcquisitionWorkspace } from './acquisition-workspace';
 
 export async function AcquisitionPage() {
-  const [acquisitions, acquisitionMethods] = await Promise.all([
-    getAcquisitions(),
-    getActiveAcquisitionMethods(),
-  ]);
+  const user = await requireCurrentUser();
+
+  let acquisitions;
+  let acquisitionMethods;
+
+  try {
+    [acquisitions, acquisitionMethods] = await Promise.all([
+      getAcquisitions(user.id),
+      getActiveAcquisitionMethods(),
+    ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
 
   const serializedAcquisitions = acquisitions.map((acquisition) => ({
     ...acquisition,

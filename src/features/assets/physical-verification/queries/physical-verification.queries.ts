@@ -1,6 +1,10 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
-
-export async function getPhysicalVerifications() {
+export async function getPhysicalVerifications(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:READ',
+  });
   return prisma.physicalVerification.findMany({
     orderBy: {
       createdAt: 'desc',
@@ -41,7 +45,11 @@ export async function getPhysicalVerifications() {
   });
 }
 
-export async function getPhysicalVerificationById(id: string) {
+export async function getPhysicalVerificationById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:READ',
+  });
   return prisma.physicalVerification.findUnique({
     where: {
       id,
@@ -150,7 +158,14 @@ export async function getPhysicalVerificationById(id: string) {
   });
 }
 
-export async function getPhysicalVerificationItems(verificationId: string) {
+export async function getPhysicalVerificationItems(
+  userId: string,
+  verificationId: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:READ',
+  });
   return prisma.physicalVerificationItem.findMany({
     where: {
       verificationId,
@@ -181,7 +196,14 @@ export async function getPhysicalVerificationItems(verificationId: string) {
   });
 }
 
-export async function getPhysicalVerificationItemById(id: string) {
+export async function getPhysicalVerificationItemById(
+  userId: string,
+  id: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:READ',
+  });
   return prisma.physicalVerificationItem.findUnique({
     where: {
       id,
@@ -217,7 +239,14 @@ export async function getPhysicalVerificationItemById(id: string) {
   });
 }
 
-export async function getUnregisteredAssetObservations(verificationId: string) {
+export async function getUnregisteredAssetObservations(
+  userId: string,
+  verificationId: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:READ',
+  });
   return prisma.unregisteredAssetObservation.findMany({
     where: {
       verificationId,
@@ -264,7 +293,14 @@ export async function getUnregisteredAssetObservations(verificationId: string) {
   });
 }
 
-export async function getUnregisteredAssetObservationById(id: string) {
+export async function getUnregisteredAssetObservationById(
+  userId: string,
+  id: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PHYSICAL_VERIFICATION:READ',
+  });
   return prisma.unregisteredAssetObservation.findUnique({
     where: {
       id,

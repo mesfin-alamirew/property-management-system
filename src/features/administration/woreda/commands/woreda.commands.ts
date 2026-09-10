@@ -4,12 +4,11 @@ import { AppError } from '@/lib/errors';
 import {
   findWoredaByCode,
   findWoredaByName,
+  findWoredaById,
   createWoredaRecord,
   updateWoredaRecord,
   deactivateWoredaRecord,
 } from '../repositories/woreda.repository';
-
-import { getWoredaById } from '../queries/woreda.queries';
 
 import type { WoredaFormData } from '../schemas/woreda.schema';
 
@@ -50,7 +49,11 @@ export async function updateWoreda(
     permissionCode: 'WOREDA:UPDATE',
   });
 
-  await getWoredaById(id);
+  const woreda = await findWoredaById(id);
+
+  if (!woreda) {
+    throw new AppError('Woreda not found', 'NOT_FOUND');
+  }
 
   const existingCode = await findWoredaByCode(data.zoneId, data.code, id);
 
@@ -79,7 +82,11 @@ export async function deactivateWoreda(userId: string, id: string) {
     permissionCode: 'WOREDA:DEACTIVATE',
   });
 
-  const woreda = await getWoredaById(id);
+  const woreda = await findWoredaById(id);
+
+  if (!woreda) {
+    throw new AppError('Woreda not found', 'NOT_FOUND');
+  }
 
   if (!woreda.isActive) {
     throw new AppError('Woreda is already inactive', 'ALREADY_INACTIVE');

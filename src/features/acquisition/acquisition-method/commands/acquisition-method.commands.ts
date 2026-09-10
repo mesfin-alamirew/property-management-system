@@ -64,6 +64,20 @@ export async function updateAcquisitionMethod(
     throw new AppError('Acquisition method not found.');
   }
 
+  if (existing.isActive && !input.isActive) {
+    await requirePermission({
+      userId,
+      permissionCode: 'ACQUISITION_METHOD:DEACTIVATE',
+    });
+  }
+
+  if (!existing.isActive && input.isActive) {
+    await requirePermission({
+      userId,
+      permissionCode: 'ACQUISITION_METHOD:ACTIVATE',
+    });
+  }
+
   const existingByCode = await findAcquisitionMethodByCode(input.code);
 
   if (existingByCode && existingByCode.id !== id) {
@@ -87,7 +101,6 @@ export async function updateAcquisitionMethod(
     isActive: input.isActive,
   });
 }
-
 export async function deactivateAcquisitionMethod(userId: string, id: string) {
   await requirePermission({
     userId,

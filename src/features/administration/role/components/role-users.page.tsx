@@ -1,4 +1,6 @@
+import { AccessDenied } from '@/components/ui/access-denied';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 
 import {
   getRoleById,
@@ -15,14 +17,24 @@ type RoleUsersPageProps = {
 export async function RoleUsersPage({ roleId }: RoleUsersPageProps) {
   const user = await requireCurrentUser();
 
-  const role = await getRoleById(user.id, roleId);
+  let role;
+  let roleUsers;
+  let assignableUsers;
 
-  //const roleUsers = await getRoleUsers(user.id, roleId);
+  try {
+    role = await getRoleById(user.id, roleId);
 
-  const [roleUsers, assignableUsers] = await Promise.all([
-    getRoleUsers(user.id, roleId),
-    getAssignableUsers(user.id),
-  ]);
+    [roleUsers, assignableUsers] = await Promise.all([
+      getRoleUsers(user.id, roleId),
+      getAssignableUsers(user.id),
+    ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
 
   return (
     <RoleUsersWorkspace

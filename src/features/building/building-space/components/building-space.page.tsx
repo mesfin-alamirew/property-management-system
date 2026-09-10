@@ -3,11 +3,14 @@ import { getBuildings } from '@/features/building/building/queries/building.quer
 import { getBuildingSpaceTypes } from '@/features/building/building-space-type/queries/building-space-type.queries';
 
 import { BuildingSpaceWorkspace } from './building-space.workspace';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 
 export async function BuildingSpacePage() {
+  const user = await requireCurrentUser();
+
   const [spaces, buildings, spaceTypes] = await Promise.all([
     getBuildingSpaces(),
-    getBuildings(),
+    getBuildings(user.id),
     getBuildingSpaceTypes(),
   ]);
 

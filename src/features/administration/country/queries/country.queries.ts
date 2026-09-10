@@ -1,20 +1,26 @@
-import { prisma } from '@/lib/prisma';
-import type { Country } from '@/generated/prisma/client';
-import { findCountryById } from '../repositories/country.repository';
 import { AppError } from '@/lib/errors';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-export async function getCountries() {
-  return prisma.country.findMany({
-    where: {
-      isActive: true,
-    },
-    orderBy: {
-      name: 'asc',
-    },
+import {
+  findCountries,
+  findCountryById,
+} from '../repositories/country.repository';
+
+export async function getCountries(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'COUNTRY:READ',
   });
+
+  return findCountries();
 }
 
-export async function getCountryById(id: string): Promise<Country> {
+export async function getCountryById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'COUNTRY:READ',
+  });
+
   const country = await findCountryById(id);
 
   if (!country) {

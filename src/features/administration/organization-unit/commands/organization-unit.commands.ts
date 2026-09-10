@@ -14,8 +14,6 @@ import {
 
 import type { OrganizationUnitFormData } from '../schemas/organization-unit.schema';
 
-import { getOrganizationUnitById } from '../queries/organization-unit.queries';
-
 import { requirePermission } from '@/lib/authorization/authorization.service';
 
 export async function createOrganizationUnit(
@@ -82,7 +80,11 @@ export async function updateOrganizationUnit(
     permissionCode: 'ORGANIZATION_UNIT:UPDATE',
   });
 
-  await getOrganizationUnitById(id);
+  const organizationUnit = await findOrganizationUnitById(id);
+
+  if (!organizationUnit) {
+    throw new AppError('Organization Unit not found', 'NOT_FOUND');
+  }
 
   const existingCode = await findOrganizationUnitByCode(data.code, id);
 
@@ -140,7 +142,11 @@ export async function deactivateOrganizationUnit(userId: string, id: string) {
     permissionCode: 'ORGANIZATION_UNIT:DEACTIVATE',
   });
 
-  await getOrganizationUnitById(id);
+  const organizationUnit = await findOrganizationUnitById(id);
+
+  if (!organizationUnit) {
+    throw new AppError('Organization Unit not found', 'NOT_FOUND');
+  }
 
   const children = await findActiveOrganizationUnitChildren(id);
 

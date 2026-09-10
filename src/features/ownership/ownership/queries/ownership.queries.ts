@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -5,11 +6,21 @@ import {
   findOwnershipById,
 } from '../repositories/ownership.repository';
 
-export async function getOwnerships() {
+export async function getOwnerships(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'OWNERSHIP:READ',
+  });
+
   return findOwnerships();
 }
 
-export async function getOwnershipById(id: string) {
+export async function getOwnershipById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'OWNERSHIP:READ',
+  });
+
   const ownership = await findOwnershipById(id);
 
   if (!ownership) {

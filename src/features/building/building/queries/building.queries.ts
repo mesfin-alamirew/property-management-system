@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getBuildings() {
+export async function getBuildings(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING:READ',
+  });
+
   const buildings = await prisma.building.findMany({
     where: {
       isActive: true,

@@ -6,11 +6,10 @@ import {
   createCountryRecord,
   updateCountryRecord,
   deactivateCountryRecord,
+  findCountryById,
 } from '../repositories/country.repository';
 
 import type { CountryFormData } from '../schemas/country.schema';
-
-import { getCountryById } from '../queries/country.queries';
 
 import { requirePermission } from '@/lib/authorization/authorization.service';
 
@@ -45,7 +44,11 @@ export async function updateCountry(
     permissionCode: 'COUNTRY:UPDATE',
   });
 
-  await getCountryById(id);
+  const country = await findCountryById(id);
+
+  if (!country) {
+    throw new AppError('Country not found', 'NOT_FOUND');
+  }
 
   const existingCode = await findCountryByCode(data.code, id);
 
@@ -68,7 +71,11 @@ export async function deactivateCountry(userId: string, id: string) {
     permissionCode: 'COUNTRY:DEACTIVATE',
   });
 
-  const country = await getCountryById(id);
+  const country = await findCountryById(id);
+
+  if (!country) {
+    throw new AppError('Country not found', 'NOT_FOUND');
+  }
 
   if (!country.isActive) {
     throw new AppError('Country is already inactive', 'ALREADY_INACTIVE');

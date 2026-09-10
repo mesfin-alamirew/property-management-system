@@ -1,8 +1,6 @@
 import { prisma } from '@/lib/prisma';
 
 import type { OrganizationUnitFormData } from '../schemas/organization-unit.schema';
-import { AppError } from '@/lib/errors';
-import { getOrganizationUnitById } from '../queries/organization-unit.queries';
 
 export async function findOrganizationUnits() {
   return prisma.organizationUnit.findMany({
@@ -175,30 +173,6 @@ export async function findActiveOrganizationUnitProperties(
       id: true,
     },
   });
-}
-
-export async function deactivateOrganizationUnit(id: string) {
-  await getOrganizationUnitById(id);
-
-  const children = await findActiveOrganizationUnitChildren(id);
-
-  if (children.length > 0) {
-    throw new AppError(
-      'Organization Unit cannot be deactivated while it has active child Organization Units',
-      'HAS_ACTIVE_CHILDREN',
-    );
-  }
-
-  const properties = await findActiveOrganizationUnitProperties(id);
-
-  if (properties.length > 0) {
-    throw new AppError(
-      'Organization Unit cannot be deactivated while it has active Properties',
-      'HAS_ACTIVE_PROPERTIES',
-    );
-  }
-
-  return deactivateOrganizationUnitRecord(id);
 }
 
 export async function findOrganizationUnitParents() {

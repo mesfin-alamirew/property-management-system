@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getAssetAssignments() {
+export async function getAssetAssignments(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_ASSIGNMENT:READ',
+  });
+
   return prisma.assetAssignment.findMany({
     orderBy: {
       assignedAt: 'desc',

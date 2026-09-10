@@ -1,19 +1,23 @@
 import { AppError } from '@/lib/errors';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
 import { findWoredas, findWoredaById } from '../repositories/woreda.repository';
 
-import type { WoredaWithZone } from '../types/woreda.types';
-import { findActiveZonesForLookup } from '@/features/administration/zone/repositories/zone.repository';
+export async function getWoredas(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'WOREDA:READ',
+  });
 
-export async function getZonesForLookup() {
-  return findActiveZonesForLookup();
-}
-
-export async function getWoredas() {
   return findWoredas();
 }
 
-export async function getWoredaById(id: string): Promise<WoredaWithZone> {
+export async function getWoredaById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'WOREDA:READ',
+  });
+
   const woreda = await findWoredaById(id);
 
   if (!woreda) {

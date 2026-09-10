@@ -1,6 +1,11 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getAssetCategories() {
+export async function getAssetCategories(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ASSET_CATEGORY:READ',
+  });
   const categories = await prisma.assetCategory.findMany({
     where: {
       isActive: true,

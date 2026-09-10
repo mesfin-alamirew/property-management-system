@@ -1473,3 +1473,91 @@ DISPOSAL_ITEM:UPDATE
 7. Role/Permission/User-role UI
        ↓
 8. End-to-end authorization testing
+
+Authorization-audit
+
+Remaining feature modules
+
+Acquisition — 3
+
+src/features/acquisition/acquisition-item
+src/features/acquisition/acquisition
+src/features/acquisition/acquisition-method
+
+Ownership — 2
+
+src/features/ownership/ownership-type
+src/features/ownership/ownership
+
+Properties — 5
+
+src/features/properties/property-category
+src/features/properties/property
+src/features/properties/property-type
+src/features/properties/property-status
+src/features/properties/property-tenure
+
+Asset Assignment — 2
+
+src/features/asset-assignment/asset-assignment
+src/features/asset-assignment/employee
+
+Assets — 15
+
+src/features/assets/disposal
+src/features/assets/asset
+src/features/assets/asset-status
+src/features/assets/asset-movement
+src/features/assets/asset-condition
+src/features/assets/retirement
+src/features/assets/physical-verification
+src/features/assets/incident-resolution
+src/features/assets/asset-location
+src/features/assets/maintenance
+src/features/assets/incident
+src/features/assets/asset-category
+src/features/assets/asset-type
+
+That's actually 13, not 15.
+
+Reports — 12
+
+src/features/reports/disposal
+src/features/reports/asset
+src/features/reports/acquisition
+src/features/reports/retirement
+src/features/reports/accountability
+src/features/reports/assignment
+src/features/reports/dashboard
+src/features/reports/verification
+src/features/reports/audit
+src/features/reports/movement
+src/features/reports/maintenance
+src/features/reports/incident
+
+Building — 5
+
+src/features/building/building-condition
+src/features/building/building-type
+src/features/building/building-space-type
+src/features/building/building-space
+src/features/building/building
+
+
+Recommended audit order
+
+I suggest we proceed in this order:
+
+1. Acquisition
+2. Ownership
+3. Properties
+4. Building
+5. Asset Assignment
+6. Assets
+7. Reports
+
+Within each group, we'll continue exactly as we have been doing:
+
+inspect → fix architecture → TypeScript → READ test → denied mutation tests → authorized mutation tests → mark complete.
+
+This keeps the authorization audit systematic and avoids introducing UI/UX changes before the functional work is finished.

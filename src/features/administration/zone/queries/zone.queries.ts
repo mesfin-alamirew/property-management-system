@@ -1,4 +1,5 @@
 import { AppError } from '@/lib/errors';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
 import {
   findZones,
@@ -8,15 +9,33 @@ import {
 
 import type { ZoneWithRegion } from '../types/zone.types';
 
-export async function getZonesForLookup() {
+export async function getZonesForLookup(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ZONE:READ',
+  });
+
   return findActiveZonesForLookup();
 }
 
-export async function getZones() {
+export async function getZones(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ZONE:READ',
+  });
+
   return findZones();
 }
 
-export async function getZoneById(id: string): Promise<ZoneWithRegion> {
+export async function getZoneById(
+  userId: string,
+  id: string,
+): Promise<ZoneWithRegion> {
+  await requirePermission({
+    userId,
+    permissionCode: 'ZONE:READ',
+  });
+
   const zone = await findZoneById(id);
 
   if (!zone) {

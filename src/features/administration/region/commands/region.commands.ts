@@ -2,6 +2,7 @@ import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
+  findRegionById,
   findRegionByCode,
   findRegionByName,
   createRegionRecord,
@@ -10,8 +11,6 @@ import {
 } from '../repositories/region.repository';
 
 import type { RegionFormData } from '../schemas/region.schema';
-
-import { getRegionById } from '../queries/region.queries';
 
 export async function createRegion(userId: string, data: RegionFormData) {
   await requirePermission({
@@ -50,7 +49,11 @@ export async function updateRegion(
     permissionCode: 'REGION:UPDATE',
   });
 
-  await getRegionById(id);
+  const region = await findRegionById(id);
+
+  if (!region) {
+    throw new AppError('Region not found', 'NOT_FOUND');
+  }
 
   const existingCode = await findRegionByCode(data.countryId, data.code, id);
 
@@ -79,7 +82,11 @@ export async function deactivateRegion(userId: string, id: string) {
     permissionCode: 'REGION:DEACTIVATE',
   });
 
-  const region = await getRegionById(id);
+  const region = await findRegionById(id);
+
+  if (!region) {
+    throw new AppError('Region not found', 'NOT_FOUND');
+  }
 
   if (!region.isActive) {
     throw new AppError('Region is already inactive', 'ALREADY_INACTIVE');

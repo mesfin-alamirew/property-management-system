@@ -5,6 +5,10 @@ import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { getPhysicalVerificationItemById } from '../queries/physical-verification.queries';
 import { PhysicalVerificationItemForm } from './physical-verification-item-form';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
+
 type PhysicalVerificationItemPageProps = {
   itemId: string;
 };
@@ -12,7 +16,19 @@ type PhysicalVerificationItemPageProps = {
 export async function PhysicalVerificationItemPage({
   itemId,
 }: PhysicalVerificationItemPageProps) {
-  const item = await getPhysicalVerificationItemById(itemId);
+  const user = await requireCurrentUser();
+
+  let item;
+
+  try {
+    item = await getPhysicalVerificationItemById(user.id, itemId);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
 
   if (!item) {
     notFound();

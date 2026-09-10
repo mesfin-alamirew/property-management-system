@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -5,11 +6,21 @@ import {
   findPropertyById,
 } from '../repositories/property.repository';
 
-export async function getProperties() {
+export async function getProperties(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY:READ',
+  });
+
   return findProperties();
 }
 
-export async function getPropertyById(id: string) {
+export async function getPropertyById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'PROPERTY:READ',
+  });
+
   const property = await findPropertyById(id);
 
   if (!property) {

@@ -3,15 +3,31 @@ import { getBuildingTypes } from '@/features/building/building-type/queries/buil
 import { getBuildingConditions } from '@/features/building/building-condition/queries/building-condition.queries';
 import { getBuildings } from '../queries/building.queries';
 import { BuildingWorkspace } from './building.Workspace';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
 
 export async function BuildingPage() {
-  const [buildings, properties, buildingTypes, buildingConditions] =
-    await Promise.all([
-      getBuildings(),
-      getProperties(),
+  const user = await requireCurrentUser();
+
+  let data;
+
+  try {
+    data = await Promise.all([
+      getBuildings(user.id),
+      getProperties(user.id),
       getBuildingTypes(),
       getBuildingConditions(),
     ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [buildings, properties, buildingTypes, buildingConditions] = data;
 
   return (
     <BuildingWorkspace

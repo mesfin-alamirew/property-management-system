@@ -1,3 +1,5 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
 import {
   findMaintenances,
   findMaintenanceById,
@@ -35,13 +37,22 @@ function serializeMaintenanceServices<
   };
 }
 
-export async function getMaintenances() {
+export async function getMaintenances(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:READ',
+  });
+
   const maintenances = await findMaintenances();
 
   return maintenances.map(serializeMaintenanceServices);
 }
 
-export async function getMaintenanceById(id: string) {
+export async function getMaintenanceById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'MAINTENANCE:READ',
+  });
   const maintenance = await findMaintenanceById(id);
 
   return maintenance ? serializeMaintenanceServices(maintenance) : null;

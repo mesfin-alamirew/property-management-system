@@ -1,23 +1,34 @@
-import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-import { findActiveAcquisitionMethods } from '../repositories/acquisition-method.repository';
+import {
+  findActiveAcquisitionMethods,
+  findAllAcquisitionMethods,
+  findAcquisitionMethodById,
+} from '../repositories/acquisition-method.repository';
 
-export async function getActiveAcquisitionMethods() {
+export async function getActiveAcquisitionMethods(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_METHOD:READ',
+  });
+
   return findActiveAcquisitionMethods();
 }
 
-export async function getAcquisitionMethods() {
-  return prisma.acquisitionMethod.findMany({
-    orderBy: {
-      name: 'asc',
-    },
+export async function getAcquisitionMethods(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_METHOD:READ',
   });
+
+  return findAllAcquisitionMethods();
 }
 
-export async function getAcquisitionMethodById(id: string) {
-  return prisma.acquisitionMethod.findUnique({
-    where: {
-      id,
-    },
+export async function getAcquisitionMethodById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'ACQUISITION_METHOD:READ',
   });
+
+  return findAcquisitionMethodById(id);
 }
