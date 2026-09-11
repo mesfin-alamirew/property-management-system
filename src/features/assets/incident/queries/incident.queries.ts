@@ -1,3 +1,5 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
 import {
   findIncidents,
   findIncidentById,
@@ -6,11 +8,21 @@ import {
   findActiveUsers,
 } from '../repositories/incident.repository';
 
-export async function getIncidents() {
+export async function getIncidents(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:READ',
+  });
+
   return findIncidents();
 }
 
-export async function getIncidentById(id: string) {
+export async function getIncidentById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'INCIDENT:READ',
+  });
+
   return findIncidentById(id);
 }
 

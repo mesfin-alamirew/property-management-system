@@ -1,6 +1,13 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
 import { prisma } from '@/lib/prisma';
 
-export async function getDisposalItems() {
+export async function getDisposalItems(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL_ITEM:READ',
+  });
+
   return prisma.disposalItem.findMany({
     orderBy: {
       createdAt: 'desc',
@@ -25,7 +32,12 @@ export async function getDisposalItems() {
   });
 }
 
-export async function getDisposalItemById(id: string) {
+export async function getDisposalItemById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL_ITEM:READ',
+  });
+
   return prisma.disposalItem.findUnique({
     where: {
       id,
@@ -50,7 +62,15 @@ export async function getDisposalItemById(id: string) {
   });
 }
 
-export async function getDisposalItemsByDisposalId(disposalId: string) {
+export async function getDisposalItemsByDisposalId(
+  userId: string,
+  disposalId: string,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL_ITEM:READ',
+  });
+
   return prisma.disposalItem.findMany({
     where: {
       disposalId,

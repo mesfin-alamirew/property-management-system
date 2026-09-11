@@ -1,3 +1,5 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
 import {
   findRetirements,
   findRetirementById,
@@ -7,11 +9,21 @@ import {
   findActiveUsers,
 } from '../repositories/retirement.repository';
 
-export async function getRetirements() {
+export async function getRetirements(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'RETIREMENT:READ',
+  });
+
   return findRetirements();
 }
 
-export async function getRetirementById(id: string) {
+export async function getRetirementById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'RETIREMENT:READ',
+  });
+
   return findRetirementById(id);
 }
 
@@ -22,9 +34,11 @@ export async function getRetirementByReferenceNumber(referenceNumber: string) {
 export async function getAssets() {
   return findAssets();
 }
+
 export async function getConditions() {
   return findConditions();
 }
+
 export async function getActiveUsers() {
   return findActiveUsers();
 }

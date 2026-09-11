@@ -13,7 +13,6 @@ import { RetirementCancelDialog } from './retirement-cancel-dialog';
 import {
   requestRetirementAction,
   approveRetirementAction,
-  cancelRetirementAction,
 } from '../actions/retirement.actions';
 
 type RetirementWorkspaceProps = {

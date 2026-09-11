@@ -1,3 +1,5 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
 import { prisma } from '@/lib/prisma';
 
 const disposalUserSelect = {
@@ -32,7 +34,12 @@ const disposalRelations = {
   },
 };
 
-export async function getDisposals() {
+export async function getDisposals(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL:READ',
+  });
+
   return prisma.disposal.findMany({
     orderBy: {
       disposalDate: 'desc',
@@ -42,7 +49,12 @@ export async function getDisposals() {
   });
 }
 
-export async function getDisposalById(id: string) {
+export async function getDisposalById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'DISPOSAL:READ',
+  });
+
   return prisma.disposal.findUnique({
     where: {
       id,
