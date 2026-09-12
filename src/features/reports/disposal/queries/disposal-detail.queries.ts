@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getDisposalDetail(id: string) {
+export async function getDisposalDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_DISPOSAL:READ',
+  });
+
   const disposal = await prisma.disposal.findUnique({
     where: {
       id,

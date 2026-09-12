@@ -11,6 +11,7 @@ import type {
   DashboardOrganizationSummaryRow,
   DashboardVerificationResult,
 } from '../types/dashboard.types';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 const ACTIONABLE_MAINTENANCE_STATUSES: MaintenanceStatus[] = [
   MaintenanceStatus.REQUESTED,
   MaintenanceStatus.ASSIGNED,
@@ -122,8 +123,13 @@ function countException(
 }
 
 export async function getDashboardData(
+  userId: string,
   filters: DashboardFilters = {},
 ): Promise<DashboardData> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_DASHBOARD:READ',
+  });
   const assetWhere = {
     ...(filters.organizationUnitId
       ? {

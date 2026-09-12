@@ -1,6 +1,12 @@
 import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-export async function getAssignmentDetail(id: string) {
+export async function getAssignmentDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSIGNMENT:READ',
+  });
+
   return prisma.assetAssignment.findUnique({
     where: {
       id,
@@ -99,7 +105,12 @@ export async function getAssignmentDetail(id: string) {
   });
 }
 
-export async function getAssignmentHistory(assetId: string) {
+export async function getAssignmentHistory(userId: string, assetId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSIGNMENT:READ',
+  });
+
   return prisma.assetAssignment.findMany({
     where: {
       assetId,

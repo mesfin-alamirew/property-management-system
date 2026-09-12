@@ -19,11 +19,11 @@ export async function getAuditReportAction(
   filters: AuditReportFilters = {},
 ): Promise<ActionResult<AuditReportRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = auditReportSchema.parse(filters);
 
-    const result = await getAuditReport(parsed);
+    const result = await getAuditReport(user.id, parsed);
 
     return {
       success: true,
@@ -55,7 +55,7 @@ export async function getAuditDetailAction(
   id: string,
 ): Promise<ActionResult<AuditDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     if (!id) {
       return {
@@ -64,7 +64,7 @@ export async function getAuditDetailAction(
       };
     }
 
-    const result = await getAuditDetail(id);
+    const result = await getAuditDetail(user.id, id);
 
     if (!result) {
       return {

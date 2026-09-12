@@ -6,6 +6,7 @@ import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
+import { getDisposalDetail } from '../queries/disposal-detail.queries';
 import { getDisposalReport } from '../queries/disposal.queries';
 import { disposalReportSchema } from '../schemas/disposal.schema';
 import type {
@@ -13,17 +14,16 @@ import type {
   DisposalReportFilters,
   DisposalReportRow,
 } from '../types/disposal.types';
-import { getDisposalDetail } from '../queries/disposal-detail.queries';
 
 export async function getDisposalReportAction(
   filters: DisposalReportFilters = {},
 ): Promise<ActionResult<DisposalReportRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = disposalReportSchema.parse(filters);
 
-    const result = await getDisposalReport(parsed);
+    const result = await getDisposalReport(user.id, parsed);
 
     return {
       success: true,
@@ -50,11 +50,12 @@ export async function getDisposalReportAction(
     };
   }
 }
+
 export async function getDisposalDetailAction(
   id: string,
 ): Promise<ActionResult<DisposalDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     if (!id) {
       return {
@@ -63,7 +64,7 @@ export async function getDisposalDetailAction(
       };
     }
 
-    const result = await getDisposalDetail(id);
+    const result = await getDisposalDetail(user.id, id);
 
     if (!result) {
       return {

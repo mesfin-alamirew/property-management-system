@@ -19,11 +19,11 @@ export async function getMovementReportAction(
   filters: MovementReportFilters = {},
 ): Promise<ActionResult<MovementReportRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = movementReportSchema.parse(filters);
 
-    const result = await getMovementReport(parsed);
+    const result = await getMovementReport(user.id, parsed);
 
     return {
       success: true,
@@ -55,7 +55,7 @@ export async function getMovementDetailAction(
   id: string,
 ): Promise<ActionResult<MovementDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     if (!id) {
       return {
@@ -64,7 +64,7 @@ export async function getMovementDetailAction(
       };
     }
 
-    const result = await getMovementDetail(id);
+    const result = await getMovementDetail(user.id, id);
 
     if (!result) {
       return {

@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
 import type {
@@ -7,8 +8,14 @@ import type {
 } from '../types/asset.types';
 
 export async function getAssetReport(
+  userId: string,
   filters: AssetReportFilters = {},
 ): Promise<AssetReportRow[]> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
+
   const {
     search,
     assetTypeId,

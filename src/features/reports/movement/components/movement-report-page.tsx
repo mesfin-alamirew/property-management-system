@@ -1,4 +1,8 @@
-import { getMovementReportAction } from '../actions/movement.actions';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
+
+import { getMovementReport } from '../queries/movement.queries';
 import {
   getMovementReportAssets,
   getMovementReportLocations,
@@ -7,20 +11,25 @@ import {
 import { MovementReportWorkspace } from './movement-report-workspace';
 
 export async function MovementReportPage() {
-  const [reportResult, assets, locations, users] = await Promise.all([
-    getMovementReportAction({}),
+  const user = await requireCurrentUser();
+
+  let reportResult;
+
+  try {
+    reportResult = await getMovementReport(user.id, {});
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [assets, locations, users] = await Promise.all([
     getMovementReportAssets(),
     getMovementReportLocations(),
     getMovementReportUsers(),
   ]);
-
-  if (!reportResult.success) {
-    return (
-      <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-        {reportResult.message}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -35,7 +44,7 @@ export async function MovementReportPage() {
       </div>
 
       <MovementReportWorkspace
-        initialRows={reportResult.data}
+        initialRows={reportResult}
         assets={assets}
         locations={locations}
         users={users}

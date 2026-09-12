@@ -17,15 +17,16 @@ import type {
   AssignmentHistoryRow,
   AssignmentReportRow,
 } from '../types/assignment.types';
+
 export async function getAssignmentReportAction(
   formData: unknown,
 ): Promise<ActionResult<AssignmentReportRow[]>> {
   try {
     const filters = assignmentReportSchema.parse(formData);
 
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getAssignmentReport(filters);
+    const result = await getAssignmentReport(user.id, filters);
 
     return {
       success: true,
@@ -45,13 +46,14 @@ export async function getAssignmentReportAction(
     };
   }
 }
+
 export async function getAssignmentDetailAction(
   id: string,
 ): Promise<ActionResult<AssignmentDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getAssignmentDetail(id);
+    const result = await getAssignmentDetail(user.id, id);
 
     if (!result) {
       return {
@@ -83,9 +85,9 @@ export async function getAssignmentHistoryAction(
   assetId: string,
 ): Promise<ActionResult<AssignmentHistoryRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getAssignmentHistory(assetId);
+    const result = await getAssignmentHistory(user.id, assetId);
 
     return {
       success: true,

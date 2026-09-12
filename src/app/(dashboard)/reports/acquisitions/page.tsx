@@ -1,3 +1,5 @@
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+
 import {
   getAcquisitionReport,
   getActiveAcquisitionMethods,
@@ -6,8 +8,10 @@ import {
 import { AcquisitionReportPage } from '@/features/reports/acquisition/components/acquisition-report-page';
 
 export default async function AcquisitionsReportRoute() {
+  const user = await requireCurrentUser();
+
   const [initialData, acquisitionMethods] = await Promise.all([
-    getAcquisitionReport(),
+    getAcquisitionReport(user.id),
     getActiveAcquisitionMethods(),
   ]);
 

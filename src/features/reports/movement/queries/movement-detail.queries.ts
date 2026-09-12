@@ -1,12 +1,19 @@
 import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
-export async function getMovementDetail(id: string) {
+export async function getMovementDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MOVEMENT:READ',
+  });
+
   const movement = await prisma.assetMovement.findUnique({
     where: {
       id,
     },
     select: {
       id: true,
+
       asset: {
         select: {
           id: true,
@@ -15,25 +22,30 @@ export async function getMovementDetail(id: string) {
           name: true,
         },
       },
+
       fromLocation: {
         select: {
           id: true,
           name: true,
         },
       },
+
       toLocation: {
         select: {
           id: true,
           name: true,
         },
       },
+
       movedAt: true,
+
       movedByUser: {
         select: {
           id: true,
           displayName: true,
         },
       },
+
       reason: true,
       notes: true,
       createdAt: true,

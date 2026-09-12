@@ -6,7 +6,8 @@ import { AssetIncidentHistoryTable } from './asset-incident-history-table';
 import { AssetMaintenanceHistoryTable } from './asset-maintenance-history-table';
 import { AssetMovementHistoryTable } from './asset-movement-history-table';
 import { AssetVerificationHistoryTable } from './asset-verification-history-table';
-
+import { AccessDenied } from '@/components/ui/access-denied';
+import { AppError } from '@/lib/errors';
 type AssetDetailPageProps = {
   assetId: string;
 };
@@ -42,7 +43,17 @@ function formatCurrency(currency: string | null, amount: string | null) {
 }
 
 export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
-  const result = await getAssetDetailAction(assetId);
+  let result;
+
+  try {
+    result = await getAssetDetailAction(assetId);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
 
   if (!result.success) {
     return (

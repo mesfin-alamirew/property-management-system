@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
 import type {
@@ -12,8 +13,14 @@ import type {
 } from '../types/asset.types';
 
 export async function getAssetDetail(
+  userId: string,
   assetId: string,
 ): Promise<AssetDetail | null> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
+
   const asset = await prisma.asset.findUnique({
     where: {
       id: assetId,

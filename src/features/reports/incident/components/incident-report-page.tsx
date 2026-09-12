@@ -1,3 +1,7 @@
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
 import { getIncidentReport } from '../queries/incident.queries';
 import {
   getIncidentReportAssets,
@@ -6,8 +10,21 @@ import {
 import { IncidentReportWorkspace } from './incident-report-workspace';
 
 export async function IncidentReportPage() {
-  const [rows, assets, users] = await Promise.all([
-    getIncidentReport({}),
+  const user = await requireCurrentUser();
+
+  let rows;
+
+  try {
+    rows = await getIncidentReport(user.id, {});
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [assets, users] = await Promise.all([
     getIncidentReportAssets(),
     getIncidentReportUsers(),
   ]);

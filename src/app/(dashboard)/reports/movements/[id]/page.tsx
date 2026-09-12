@@ -1,6 +1,10 @@
 import { notFound } from 'next/navigation';
 
-import { getMovementDetailAction } from '@/features/reports/movement/actions/movement.actions';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
+
+import { getMovementDetail } from '@/features/reports/movement/queries/movement-detail.queries';
 import { MovementDetailPage } from '@/features/reports/movement/components/movement-detail-page';
 
 type MovementDetailRouteProps = {
@@ -10,13 +14,24 @@ type MovementDetailRouteProps = {
 };
 
 export default async function Page({ params }: MovementDetailRouteProps) {
+  const user = await requireCurrentUser();
   const { id } = await params;
 
-  const result = await getMovementDetailAction(id);
+  let movement;
 
-  if (!result.success) {
+  try {
+    movement = await getMovementDetail(user.id, id);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  if (!movement) {
     notFound();
   }
 
-  return <MovementDetailPage movement={result.data} />;
+  return <MovementDetailPage movement={movement} />;
 }

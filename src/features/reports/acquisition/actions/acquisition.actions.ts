@@ -26,9 +26,9 @@ export async function getAcquisitionReportAction(
   try {
     const filters = acquisitionReportSchema.parse(formData);
 
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getAcquisitionReport(filters);
+    const result = await getAcquisitionReport(user.id, filters);
 
     return {
       success: true,
@@ -53,9 +53,9 @@ export async function getAcquisitionDetailAction(
   id: string,
 ): Promise<ActionResult<AcquisitionDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const acquisition = await getAcquisitionDetail(id);
+    const acquisition = await getAcquisitionDetail(user.id, id);
 
     if (!acquisition) {
       return {
@@ -89,9 +89,9 @@ export async function getAcquisitionSummaryAction(
   try {
     const filters = acquisitionSummarySchema.parse(formData);
 
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getAcquisitionSummary(filters);
+    const result = await getAcquisitionSummary(user.id, filters);
 
     return {
       success: true,

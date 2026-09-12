@@ -1,10 +1,20 @@
 import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
 import type {
   AssignmentReportFilters,
   AssignmentStatus,
 } from '../types/assignment.types';
-export async function getAssignmentReport(filters?: AssignmentReportFilters) {
+
+export async function getAssignmentReport(
+  userId: string,
+  filters?: AssignmentReportFilters,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSIGNMENT:READ',
+  });
+
   const search = filters?.search?.trim();
 
   const status = filters?.status ?? 'CURRENT';

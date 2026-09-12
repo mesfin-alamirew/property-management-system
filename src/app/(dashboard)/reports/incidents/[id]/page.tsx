@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation';
-
-import { getIncidentDetailAction } from '@/features/reports/incident/actions/incident.actions';
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { getIncidentDetail } from '@/features/reports/incident/queries/incident-detail.queries';
 import { IncidentDetailPage } from '@/features/reports/incident/components/incident-detail-page';
 
 type IncidentDetailRouteProps = {
@@ -12,11 +13,33 @@ type IncidentDetailRouteProps = {
 export default async function Page({ params }: IncidentDetailRouteProps) {
   const { id } = await params;
 
-  const result = await getIncidentDetailAction(id);
+  const user = await requireCurrentUser();
 
-  if (!result.success) {
-    notFound();
+  let incident;
+
+  try {
+    incident = await getIncidentDetail(user.id, id);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
   }
 
-  return <IncidentDetailPage incident={result.data} />;
+  if (!incident) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Incident Detail
+        </h1>
+
+        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          Incident record not found.
+        </div>
+      </div>
+    );
+  }
+
+  return <IncidentDetailPage incident={incident} />;
 }

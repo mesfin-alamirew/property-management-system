@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getMaintenanceDetail(id: string) {
+export async function getMaintenanceDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MAINTENANCE:READ',
+  });
+
   const maintenance = await prisma.maintenance.findUnique({
     where: { id },
     select: {

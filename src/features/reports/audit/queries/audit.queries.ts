@@ -2,9 +2,24 @@ import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
 import type { AuditReportFilters } from '../types/audit.types';
+import { requirePermission } from '@/lib/authorization/authorization.service';
+export async function getAuditReport(
+  userId: string,
+  filters: AuditReportFilters = {},
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_AUDIT:READ',
+  });
 
-export async function getAuditReport(filters: AuditReportFilters = {}) {
-  const { search, userId, action, entityType, dateFrom, dateTo } = filters;
+  const {
+    search,
+    userId: filterUserId,
+    action,
+    entityType,
+    dateFrom,
+    dateTo,
+  } = filters;
 
   const where: Prisma.AuditLogWhereInput = {
     ...(search
@@ -46,9 +61,9 @@ export async function getAuditReport(filters: AuditReportFilters = {}) {
         }
       : {}),
 
-    ...(userId
+    ...(filterUserId
       ? {
-          userId,
+          userId: filterUserId,
         }
       : {}),
 

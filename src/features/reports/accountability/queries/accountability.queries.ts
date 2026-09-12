@@ -5,7 +5,7 @@ import type {
   AccountabilityReportFilters,
   AccountabilityReportRow,
 } from '../types/accountability.types';
-
+import { requirePermission } from '@/lib/authorization/authorization.service';
 type AssetWithAccountabilityData = {
   id: string;
   assetCode: string;
@@ -62,8 +62,14 @@ function createExceptionId(
 }
 
 export async function getAccountabilityReport(
+  userId: string,
   filters: AccountabilityReportFilters = {},
 ): Promise<AccountabilityReportRow[]> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ACCOUNTABILITY:READ',
+  });
+
   const assets = await prisma.asset.findMany({
     where: {
       ...(filters.assetTypeId

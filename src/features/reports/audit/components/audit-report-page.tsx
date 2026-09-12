@@ -1,26 +1,35 @@
-import { getAuditReportAction } from '../actions/audit.actions';
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
 import {
   getAuditReportActions,
   getAuditReportEntityTypes,
   getAuditReportUsers,
 } from '../queries/audit-lookup.queries';
+import { getAuditReport } from '../queries/audit.queries';
 import { AuditReportWorkspace } from './audit-report-workspace';
 
 export async function AuditReportPage() {
-  const [reportResult, users, actions, entityTypes] = await Promise.all([
-    getAuditReportAction(),
+  const user = await requireCurrentUser();
+
+  let rows;
+
+  try {
+    rows = await getAuditReport(user.id, {});
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [users, actions, entityTypes] = await Promise.all([
     getAuditReportUsers(),
     getAuditReportActions(),
     getAuditReportEntityTypes(),
   ]);
-
-  if (!reportResult.success) {
-    return (
-      <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-        {reportResult.message}
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -32,7 +41,7 @@ export async function AuditReportPage() {
       </div>
 
       <AuditReportWorkspace
-        initialRows={reportResult.data}
+        initialRows={rows}
         users={users}
         actions={actions}
         entityTypes={entityTypes}

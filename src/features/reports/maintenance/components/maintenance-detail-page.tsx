@@ -1,6 +1,10 @@
 import Link from 'next/link';
 
-import { getMaintenanceDetailAction } from '../actions/maintenance.actions';
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
+import { getMaintenanceDetail } from '../queries/maintenance-detail.queries';
 import { MaintenanceServiceHistoryTable } from './maintenance-service-history-table';
 
 type MaintenanceDetailPageProps = {
@@ -40,9 +44,21 @@ function formatValue(value: string | null) {
 export async function MaintenanceDetailPage({
   maintenanceId,
 }: MaintenanceDetailPageProps) {
-  const result = await getMaintenanceDetailAction(maintenanceId);
+  const user = await requireCurrentUser();
 
-  if (!result.success) {
+  let maintenance;
+
+  try {
+    maintenance = await getMaintenanceDetail(user.id, maintenanceId);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  if (!maintenance) {
     return (
       <div className="space-y-4">
         <Link
@@ -53,13 +69,11 @@ export async function MaintenanceDetailPage({
         </Link>
 
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {result.message}
+          Maintenance record not found.
         </div>
       </div>
     );
   }
-
-  const maintenance = result.data;
 
   return (
     <div className="space-y-8">

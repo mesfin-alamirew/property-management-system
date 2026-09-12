@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
 import type {
@@ -6,8 +7,14 @@ import type {
 } from '../types/maintenance.types';
 
 export async function getMaintenanceReport(
+  userId: string,
   filters: MaintenanceReportFilters = {},
 ): Promise<MaintenanceReportRow[]> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MAINTENANCE:READ',
+  });
+
   const where = {
     ...(filters.search
       ? {

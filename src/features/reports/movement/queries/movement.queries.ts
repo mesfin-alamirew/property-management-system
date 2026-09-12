@@ -1,9 +1,18 @@
 import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
 import type { MovementReportFilters } from '../types/movement.types';
 
-export async function getMovementReport(filters: MovementReportFilters = {}) {
+export async function getMovementReport(
+  userId: string,
+  filters: MovementReportFilters = {},
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MOVEMENT:READ',
+  });
+
   const {
     search,
     assetId,

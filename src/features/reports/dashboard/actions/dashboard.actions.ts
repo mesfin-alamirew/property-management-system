@@ -20,7 +20,7 @@ export async function getDashboardDataAction(
   DashboardActionResult<Awaited<ReturnType<typeof getDashboardData>>>
 > {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = dashboardSchema.safeParse(input);
 
@@ -37,7 +37,7 @@ export async function getDashboardDataAction(
       assetStatusId: parsed.data.assetStatusId,
     };
 
-    const data = await getDashboardData(filters);
+    const data = await getDashboardData(user.id, filters);
 
     return {
       success: true,

@@ -1,4 +1,8 @@
-import { getDisposalReportAction } from '../actions/disposal.actions';
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
+import { getDisposalReport } from '../queries/disposal.queries';
 import {
   getDisposalReportAssets,
   getDisposalReportUsers,
@@ -6,19 +10,24 @@ import {
 import { DisposalReportWorkspace } from './disposal-report-workspace';
 
 export async function DisposalReportPage() {
-  const [reportResult, assets, users] = await Promise.all([
-    getDisposalReportAction({}),
+  const user = await requireCurrentUser();
+
+  let rows;
+
+  try {
+    rows = await getDisposalReport(user.id, {});
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [assets, users] = await Promise.all([
     getDisposalReportAssets(),
     getDisposalReportUsers(),
   ]);
-
-  if (!reportResult.success) {
-    return (
-      <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-        {reportResult.message}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -34,7 +43,7 @@ export async function DisposalReportPage() {
       </div>
 
       <DisposalReportWorkspace
-        initialRows={reportResult.data}
+        initialRows={rows}
         assets={assets}
         users={users}
       />

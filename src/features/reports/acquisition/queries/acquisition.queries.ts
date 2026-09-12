@@ -1,10 +1,20 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
 import type {
   AcquisitionReportFilters,
   AcquisitionSummaryFilters,
 } from '../types/acquisition.types';
-export async function getAcquisitionReport(filters?: AcquisitionReportFilters) {
+
+export async function getAcquisitionReport(
+  userId: string,
+  filters?: AcquisitionReportFilters,
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ACQUISITION:READ',
+  });
+
   const search = filters?.search?.trim();
   const supplierName = filters?.supplierName?.trim();
   const fundingSource = filters?.fundingSource?.trim();
@@ -145,6 +155,7 @@ export async function getAcquisitionReport(filters?: AcquisitionReportFilters) {
     itemCount: acquisition._count.items,
   }));
 }
+
 export async function getActiveAcquisitionMethods() {
   return prisma.acquisitionMethod.findMany({
     where: {
@@ -160,7 +171,13 @@ export async function getActiveAcquisitionMethods() {
     },
   });
 }
-export async function getAcquisitionDetail(id: string) {
+
+export async function getAcquisitionDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ACQUISITION:READ',
+  });
+
   const acquisition = await prisma.acquisition.findUnique({
     where: {
       id,
@@ -239,8 +256,14 @@ export async function getAcquisitionDetail(id: string) {
 }
 
 export async function getAcquisitionSummary(
+  userId: string,
   filters?: AcquisitionSummaryFilters,
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ACQUISITION:READ',
+  });
+
   const acquisitions = await prisma.acquisition.findMany({
     where: {
       ...(filters?.dateFrom || filters?.dateTo

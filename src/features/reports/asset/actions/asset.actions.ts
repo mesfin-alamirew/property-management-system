@@ -15,15 +15,16 @@ import type {
   AssetReportRow,
 } from '../types/asset.types';
 import { getAssetDetail } from '../queries/asset-detail.queries';
+
 export async function getAssetReportAction(
   formData: unknown,
 ): Promise<ActionResult<AssetReportRow[]>> {
   try {
     const filters = assetReportSchema.parse(formData);
 
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getAssetReport(filters as AssetReportFilters);
+    const result = await getAssetReport(user.id, filters as AssetReportFilters);
 
     return {
       success: true,
@@ -50,11 +51,12 @@ export async function getAssetReportAction(
     };
   }
 }
+
 export async function getAssetDetailAction(
   assetId: string,
 ): Promise<ActionResult<AssetDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     if (!assetId) {
       return {
@@ -63,7 +65,7 @@ export async function getAssetDetailAction(
       };
     }
 
-    const result = await getAssetDetail(assetId);
+    const result = await getAssetDetail(user.id, assetId);
 
     if (!result) {
       return {
@@ -78,6 +80,10 @@ export async function getAssetDetailAction(
     };
   } catch (error) {
     if (error instanceof AppError) {
+      if (error.code === 'PERMISSION_DENIED') {
+        throw error;
+      }
+
       return {
         success: false,
         message: error.message,

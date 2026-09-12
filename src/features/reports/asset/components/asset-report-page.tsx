@@ -1,3 +1,7 @@
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
+
 import { getAssetReport } from '../queries/asset.queries';
 import {
   getAssetReportAcquisitionMethods,
@@ -11,6 +15,29 @@ import {
 import { AssetReportWorkspace } from './asset-report-workspace';
 
 export async function AssetReportPage() {
+  const user = await requireCurrentUser();
+
+  let data;
+
+  try {
+    data = await Promise.all([
+      getAssetReportAssetTypes(),
+      getAssetReportAssetCategories(),
+      getAssetReportStatuses(),
+      getAssetReportConditions(),
+      getAssetReportOrganizationUnits(),
+      getAssetReportLocations(),
+      getAssetReportAcquisitionMethods(),
+      getAssetReport(user.id),
+    ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
   const [
     assetTypes,
     assetCategories,
@@ -20,16 +47,7 @@ export async function AssetReportPage() {
     locations,
     acquisitionMethods,
     initialRows,
-  ] = await Promise.all([
-    getAssetReportAssetTypes(),
-    getAssetReportAssetCategories(),
-    getAssetReportStatuses(),
-    getAssetReportConditions(),
-    getAssetReportOrganizationUnits(),
-    getAssetReportLocations(),
-    getAssetReportAcquisitionMethods(),
-    getAssetReport(),
-  ]);
+  ] = data;
 
   return (
     <div className="space-y-6">

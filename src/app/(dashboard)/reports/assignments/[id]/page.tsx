@@ -1,5 +1,9 @@
 import { notFound } from 'next/navigation';
 
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+import { AccessDenied } from '@/components/ui/access-denied';
+
 import {
   getAssignmentDetail,
   getAssignmentHistory,
@@ -16,15 +20,27 @@ type AssignmentDetailRouteProps = {
 export default async function AssignmentDetailRoute({
   params,
 }: AssignmentDetailRouteProps) {
+  const user = await requireCurrentUser();
   const { id } = await params;
 
-  const detail = await getAssignmentDetail(id);
+  let detail;
+  let history;
 
-  if (!detail) {
-    notFound();
+  try {
+    detail = await getAssignmentDetail(user.id, id);
+
+    if (!detail) {
+      notFound();
+    }
+
+    history = await getAssignmentHistory(user.id, detail.asset.id);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
   }
-
-  const history = await getAssignmentHistory(detail.asset.id);
 
   return <AssignmentDetailPage detail={detail} history={history} />;
 }

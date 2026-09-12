@@ -2,10 +2,11 @@
 
 import { z } from 'zod';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
+import { getIncidentDetail } from '../queries/incident-detail.queries';
 import { getIncidentReport } from '../queries/incident.queries';
 import { incidentReportSchema } from '../schemas/incident.schema';
 import type {
@@ -13,17 +14,16 @@ import type {
   IncidentReportFilters,
   IncidentReportRow,
 } from '../types/incident.types';
-import { getIncidentDetail } from '../queries/incident-detail.queries';
 
 export async function getIncidentReportAction(
   filters: IncidentReportFilters = {},
 ): Promise<ActionResult<IncidentReportRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = incidentReportSchema.parse(filters);
 
-    const result = await getIncidentReport(parsed);
+    const result = await getIncidentReport(user.id, parsed);
 
     return {
       success: true,
@@ -50,13 +50,14 @@ export async function getIncidentReportAction(
     };
   }
 }
+
 export async function getIncidentDetailAction(
   id: string,
 ): Promise<ActionResult<IncidentDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getIncidentDetail(id);
+    const result = await getIncidentDetail(user.id, id);
 
     if (!result) {
       return {

@@ -1,9 +1,18 @@
 import { Prisma } from '@/generated/prisma/client';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
 import type { DisposalReportFilters } from '../types/disposal.types';
 
-export async function getDisposalReport(filters: DisposalReportFilters = {}) {
+export async function getDisposalReport(
+  userId: string,
+  filters: DisposalReportFilters = {},
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_DISPOSAL:READ',
+  });
+
   const {
     search,
     status,

@@ -28,7 +28,7 @@ export async function getAccountabilityReportAction(
   >
 > {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = accountabilityReportSchema.safeParse(input);
 
@@ -50,7 +50,7 @@ export async function getAccountabilityReportAction(
       assetStatusId: parsed.data.assetStatusId,
     };
 
-    const data = await getAccountabilityReport(filters);
+    const data = await getAccountabilityReport(user.id, filters);
 
     return {
       success: true,

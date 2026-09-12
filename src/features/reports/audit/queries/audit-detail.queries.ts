@@ -1,6 +1,10 @@
 import { prisma } from '@/lib/prisma';
-
-export async function getAuditDetail(id: string) {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+export async function getAuditDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_AUDIT:READ',
+  });
   const auditLog = await prisma.auditLog.findUnique({
     where: { id },
     select: {

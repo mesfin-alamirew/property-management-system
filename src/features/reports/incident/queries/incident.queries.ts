@@ -1,8 +1,17 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
 import type { IncidentReportFilters } from '../types/incident.types';
 
-export async function getIncidentReport(filters: IncidentReportFilters = {}) {
+export async function getIncidentReport(
+  userId: string,
+  filters: IncidentReportFilters = {},
+) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_INCIDENT:READ',
+  });
+
   const where = {
     ...(filters.search
       ? {

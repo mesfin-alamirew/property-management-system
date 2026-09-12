@@ -1,3 +1,7 @@
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AccessDenied } from '@/components/ui/access-denied';
+import { AppError } from '@/lib/errors';
+
 import { getMaintenanceReport } from '../queries/maintenance.queries';
 import {
   getMaintenanceReportAssets,
@@ -6,8 +10,21 @@ import {
 import { MaintenanceReportWorkspace } from './maintenance-report-workspace';
 
 export async function MaintenanceReportPage() {
-  const [initialRows, assets, assignedUsers] = await Promise.all([
-    getMaintenanceReport({}),
+  const user = await requireCurrentUser();
+
+  let initialRows;
+
+  try {
+    initialRows = await getMaintenanceReport(user.id, {});
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
+
+  const [assets, assignedUsers] = await Promise.all([
     getMaintenanceReportAssets(),
     getMaintenanceReportAssignedUsers(),
   ]);

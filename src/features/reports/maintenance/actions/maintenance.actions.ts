@@ -2,10 +2,11 @@
 
 import { z } from 'zod';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
 import type { ActionResult } from '@/types/action-result';
 
+import { getMaintenanceDetail } from '../queries/maintenance-detail.queries';
 import { getMaintenanceReport } from '../queries/maintenance.queries';
 import { maintenanceReportSchema } from '../schemas/maintenance.schema';
 import type {
@@ -13,17 +14,16 @@ import type {
   MaintenanceReportFilters,
   MaintenanceReportRow,
 } from '../types/maintenance.types';
-import { getMaintenanceDetail } from '../queries/maintenance-detail.queries';
 
 export async function getMaintenanceReportAction(
   filters: MaintenanceReportFilters = {},
 ): Promise<ActionResult<MaintenanceReportRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = maintenanceReportSchema.parse(filters);
 
-    const result = await getMaintenanceReport(parsed);
+    const result = await getMaintenanceReport(user.id, parsed);
 
     return {
       success: true,
@@ -50,13 +50,14 @@ export async function getMaintenanceReportAction(
     };
   }
 }
+
 export async function getMaintenanceDetailAction(
   id: string,
 ): Promise<ActionResult<MaintenanceDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getMaintenanceDetail(id);
+    const result = await getMaintenanceDetail(user.id, id);
 
     if (!result) {
       return {
