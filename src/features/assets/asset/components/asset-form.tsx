@@ -13,6 +13,7 @@ import { createAssetAction, updateAssetAction } from '../actions/asset.actions';
 import type { AssetWithRelations } from '../types/asset.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
@@ -74,6 +75,21 @@ export function AssetForm({
     },
   });
 
+  const assetTypeOptions = assetTypes.map((assetType) => ({
+    value: assetType.id,
+    label: `${assetType.code} - ${assetType.name}`,
+  }));
+
+  const assetStatusOptions = assetStatuses.map((status) => ({
+    value: status.id,
+    label: `${status.code} - ${status.name}`,
+  }));
+
+  const assetConditionOptions = assetConditions.map((condition) => ({
+    value: condition.id,
+    label: `${condition.code} - ${condition.name}`,
+  }));
+
   async function onSubmit(data: AssetFormData) {
     const result = asset
       ? await updateAssetAction(asset.id, data)
@@ -98,9 +114,13 @@ export function AssetForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the asset name, tag, and general description.
+          </p>
+        </div>
 
         <TextField
           label="Asset Tag"
@@ -122,9 +142,15 @@ export function AssetForm({
         />
       </div>
 
-      {/* Manufacturer Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Manufacturer Information</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Manufacturer Information
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record manufacturer and identifying information when available.
+          </p>
+        </div>
 
         <TextField
           label="Manufacturer"
@@ -145,98 +171,52 @@ export function AssetForm({
         />
       </div>
 
-      {/* Classification */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Classification</h3>
-
-        <div className="space-y-2">
-          <label htmlFor="assetTypeId" className="text-sm font-medium">
-            Asset Type
-          </label>
-
-          <select
-            id="assetTypeId"
-            {...register('assetTypeId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset Type</option>
-
-            {assetTypes.map((assetType) => (
-              <option key={assetType.id} value={assetType.id}>
-                {assetType.code} - {assetType.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetTypeId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.assetTypeId.message}
-            </p>
-          )}
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Classification
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Assign the asset type, status, and current condition.
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="statusId" className="text-sm font-medium">
-            Asset Status
-          </label>
+        <SelectField
+          label="Asset Type"
+          options={assetTypeOptions}
+          placeholder="Select asset type"
+          error={errors.assetTypeId?.message}
+          {...register('assetTypeId')}
+        />
 
-          <select
-            id="statusId"
-            {...register('statusId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset Status</option>
+        <SelectField
+          label="Asset Status"
+          options={assetStatusOptions}
+          placeholder="Select asset status"
+          error={errors.statusId?.message}
+          {...register('statusId')}
+        />
 
-            {assetStatuses.map((status) => (
-              <option key={status.id} value={status.id}>
-                {status.code} - {status.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.statusId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.statusId.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="conditionId" className="text-sm font-medium">
-            Asset Condition
-          </label>
-
-          <select
-            id="conditionId"
-            {...register('conditionId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset Condition</option>
-
-            {assetConditions.map((condition) => (
-              <option key={condition.id} value={condition.id}>
-                {condition.code} - {condition.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.conditionId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.conditionId.message}
-            </p>
-          )}
-        </div>
+        <SelectField
+          label="Asset Condition"
+          options={assetConditionOptions}
+          placeholder="Select asset condition"
+          error={errors.conditionId?.message}
+          {...register('conditionId')}
+        />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? asset
-            ? 'Updating...'
-            : 'Saving...'
-          : asset
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? asset
+              ? 'Updating...'
+              : 'Saving...'
+            : asset
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

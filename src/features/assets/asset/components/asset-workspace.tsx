@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import type { AssetWithRelations } from '../types/asset.types';
@@ -58,13 +59,9 @@ export function AssetWorkspace({
       title="Assets"
       description="Register and manage organizational assets."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Register Asset
-        </button>
+        </Button>
       }
     >
       <AssetTable assets={assets} onEdit={handleEdit} />

@@ -19,12 +19,11 @@ import {
 import type { OwnershipType } from '@/generated/prisma/client';
 
 import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 
 type OwnershipTypeFormProps = {
   ownershipType?: OwnershipType | null;
-
   onSuccess?: () => void;
 };
 
@@ -76,41 +75,53 @@ export function OwnershipTypeForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Ownership Type Information
+          </h3>
 
-        <TextField
-          label="Code"
-          required
-          error={errors.code?.message}
-          {...register('code')}
-        />
+          <p className="text-xs leading-5 text-muted-foreground">
+            Provide the identifying information used to classify property
+            ownership records.
+          </p>
+        </div>
 
-        <TextField
-          label="Name"
-          required
-          error={errors.name?.message}
-          {...register('name')}
-        />
+        <div className="space-y-4">
+          <TextField
+            label="Code"
+            required
+            error={errors.code?.message}
+            {...register('code')}
+          />
 
-        <TextAreaField
-          label="Description"
-          error={errors.description?.message}
-          {...register('description')}
-        />
+          <TextField
+            label="Name"
+            required
+            error={errors.name?.message}
+            {...register('name')}
+          />
+
+          <TextAreaField
+            label="Description"
+            error={errors.description?.message}
+            {...register('description')}
+          />
+        </div>
+      </section>
+
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? ownershipType
+              ? 'Updating...'
+              : 'Saving...'
+            : ownershipType
+              ? 'Update Ownership Type'
+              : 'Save Ownership Type'}
+        </Button>
       </div>
-
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? ownershipType
-            ? 'Updating...'
-            : 'Saving...'
-          : ownershipType
-            ? 'Update'
-            : 'Save'}
-      </Button>
     </form>
   );
 }

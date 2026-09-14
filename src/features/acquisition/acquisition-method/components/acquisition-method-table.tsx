@@ -2,6 +2,9 @@
 
 import type { AcquisitionMethodListItem } from '../types/acquisition-method.types';
 
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -10,9 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
 
 type AcquisitionMethodTableProps = {
   acquisitionMethods: AcquisitionMethodListItem[];
@@ -30,6 +30,15 @@ export function AcquisitionMethodTable({
   onDeactivate,
   deactivatingId,
 }: AcquisitionMethodTableProps) {
+  if (acquisitionMethods.length === 0) {
+    return (
+      <EmptyState
+        title="No acquisition methods found"
+        description="Add an acquisition method to make it available when registering acquisitions."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -45,17 +54,25 @@ export function AcquisitionMethodTable({
       <TableBody>
         {acquisitionMethods.map((acquisitionMethod) => (
           <TableRow key={acquisitionMethod.id}>
-            <TableCell>{acquisitionMethod.code}</TableCell>
+            <TableCell className="whitespace-nowrap font-medium">
+              {acquisitionMethod.code}
+            </TableCell>
 
-            <TableCell>{acquisitionMethod.name}</TableCell>
+            <TableCell className="font-medium">
+              {acquisitionMethod.name}
+            </TableCell>
 
-            <TableCell>{acquisitionMethod.description ?? '-'}</TableCell>
+            <TableCell className="max-w-md">
+              <span className="line-clamp-2 text-sm text-muted-foreground">
+                {acquisitionMethod.description ?? '—'}
+              </span>
+            </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <StatusBadge active={acquisitionMethod.isActive} />
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(acquisitionMethod)}
                 onDeactivate={() => onDeactivate(acquisitionMethod)}

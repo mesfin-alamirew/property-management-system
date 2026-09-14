@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+
 import { getDashboardDataAction } from '../actions/dashboard.actions';
+import type {
+  DashboardData,
+  DashboardFilters as DashboardFilterValues,
+} from '../types/dashboard.types';
+
 import { DashboardAccountabilitySummary } from './dashboard-accountability-summary';
 import { DashboardFilters } from './dashboard-filters';
 import { DashboardKpiCards } from './dashboard-kpi-cards';
@@ -9,10 +15,6 @@ import { DashboardLifecycleSummary } from './dashboard-lifecycle-summary';
 import { DashboardOperationalSummary } from './dashboard-operational-summary';
 import { DashboardOrganizationSummary } from './dashboard-organization-summary';
 import { DashboardVerificationSummary } from './dashboard-verification-summary';
-import type {
-  DashboardData,
-  DashboardFilters as DashboardFilterValues,
-} from '../types/dashboard.types';
 
 type DashboardWorkspaceProps = {
   initialData: DashboardData;
@@ -91,14 +93,23 @@ export function DashboardWorkspace({
       />
 
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm font-medium text-red-800">{error}</p>
+        <div
+          className="rounded-md border border-danger/20 bg-danger-surface p-4"
+          role="alert"
+        >
+          <p className="text-sm font-medium text-danger">{error}</p>
         </div>
       ) : null}
 
       {isPending ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <p className="text-sm text-gray-600">Updating dashboard...</p>
+        <div
+          className="flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-3"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+
+          <p className="text-sm text-muted-foreground">Updating dashboard...</p>
         </div>
       ) : null}
 

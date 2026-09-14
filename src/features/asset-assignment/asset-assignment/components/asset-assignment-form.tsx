@@ -14,7 +14,9 @@ import {
 import { createAssetAssignmentAction } from '../actions/asset-assignment.actions';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 
 type AssetAssignmentFormProps = {
   assets: {
@@ -69,108 +71,82 @@ export function AssetAssignmentForm({
       toast.success('Asset assigned successfully');
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
     }
   }
 
+  const assetOptions = assets.map((asset) => ({
+    value: asset.id,
+    label: `${asset.assetCode}${asset.assetTag ? ` - ${asset.assetTag}` : ''} - ${asset.name}`,
+  }));
+
+  const employeeOptions = employees.map((employee) => {
+    const fullName = [
+      employee.firstName,
+      employee.middleName,
+      employee.lastName,
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    return {
+      value: employee.id,
+      label: `${employee.employeeNumber} - ${fullName}`,
+    };
+  });
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Assignment */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Assignment</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Assignment Information
+          </h3>
 
-        {/* Asset */}
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset <span className="text-destructive">*</span>
-          </label>
-
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode}
-                {asset.assetTag ? ` - ${asset.assetTag}` : ''} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Select the asset and employee for this assignment.
+          </p>
         </div>
 
-        {/* Employee */}
-        <div className="space-y-2">
-          <label htmlFor="employeeId" className="text-sm font-medium">
-            Employee <span className="text-destructive">*</span>
-          </label>
+        <SelectField
+          label="Asset"
+          required
+          options={assetOptions}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
+        />
 
-          <select
-            id="employeeId"
-            {...register('employeeId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Employee</option>
+        <SelectField
+          label="Employee"
+          required
+          options={employeeOptions}
+          placeholder="Select employee"
+          error={errors.employeeId?.message}
+          {...register('employeeId')}
+        />
 
-            {employees.map((employee) => {
-              const fullName = [
-                employee.firstName,
-                employee.middleName,
-                employee.lastName,
-              ]
-                .filter(Boolean)
-                .join(' ');
-
-              return (
-                <option key={employee.id} value={employee.id}>
-                  {employee.employeeNumber} - {fullName}
-                </option>
-              );
-            })}
-          </select>
-
-          {errors.employeeId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.employeeId.message}
-            </p>
-          )}
-        </div>
-
-        {/* Assignment Date */}
-        <div className="space-y-2">
-          <label htmlFor="assignedAt" className="text-sm font-medium">
-            Assignment Date
-          </label>
-
-          <input
-            id="assignedAt"
-            type="datetime-local"
-            {...register('assignedAt')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          />
-
-          {errors.assignedAt?.message && (
-            <p className="text-sm text-destructive">
-              {errors.assignedAt.message}
-            </p>
-          )}
-        </div>
+        <TextField
+          label="Assignment Date"
+          type="datetime-local"
+          error={errors.assignedAt?.message}
+          {...register('assignedAt')}
+        />
       </div>
 
-      {/* Additional Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Additional Information</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Additional Information
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add any notes relevant to this asset assignment.
+          </p>
+        </div>
 
         <TextAreaField
           label="Notes"
@@ -179,9 +155,11 @@ export function AssetAssignmentForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Assigning...' : 'Assign Asset'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Assigning...' : 'Assign Asset'}
+        </Button>
+      </div>
     </form>
   );
 }

@@ -2,6 +2,10 @@
 
 import type { AssetAssignmentWithRelations } from '../types/asset-assignment.types';
 
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -10,8 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { StatusBadge } from '@/components/common/status-badge';
 
 type AssetAssignmentTableProps = {
   assignments: AssetAssignmentWithRelations[];
@@ -26,6 +28,15 @@ export function AssetAssignmentTable({
   onReturn,
   returningId,
 }: AssetAssignmentTableProps) {
+  if (assignments.length === 0) {
+    return (
+      <EmptyState
+        title="No asset assignments found"
+        description="There are no asset assignment records to display."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -37,7 +48,7 @@ export function AssetAssignmentTable({
           <TableHead>Returned At</TableHead>
           <TableHead>Returned By</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
@@ -45,10 +56,20 @@ export function AssetAssignmentTable({
         {assignments.map((assignment) => {
           const isActive = assignment.returnedAt === null;
 
+          const employeeName = [
+            assignment.employee.firstName,
+            assignment.employee.middleName,
+            assignment.employee.lastName,
+          ]
+            .filter(Boolean)
+            .join(' ');
+
           return (
             <TableRow key={assignment.id}>
-              <TableCell className="font-medium">
-                <div>{assignment.asset.assetCode}</div>
+              <TableCell>
+                <div className="font-medium text-foreground">
+                  {assignment.asset.assetCode}
+                </div>
 
                 <div className="text-xs text-muted-foreground">
                   {assignment.asset.name}
@@ -62,12 +83,8 @@ export function AssetAssignmentTable({
               </TableCell>
 
               <TableCell>
-                <div>
-                  {assignment.employee.firstName}{' '}
-                  {assignment.employee.middleName
-                    ? `${assignment.employee.middleName} `
-                    : ''}
-                  {assignment.employee.lastName}
+                <div className="font-medium text-foreground">
+                  {employeeName}
                 </div>
 
                 <div className="text-xs text-muted-foreground">
@@ -75,36 +92,39 @@ export function AssetAssignmentTable({
                 </div>
               </TableCell>
 
-              <TableCell>{assignment.assignedAt.toLocaleString()}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {assignment.assignedAt.toLocaleString()}
+              </TableCell>
 
               <TableCell>{assignment.assignedByUser.displayName}</TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap">
                 {assignment.returnedAt
                   ? assignment.returnedAt.toLocaleString()
                   : '—'}
               </TableCell>
 
               <TableCell>
-                {assignment.returnedByUser
-                  ? assignment.returnedByUser.displayName
-                  : '—'}
+                {assignment.returnedByUser?.displayName ?? '—'}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap">
                 <StatusBadge active={isActive} />
               </TableCell>
 
-              <TableCell>
-                {isActive && (
-                  <button
+              <TableCell className="whitespace-nowrap">
+                {isActive ? (
+                  <Button
                     type="button"
-                    onClick={() => onReturn(assignment)}
+                    variant="secondary"
+                    className="px-3 py-1.5"
                     disabled={returningId === assignment.id}
-                    className="rounded-md border px-3 py-1.5 text-sm"
+                    onClick={() => onReturn(assignment)}
                   >
                     {returningId === assignment.id ? 'Returning...' : 'Return'}
-                  </button>
+                  </Button>
+                ) : (
+                  <span className="text-sm text-muted-foreground">—</span>
                 )}
               </TableCell>
             </TableRow>

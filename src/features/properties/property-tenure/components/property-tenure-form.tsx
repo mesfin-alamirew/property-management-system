@@ -1,5 +1,6 @@
 'use client';
 
+import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -18,8 +19,8 @@ import {
 } from '../actions/property-tenure.actions';
 
 import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 
 type PropertyTenureFormProps = {
   propertyTenure?: PropertyTenure | null;
@@ -37,7 +38,11 @@ export function PropertyTenureForm({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<
+    z.input<typeof propertyTenureSchema>,
+    unknown,
+    z.output<typeof propertyTenureSchema>
+  >({
     resolver: zodResolver(propertyTenureSchema),
 
     defaultValues: {
@@ -70,36 +75,53 @@ export function PropertyTenureForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <TextField
-        label="Code"
-        required
-        error={errors.code?.message}
-        {...register('code')}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Property Tenure Information
+          </h3>
 
-      <TextField
-        label="Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+          <p className="text-xs leading-5 text-muted-foreground">
+            Provide the identifying information used to classify property
+            tenure.
+          </p>
+        </div>
 
-      <TextAreaField
-        label="Description"
-        error={errors.description?.message}
-        {...register('description')}
-      />
+        <div className="space-y-4">
+          <TextField
+            label="Code"
+            required
+            error={errors.code?.message}
+            {...register('code')}
+          />
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? propertyTenure
-            ? 'Updating...'
-            : 'Saving...'
-          : propertyTenure
-            ? 'Update'
-            : 'Save'}
-      </Button>
+          <TextField
+            label="Name"
+            required
+            error={errors.name?.message}
+            {...register('name')}
+          />
+
+          <TextAreaField
+            label="Description"
+            error={errors.description?.message}
+            {...register('description')}
+          />
+        </div>
+      </section>
+
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? propertyTenure
+              ? 'Updating...'
+              : 'Saving...'
+            : propertyTenure
+              ? 'Update Property Tenure'
+              : 'Save Property Tenure'}
+        </Button>
+      </div>
     </form>
   );
 }

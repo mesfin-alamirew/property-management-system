@@ -19,8 +19,9 @@ import {
 import type { OwnershipWithRelations } from '../types/ownership.types';
 
 import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 
 type OwnershipFormProps = {
   ownership?: OwnershipWithRelations | null;
@@ -83,13 +84,9 @@ export function OwnershipForm({
           : '',
 
       acquisitionCurrency: ownership?.acquisitionCurrency ?? '',
-
       deedNumber: ownership?.deedNumber ?? '',
-
       legalReference: ownership?.legalReference ?? '',
-
       registrationAuthority: ownership?.registrationAuthority ?? '',
-
       notes: ownership?.notes ?? '',
     },
   });
@@ -107,9 +104,7 @@ export function OwnershipForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
@@ -117,154 +112,178 @@ export function OwnershipForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Relationships */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Relationships</h3>
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Relationships
+          </h3>
 
-        <div className="space-y-2">
-          <label htmlFor="propertyId" className="text-sm font-medium">
-            Property <span className="text-destructive">*</span>
-          </label>
+          <p className="text-xs leading-5 text-muted-foreground">
+            Select the property and ownership type associated with this record.
+          </p>
+        </div>
 
-          <select
-            id="propertyId"
+        <div className="grid gap-4 sm:grid-cols-2">
+          <SelectField
+            label="Property"
+            required
+            error={errors.propertyId?.message}
+            options={properties.map((property) => ({
+              value: property.id,
+              label: `${property.propertyCode} - ${property.name}`,
+            }))}
+            placeholder="Select Property"
             {...register('propertyId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Property</option>
+          />
 
-            {properties.map((property) => (
-              <option key={property.id} value={property.id}>
-                {property.propertyCode} - {property.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.propertyId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.propertyId.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="ownershipTypeId" className="text-sm font-medium">
-            Ownership Type <span className="text-destructive">*</span>
-          </label>
-
-          <select
-            id="ownershipTypeId"
+          <SelectField
+            label="Ownership Type"
+            required
+            error={errors.ownershipTypeId?.message}
+            options={ownershipTypes.map((ownershipType) => ({
+              value: ownershipType.id,
+              label: `${ownershipType.code} - ${ownershipType.name}`,
+            }))}
+            placeholder="Select Ownership Type"
             {...register('ownershipTypeId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Ownership Type</option>
-
-            {ownershipTypes.map((ownershipType) => (
-              <option key={ownershipType.id} value={ownershipType.id}>
-                {ownershipType.code} - {ownershipType.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.ownershipTypeId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.ownershipTypeId.message}
-            </p>
-          )}
+          />
         </div>
-      </div>
+      </section>
 
       {/* Ownership Period */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Ownership Period</h3>
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Ownership Period
+          </h3>
 
-        <TextField
-          label="Start Date"
-          type="date"
-          required
-          error={errors.startDate?.message}
-          {...register('startDate')}
-        />
+          <p className="text-xs leading-5 text-muted-foreground">
+            Define when the ownership became effective and, if applicable, when
+            it ended.
+          </p>
+        </div>
 
-        <TextField
-          label="End Date"
-          type="date"
-          error={errors.endDate?.message}
-          {...register('endDate')}
-        />
-      </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Start Date"
+            type="date"
+            required
+            error={errors.startDate?.message}
+            {...register('startDate')}
+          />
+
+          <TextField
+            label="End Date"
+            type="date"
+            error={errors.endDate?.message}
+            {...register('endDate')}
+          />
+        </div>
+      </section>
 
       {/* Acquisition */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Acquisition</h3>
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">Acquisition</h3>
 
-        <TextField
-          label="Acquisition Date"
-          type="date"
-          error={errors.acquisitionDate?.message}
-          {...register('acquisitionDate')}
-        />
+          <p className="text-xs leading-5 text-muted-foreground">
+            Record the acquisition date, price, currency, and deed information
+            where applicable.
+          </p>
+        </div>
 
-        <TextField
-          label="Acquisition Price"
-          type="number"
-          min="0"
-          step="any"
-          error={errors.acquisitionPrice?.message}
-          {...register('acquisitionPrice')}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Acquisition Date"
+            type="date"
+            error={errors.acquisitionDate?.message}
+            {...register('acquisitionDate')}
+          />
 
-        <TextField
-          label="Currency"
-          error={errors.acquisitionCurrency?.message}
-          {...register('acquisitionCurrency')}
-        />
+          <TextField
+            label="Acquisition Price"
+            type="number"
+            min="0"
+            step="any"
+            error={errors.acquisitionPrice?.message}
+            {...register('acquisitionPrice')}
+          />
 
-        <TextField
-          label="Deed Number"
-          error={errors.deedNumber?.message}
-          {...register('deedNumber')}
-        />
-      </div>
+          <TextField
+            label="Currency"
+            error={errors.acquisitionCurrency?.message}
+            {...register('acquisitionCurrency')}
+          />
+
+          <TextField
+            label="Deed Number"
+            error={errors.deedNumber?.message}
+            {...register('deedNumber')}
+          />
+        </div>
+      </section>
 
       {/* Legal Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Legal Information</h3>
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Legal Information
+          </h3>
 
-        <TextField
-          label="Legal Reference"
-          error={errors.legalReference?.message}
-          {...register('legalReference')}
-        />
+          <p className="text-xs leading-5 text-muted-foreground">
+            Capture the legal reference and authority responsible for the
+            ownership registration.
+          </p>
+        </div>
 
-        <TextField
-          label="Registration Authority"
-          error={errors.registrationAuthority?.message}
-          {...register('registrationAuthority')}
-        />
-      </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Legal Reference"
+            error={errors.legalReference?.message}
+            {...register('legalReference')}
+          />
+
+          <TextField
+            label="Registration Authority"
+            error={errors.registrationAuthority?.message}
+            {...register('registrationAuthority')}
+          />
+        </div>
+      </section>
 
       {/* Additional Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Additional Information</h3>
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Additional Information
+          </h3>
+
+          <p className="text-xs leading-5 text-muted-foreground">
+            Add any additional notes that may be useful for managing this
+            ownership record.
+          </p>
+        </div>
 
         <TextAreaField
           label="Notes"
           error={errors.notes?.message}
           {...register('notes')}
         />
-      </div>
+      </section>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? ownership
-            ? 'Updating...'
-            : 'Saving...'
-          : ownership
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? ownership
+              ? 'Updating...'
+              : 'Saving...'
+            : ownership
+              ? 'Update Ownership'
+              : 'Save Ownership'}
+        </Button>
+      </div>
     </form>
   );
 }

@@ -14,7 +14,6 @@ import { EmployeeForm } from './employee-form';
 
 type EmployeeDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
 
   employee?: EmployeeWithRelations | null;
@@ -34,20 +33,26 @@ export function EmployeeDialog({
 }: EmployeeDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {employee ? 'Edit Employee' : 'Create Employee'}
           </DialogTitle>
 
-          <DialogDescription>Enter employee information.</DialogDescription>
+          <DialogDescription>
+            {employee
+              ? 'Update employee information.'
+              : 'Enter the information required to create an employee.'}
+          </DialogDescription>
         </DialogHeader>
 
-        <EmployeeForm
-          employee={employee}
-          organizationUnits={organizationUnits}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <EmployeeForm
+            employee={employee}
+            organizationUnits={organizationUnits}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

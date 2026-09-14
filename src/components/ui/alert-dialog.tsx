@@ -37,9 +37,10 @@ export function AlertDialogContent({
 
       <AlertDialogPrimitive.Content
         className={cn(
-          'fixed left-1/2 top-1/2 z-50 w-full max-w-md',
+          'fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md',
           '-translate-x-1/2 -translate-y-1/2',
-          'rounded-lg border bg-white p-6 shadow-lg',
+          'rounded-lg border border-border bg-surface p-6 shadow-xl',
+          'focus:outline-none',
           className,
         )}
         {...props}
@@ -53,7 +54,10 @@ export function AlertDialogHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('mb-4 flex flex-col space-y-1', className)} {...props} />
+    <div
+      className={cn('mb-5 flex flex-col space-y-1.5', className)}
+      {...props}
+    />
   );
 }
 
@@ -62,7 +66,13 @@ export function AlertDialogFooter({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('mt-6 flex justify-end gap-2', className)} {...props} />
+    <div
+      className={cn(
+        'mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -72,7 +82,7 @@ export function AlertDialogTitle({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
   return (
     <AlertDialogPrimitive.Title
-      className={cn('text-lg font-semibold', className)}
+      className={cn('text-lg font-semibold text-foreground', className)}
       {...props}
     />
   );
@@ -84,7 +94,7 @@ export function AlertDialogDescription({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
   return (
     <AlertDialogPrimitive.Description
-      className={cn('text-sm text-gray-500', className)}
+      className={cn('text-sm leading-5 text-muted-foreground', className)}
       {...props}
     />
   );

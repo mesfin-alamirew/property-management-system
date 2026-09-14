@@ -14,9 +14,7 @@ import { MaintenanceForm } from './maintenance-form';
 
 type MaintenanceDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
-
   maintenance?: MaintenanceWithRelations | null;
 
   assets: {
@@ -37,11 +35,10 @@ export function MaintenanceDialog({
   onOpenChange,
   maintenance,
   assets,
-  users,
 }: MaintenanceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {maintenance ? 'Edit Maintenance' : 'Create Maintenance'}
@@ -54,11 +51,13 @@ export function MaintenanceDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <MaintenanceForm
-          maintenance={maintenance}
-          assets={assets}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <MaintenanceForm
+            maintenance={maintenance}
+            assets={assets}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

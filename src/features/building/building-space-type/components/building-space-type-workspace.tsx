@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 
 import type { BuildingSpaceType } from '@/generated/prisma/client';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivateBuildingSpaceTypeAction } from '../actions/building-space-type.actions';
 
@@ -82,13 +83,9 @@ export function BuildingSpaceTypeWorkspace({
       title="Building Space Types"
       description="Manage the types of spaces available within buildings."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Space Type
-        </button>
+        </Button>
       }
     >
       <BuildingSpaceTypeTable

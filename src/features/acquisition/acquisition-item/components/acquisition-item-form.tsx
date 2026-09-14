@@ -19,6 +19,7 @@ import {
 import type { AcquisitionItemWithRelations } from '../types/acquisition-item.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 
 type AcquisitionItemFormProps = {
@@ -90,98 +91,96 @@ export function AcquisitionItemForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Acquisition Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Acquisition Information</h3>
+      <section className="rounded-lg border border-border bg-surface p-5">
+        <div className="mb-5 space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Acquisition Information
+          </h3>
 
-        <div className="space-y-2">
-          <label htmlFor="acquisitionId" className="text-sm font-medium">
-            Acquisition
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="acquisitionId"
-            {...register('acquisitionId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Acquisition</option>
-
-            {acquisitions.map((acquisition) => (
-              <option key={acquisition.id} value={acquisition.id}>
-                {acquisition.acquisitionNumber}
-              </option>
-            ))}
-          </select>
-
-          {errors.acquisitionId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.acquisitionId.message}
-            </p>
-          )}
+          <p className="text-xs leading-5 text-muted-foreground">
+            Select the acquisition that this asset belongs to.
+          </p>
         </div>
-      </div>
 
-      {/* Asset Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Asset Information</h3>
+        <SelectField
+          label="Acquisition"
+          required
+          options={acquisitions.map((acquisition) => ({
+            value: acquisition.id,
+            label: acquisition.acquisitionNumber,
+          }))}
+          placeholder="Select acquisition"
+          error={errors.acquisitionId?.message}
+          {...register('acquisitionId')}
+        />
+      </section>
 
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset
-            <span className="text-destructive"> *</span>
-          </label>
+      <section className="rounded-lg border border-border bg-surface p-5">
+        <div className="mb-5 space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Asset Information
+          </h3>
 
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+          <p className="text-xs leading-5 text-muted-foreground">
+            Select the asset being recorded under this acquisition.
+          </p>
         </div>
-      </div>
 
-      {/* Cost Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Cost Information</h3>
-
-        <TextField
-          label="Unit Cost"
-          type="number"
-          step="0.01"
-          error={errors.unitCost?.message}
-          {...register('unitCost')}
+        <SelectField
+          label="Asset"
+          required
+          options={assets.map((asset) => ({
+            value: asset.id,
+            label: `${asset.assetCode} - ${asset.name}`,
+          }))}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
         />
+      </section>
 
-        <TextField
-          label="Total Cost"
-          type="number"
-          step="0.01"
-          error={errors.totalCost?.message}
-          {...register('totalCost')}
-        />
+      <section className="rounded-lg border border-border bg-surface p-5">
+        <div className="mb-5 space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Cost Information
+          </h3>
+
+          <p className="text-xs leading-5 text-muted-foreground">
+            Record the applicable unit and total costs for this acquisition
+            item.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Unit Cost"
+            type="number"
+            step="0.01"
+            error={errors.unitCost?.message}
+            {...register('unitCost')}
+          />
+
+          <TextField
+            label="Total Cost"
+            type="number"
+            step="0.01"
+            error={errors.totalCost?.message}
+            {...register('totalCost')}
+          />
+        </div>
+      </section>
+
+      <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? acquisitionItem
+              ? 'Updating Acquisition Item...'
+              : 'Saving Acquisition Item...'
+            : acquisitionItem
+              ? 'Update Acquisition Item'
+              : 'Save Acquisition Item'}
+        </Button>
       </div>
-
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? acquisitionItem
-            ? 'Updating...'
-            : 'Saving...'
-          : acquisitionItem
-            ? 'Update'
-            : 'Save'}
-      </Button>
     </form>
   );
 }

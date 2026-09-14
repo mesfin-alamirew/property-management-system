@@ -14,9 +14,7 @@ import { OwnershipTypeForm } from './ownership-type-form';
 
 type OwnershipTypeDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
-
   ownershipType?: OwnershipType | null;
 };
 
@@ -25,16 +23,20 @@ export function OwnershipTypeDialog({
   onOpenChange,
   ownershipType,
 }: OwnershipTypeDialogProps) {
+  const isEditing = Boolean(ownershipType);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {ownershipType ? 'Edit Ownership Type' : 'Create Ownership Type'}
+            {isEditing ? 'Edit Ownership Type' : 'Create Ownership Type'}
           </DialogTitle>
 
-          <DialogDescription>
-            Enter ownership type information.
+          <DialogDescription className="pt-2">
+            {isEditing
+              ? 'Update the ownership type code, name, and description.'
+              : 'Create an ownership type and provide its identifying information.'}
           </DialogDescription>
         </DialogHeader>
 

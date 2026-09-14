@@ -19,6 +19,7 @@ import {
 import type { AssetLocationWithRelations } from '../types/asset-location.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
@@ -61,6 +62,11 @@ export function AssetLocationForm({
     },
   });
 
+  const organizationUnitOptions = organizationUnits.map((organizationUnit) => ({
+    value: organizationUnit.id,
+    label: `${organizationUnit.code} - ${organizationUnit.name}`,
+  }));
+
   async function onSubmit(data: AssetLocationFormData) {
     const result = assetLocation
       ? await updateAssetLocationAction(assetLocation.id, data)
@@ -85,9 +91,14 @@ export function AssetLocationForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the asset location and the organization unit responsible for
+            it.
+          </p>
+        </div>
 
         <TextField
           label="Asset Location Code"
@@ -103,31 +114,14 @@ export function AssetLocationForm({
           {...register('name')}
         />
 
-        <div className="space-y-2">
-          <label htmlFor="organizationUnitId" className="text-sm font-medium">
-            Organization Unit <span className="text-red-500">*</span>
-          </label>
-
-          <select
-            id="organizationUnitId"
-            {...register('organizationUnitId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select organization unit</option>
-
-            {organizationUnits.map((organizationUnit) => (
-              <option key={organizationUnit.id} value={organizationUnit.id}>
-                {organizationUnit.code} - {organizationUnit.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.organizationUnitId?.message && (
-            <p className="text-sm text-red-500">
-              {errors.organizationUnitId.message}
-            </p>
-          )}
-        </div>
+        <SelectField
+          label="Organization Unit"
+          required
+          options={organizationUnitOptions}
+          placeholder="Select organization unit"
+          error={errors.organizationUnitId?.message}
+          {...register('organizationUnitId')}
+        />
 
         <TextAreaField
           label="Description"
@@ -136,15 +130,17 @@ export function AssetLocationForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? assetLocation
-            ? 'Updating...'
-            : 'Saving...'
-          : assetLocation
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? assetLocation
+              ? 'Updating...'
+              : 'Saving...'
+            : assetLocation
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

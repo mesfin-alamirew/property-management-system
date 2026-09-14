@@ -4,12 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+
 import type { DisposalWithRelations } from '../types/disposal.types';
 
 import { DisposalTable } from './disposal-table';
 import { DisposalDialog } from './disposal-dialog';
 import { DisposalCancelDialog } from './disposal-cancel-dialog';
 import { DisposalItemDialog } from './disposal-item-dialog';
+
 import {
   requestDisposalAction,
   approveDisposalAction,
@@ -50,7 +54,6 @@ export function DisposalWorkspace({
 
     if (result.success) {
       toast.success('Disposal requested successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -62,7 +65,6 @@ export function DisposalWorkspace({
 
     if (result.success) {
       toast.success('Disposal approved successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -73,32 +75,22 @@ export function DisposalWorkspace({
     setSelectedDisposal(disposal);
     setIsCancelDialogOpen(true);
   }
+
   function handleAddItem(disposal: DisposalWithRelations) {
     setSelectedDisposalForItems(disposal);
     setIsItemDialogOpen(true);
   }
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Disposal</h1>
-
-          <p className="text-sm text-muted-foreground">
-            Create and manage asset disposal requests.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+    <MasterDataLayout
+      title="Disposal"
+      description="Create and manage asset disposal requests."
+      actions={
+        <Button type="button" onClick={handleCreate}>
           Create Disposal
-        </button>
-      </div>
-
-      {/* Disposal Table */}
+        </Button>
+      }
+    >
       <DisposalTable
         disposals={disposals}
         onRequest={handleRequest}
@@ -107,10 +99,8 @@ export function DisposalWorkspace({
         onAddItem={handleAddItem}
       />
 
-      {/* Disposal Dialog */}
       <DisposalDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
 
-      {/* Disposal Cancel Dialog */}
       <DisposalCancelDialog
         open={isCancelDialogOpen}
         onOpenChange={(open) => {
@@ -125,7 +115,7 @@ export function DisposalWorkspace({
           setSelectedDisposal(null);
         }}
       />
-      {/* Disposal Item Dialog */}
+
       {selectedDisposalForItems && (
         <DisposalItemDialog
           open={isItemDialogOpen}
@@ -141,6 +131,6 @@ export function DisposalWorkspace({
           assets={assets}
         />
       )}
-    </div>
+    </MasterDataLayout>
   );
 }

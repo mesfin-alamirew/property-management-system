@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivateOwnershipTypeAction } from '../actions/ownership-type.actions';
 import type { OwnershipType } from '@/generated/prisma/client';
@@ -81,13 +82,9 @@ export function OwnershipTypeWorkspace({
       title="Ownership Types"
       description="Manage property ownership types."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Ownership Type
-        </button>
+        </Button>
       }
     >
       <OwnershipTypeTable

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import type { AssetMovementWithRelations } from '../types/asset-movement.types';
@@ -42,13 +43,9 @@ export function AssetMovementWorkspace({
       title="Asset Movements"
       description="Record and review asset location movements."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Move Asset
-        </button>
+        </Button>
       }
     >
       <AssetMovementTable assetMovements={assetMovements} />

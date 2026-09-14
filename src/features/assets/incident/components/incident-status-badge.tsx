@@ -14,21 +14,23 @@ const statusLabels: Record<IncidentStatus, string> = {
   CANCELLED: 'Cancelled',
 };
 
+const statusClasses: Record<IncidentStatus, string> = {
+  DRAFT: 'bg-surface-muted text-muted-foreground',
+  REPORTED: 'bg-info-surface text-info',
+  ASSIGNED: 'bg-warning-surface text-warning',
+  IN_PROGRESS: 'bg-warning-surface text-warning',
+  RESOLVED: 'bg-success-surface text-success',
+  CLOSED: 'bg-success-surface text-success',
+  CANCELLED: 'bg-danger-surface text-danger',
+};
+
 export function WorkflowStatusBadge({ status }: WorkflowStatusBadgeProps) {
   return (
     <span
       className={[
         'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
-        status === 'DRAFT' && 'bg-gray-100 text-gray-700',
-        status === 'REPORTED' && 'bg-blue-100 text-blue-700',
-        status === 'ASSIGNED' && 'bg-purple-100 text-purple-700',
-        status === 'IN_PROGRESS' && 'bg-yellow-100 text-yellow-700',
-        status === 'RESOLVED' && 'bg-emerald-100 text-emerald-700',
-        status === 'CLOSED' && 'bg-green-100 text-green-700',
-        status === 'CANCELLED' && 'bg-red-100 text-red-700',
-      ]
-        .filter(Boolean)
-        .join(' ')}
+        statusClasses[status],
+      ].join(' ')}
     >
       {statusLabels[status]}
     </span>

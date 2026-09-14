@@ -61,24 +61,30 @@ export function PropertyDialog({
 }: PropertyDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {property ? 'Edit Property' : 'Create Property'}
           </DialogTitle>
 
-          <DialogDescription>Enter property information.</DialogDescription>
+          <DialogDescription>
+            {property
+              ? 'Update property information.'
+              : 'Enter the information required to create a property.'}
+          </DialogDescription>
         </DialogHeader>
 
-        <PropertyForm
-          property={property}
-          organizationUnits={organizationUnits}
-          propertyTypes={propertyTypes}
-          propertyCategories={propertyCategories}
-          propertyTenures={propertyTenures}
-          propertyStatuses={propertyStatuses}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <PropertyForm
+            property={property}
+            organizationUnits={organizationUnits}
+            propertyTypes={propertyTypes}
+            propertyCategories={propertyCategories}
+            propertyTenures={propertyTenures}
+            propertyStatuses={propertyStatuses}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

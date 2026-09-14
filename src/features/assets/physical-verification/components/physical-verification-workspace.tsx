@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import type { PhysicalVerificationWithRelations } from '../types/physical-verification.types';
 
@@ -41,13 +42,9 @@ export function PhysicalVerificationWorkspace({
       title="Physical Verifications"
       description="Plan, perform, and review physical asset verifications."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Create Physical Verification
-        </button>
+        </Button>
       }
     >
       <PhysicalVerificationTable

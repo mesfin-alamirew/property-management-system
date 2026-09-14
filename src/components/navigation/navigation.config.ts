@@ -1,3 +1,15 @@
+import type { LucideIcon } from 'lucide-react';
+import {
+  BarChart3,
+  Building2,
+  ClipboardCheck,
+  FileText,
+  Handshake,
+  LayoutDashboard,
+  Package,
+  Settings,
+} from 'lucide-react';
+
 export type NavigationItem = {
   title: string;
   href: string;
@@ -5,11 +17,13 @@ export type NavigationItem = {
 
 export type NavigationSection = {
   title?: string;
+  icon?: LucideIcon;
   items: NavigationItem[];
 };
 
 export const navigationSections: NavigationSection[] = [
   {
+    icon: LayoutDashboard,
     items: [
       {
         title: 'Dashboard',
@@ -20,6 +34,7 @@ export const navigationSections: NavigationSection[] = [
 
   {
     title: 'Administration',
+    icon: Settings,
     items: [
       {
         title: 'Organization Units',
@@ -46,7 +61,7 @@ export const navigationSections: NavigationSection[] = [
         href: '/woredas',
       },
       {
-        title: 'Role',
+        title: 'Roles',
         href: '/administration/roles',
       },
     ],
@@ -54,6 +69,7 @@ export const navigationSections: NavigationSection[] = [
 
   {
     title: 'Properties',
+    icon: Building2,
     items: [
       {
         title: 'Properties',
@@ -79,7 +95,35 @@ export const navigationSections: NavigationSection[] = [
   },
 
   {
+    title: 'Buildings',
+    icon: Building2,
+    items: [
+      {
+        title: 'Buildings',
+        href: '/buildings',
+      },
+      {
+        title: 'Building Types',
+        href: '/building-types',
+      },
+      {
+        title: 'Building Conditions',
+        href: '/building-conditions',
+      },
+      {
+        title: 'Building Space Types',
+        href: '/building-space-types',
+      },
+      {
+        title: 'Building Spaces',
+        href: '/building-spaces',
+      },
+    ],
+  },
+
+  {
     title: 'Ownership',
+    icon: Handshake,
     items: [
       {
         title: 'Ownerships',
@@ -93,18 +137,64 @@ export const navigationSections: NavigationSection[] = [
   },
 
   {
-    title: 'Verification',
+    title: 'Acquisition',
+    icon: Package,
     items: [
       {
-        title: 'Physical Verifications',
-        href: '/physical-verifications',
+        title: 'Acquisitions',
+        href: '/acquisitions',
+      },
+      {
+        title: 'Acquisition Items',
+        href: '/acquisition-items',
+      },
+      {
+        title: 'Acquisition Methods',
+        href: '/acquisition-methods',
       },
     ],
   },
 
   {
-    title: 'Maintenance',
+    title: 'Asset Management',
+    icon: ClipboardCheck,
     items: [
+      {
+        title: 'Assets',
+        href: '/assets',
+      },
+      {
+        title: 'Asset Types',
+        href: '/asset-types',
+      },
+      {
+        title: 'Asset Categories',
+        href: '/asset-categories',
+      },
+      {
+        title: 'Asset Statuses',
+        href: '/asset-statuses',
+      },
+      {
+        title: 'Asset Conditions',
+        href: '/asset-conditions',
+      },
+      {
+        title: 'Asset Locations',
+        href: '/asset-locations',
+      },
+      {
+        title: 'Asset Movements',
+        href: '/asset-movements',
+      },
+      {
+        title: 'Asset Assignments',
+        href: '/asset-assignments',
+      },
+      {
+        title: 'Physical Verifications',
+        href: '/physical-verifications',
+      },
       {
         title: 'Maintenance',
         href: '/maintenances',
@@ -117,55 +207,68 @@ export const navigationSections: NavigationSection[] = [
         title: 'Incidents',
         href: '/incidents',
       },
-    ],
-  },
-  {
-    title: 'Reports',
-    items: [
       {
-        title: 'Accountability',
-        href: '/reports/accountability',
+        title: 'Retirements',
+        href: '/retirements',
       },
       {
-        title: 'Acquisitions',
-        href: '/reports/acquisitions',
+        title: 'Disposals',
+        href: '/disposals',
+      },
+    ],
+  },
+
+  {
+    title: 'Reports',
+    icon: BarChart3,
+    items: [
+      {
+        title: 'Dashboard',
+        href: '/reports/dashboard',
       },
       {
         title: 'Assets',
         href: '/reports/assets',
       },
       {
+        title: 'Acquisitions',
+        href: '/reports/acquisitions',
+      },
+      {
         title: 'Assignments',
         href: '/reports/assignments',
-      },
-      {
-        title: 'Audits',
-        href: '/reports/audits',
-      },
-      {
-        title: 'Dashboard',
-        href: '/reports/dashboard',
-      },
-      {
-        title: 'Incidents',
-        href: '/reports/incidents',
-      },
-
-      {
-        title: 'Maintenances',
-        href: '/reports/maintenances',
       },
       {
         title: 'Movements',
         href: '/reports/movements',
       },
       {
-        title: 'Retirements',
-        href: '/reports/retirements',
+        title: 'Maintenance',
+        href: '/reports/maintenances',
+      },
+      {
+        title: 'Incidents',
+        href: '/reports/incidents',
       },
       {
         title: 'Verifications',
         href: '/reports/verifications',
+      },
+      {
+        title: 'Retirements',
+        href: '/reports/retirements',
+      },
+      {
+        title: 'Disposals',
+        href: '/reports/disposals',
+      },
+      {
+        title: 'Accountability',
+        href: '/reports/accountability',
+      },
+      {
+        title: 'Audits',
+        href: '/reports/audits',
       },
     ],
   },

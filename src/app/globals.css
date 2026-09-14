@@ -1,22 +1,103 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
   --foreground: #171717;
+
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+
+  --border: #e2e8f0;
+
+  --muted-foreground: #64748b;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+
+  --focus-ring: #3b82f6;
+  --warning: #a16207;
+  --warning-surface: #fef3c7;
+
+  --info: #1d4ed8;
+  --info-surface: #dbeafe;
+}
+:root {
+  --background: #f8fafc;
+
+  --foreground: #171717;
+
+  --surface: #ffffff;
+
+  --surface-muted: #f1f5f9;
+
+  --border: #e2e8f0;
+
+  --muted-foreground: #64748b;
+
+  --primary: #2563eb;
+
+  --primary-hover: #1d4ed8;
+
+  --danger: #dc2626;
+
+  --danger-hover: #b91c1c;
+
+  --focus-ring: #3b82f6;
+
+  --success: #15803d;
+
+  --success-surface: #dcfce7;
+
+  --warning: #a16207;
+
+  --warning-surface: #fef3c7;
+
+  --info: #1d4ed8;
+
+  --info-surface: #dbeafe;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-border: var(--border);
+
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+
+  --color-focus-ring: var(--focus-ring);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-info: var(--info);
+  --color-info-surface: var(--info-surface);
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-surface: var(--danger-surface);
+
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
+
+  --color-info: var(--info);
+  --color-info-surface: var(--info-surface);
 }
 
 body {

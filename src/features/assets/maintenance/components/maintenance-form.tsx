@@ -19,8 +19,9 @@ import {
 import type { MaintenanceWithRelations } from '../types/maintenance.types';
 
 import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 
 const maintenanceTypes = [
   'PREVENTIVE',
@@ -41,6 +42,7 @@ type MaintenanceFormProps = {
 
   onSuccess?: () => void;
 };
+
 export function MaintenanceForm({
   maintenance,
   assets,
@@ -73,7 +75,6 @@ export function MaintenanceForm({
   });
 
   async function onSubmit(data: MaintenanceFormData) {
-    console.log('Maintenance form submitted:', data);
     const result = maintenance
       ? await updateMaintenanceAction(maintenance.id, data)
       : await createMaintenanceAction(data);
@@ -86,72 +87,54 @@ export function MaintenanceForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
     }
   }
 
+  const assetOptions = assets.map((asset) => ({
+    value: asset.id,
+    label: `${asset.assetCode} - ${asset.name}`,
+  }));
+
+  const maintenanceTypeOptions = maintenanceTypes.map((type) => ({
+    value: type,
+    label: type,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Maintenance Information */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Maintenance Information</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Maintenance Information
+          </h3>
 
-        {/* Asset */}
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Provide the asset and basic information for this maintenance
+            request.
+          </p>
         </div>
 
-        {/* Maintenance Type */}
-        <div className="space-y-2">
-          <label htmlFor="type" className="text-sm font-medium">
-            Maintenance Type
-            <span className="text-destructive"> *</span>
-          </label>
+        <SelectField
+          label="Asset"
+          required
+          options={assetOptions}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
+        />
 
-          <select
-            id="type"
-            {...register('type')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Maintenance Type</option>
-
-            {maintenanceTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-
-          {errors.type?.message && (
-            <p className="text-sm text-destructive">{errors.type.message}</p>
-          )}
-        </div>
+        <SelectField
+          label="Maintenance Type"
+          required
+          options={maintenanceTypeOptions}
+          placeholder="Select maintenance type"
+          error={errors.type?.message}
+          {...register('type')}
+        />
 
         <TextField
           label="Title"
@@ -161,9 +144,14 @@ export function MaintenanceForm({
         />
       </div>
 
-      {/* Schedule */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Schedule</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Schedule</h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Specify the planned date and time for the maintenance activity.
+          </p>
+        </div>
 
         <TextField
           label="Scheduled At"
@@ -173,9 +161,14 @@ export function MaintenanceForm({
         />
       </div>
 
-      {/* Details */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Details</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Details</h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Describe the maintenance work and provide any additional notes.
+          </p>
+        </div>
 
         <TextAreaField
           label="Description"
@@ -190,15 +183,17 @@ export function MaintenanceForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? maintenance
-            ? 'Updating...'
-            : 'Submitting...'
-          : maintenance
-            ? 'Update'
-            : 'Submit Request'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? maintenance
+              ? 'Updating...'
+              : 'Submitting...'
+            : maintenance
+              ? 'Update'
+              : 'Submit Request'}
+        </Button>
+      </div>
     </form>
   );
 }

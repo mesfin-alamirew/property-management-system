@@ -2,6 +2,8 @@
 
 import type { MaintenanceServiceWithRelations } from '../types/maintenance-service.types';
 
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -10,8 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { RowActionButtons } from '@/components/common/row-action-buttons';
 
 type MaintenanceServiceTableProps = {
   maintenanceServices: MaintenanceServiceWithRelations[];
@@ -23,6 +23,15 @@ export function MaintenanceServiceTable({
   maintenanceServices,
   onEdit,
 }: MaintenanceServiceTableProps) {
+  if (maintenanceServices.length === 0) {
+    return (
+      <EmptyState
+        title="No maintenance services found"
+        description="There are no maintenance service records to display."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -35,33 +44,46 @@ export function MaintenanceServiceTable({
           <TableHead>Quantity</TableHead>
           <TableHead>Unit Cost</TableHead>
           <TableHead>Total Cost</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {maintenanceServices.map((service) => (
           <TableRow key={service.id}>
-            <TableCell className="font-medium">
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
               {service.serviceDate.toLocaleDateString()}
             </TableCell>
 
-            <TableCell className="font-medium">
-              {service.maintenance.referenceNumber}
+            <TableCell className="whitespace-nowrap">
+              <span className="font-medium text-foreground">
+                {service.maintenance.referenceNumber}
+              </span>
             </TableCell>
-            <TableCell>{service.maintenance.title}</TableCell>
 
-            <TableCell>{service.description}</TableCell>
+            <TableCell className="max-w-xs">
+              <span className="line-clamp-2">{service.maintenance.title}</span>
+            </TableCell>
+
+            <TableCell className="max-w-sm">
+              <span className="line-clamp-2">{service.description || '-'}</span>
+            </TableCell>
 
             <TableCell>{service.serviceProvider ?? '-'}</TableCell>
 
-            <TableCell>{service.quantity?.toString() ?? '-'}</TableCell>
+            <TableCell className="whitespace-nowrap">
+              {service.quantity?.toString() ?? '-'}
+            </TableCell>
 
-            <TableCell>{service.unitCost?.toString() ?? '-'}</TableCell>
+            <TableCell className="whitespace-nowrap">
+              {service.unitCost?.toString() ?? '-'}
+            </TableCell>
 
-            <TableCell>{service.totalCost?.toString() ?? '-'}</TableCell>
+            <TableCell className="whitespace-nowrap font-medium">
+              {service.totalCost?.toString() ?? '-'}
+            </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons onEdit={() => onEdit(service)} />
             </TableCell>
           </TableRow>

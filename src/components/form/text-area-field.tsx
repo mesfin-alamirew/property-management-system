@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+
 import { cn } from '@/lib/utils';
 
 import { FormError } from './form-error';
@@ -23,12 +25,16 @@ export function TextAreaField({
   const textAreaId = id ?? generatedId;
 
   return (
-    <div className="space-y-1">
-      <label htmlFor={textAreaId} className="text-sm font-medium text-gray-700">
+    <div className="space-y-1.5">
+      <Label htmlFor={textAreaId}>
         {label}
 
-        {required && <span className="ml-1 text-red-600">*</span>}
-      </label>
+        {required && (
+          <span className="ml-1 text-danger" aria-hidden="true">
+            *
+          </span>
+        )}
+      </Label>
 
       <Textarea
         id={textAreaId}

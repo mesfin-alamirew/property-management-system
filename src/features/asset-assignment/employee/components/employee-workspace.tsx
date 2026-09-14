@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { Button } from '@/components/ui/button';
 
 import { deactivateEmployeeAction } from '../actions/employee.actions';
 import type { EmployeeWithRelations } from '../types/employee.types';
@@ -86,13 +87,9 @@ export function EmployeeWorkspace({
       title="Employees"
       description="Manage employees and their organizational assignments."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Employee
-        </button>
+        </Button>
       }
     >
       <EmployeeTable

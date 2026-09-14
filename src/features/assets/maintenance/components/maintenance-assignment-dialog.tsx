@@ -2,6 +2,16 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { SelectField } from '@/components/form/select-field';
+
 import { assignMaintenanceAction } from '../actions/maintenance.actions';
 import type { MaintenanceWithRelations } from '../types/maintenance.types';
 
@@ -29,7 +39,6 @@ export function MaintenanceAssignmentDialog({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
 
   async function handleAssign() {
@@ -64,85 +73,87 @@ export function MaintenanceAssignmentDialog({
     }
   }
 
-  if (!open || !maintenance) {
+  if (!maintenance) {
     return null;
   }
 
+  const userOptions = users.map((user) => ({
+    value: user.id,
+    label: `${user.displayName} (${user.username})`,
+  }));
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-lg">
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Assign Maintenance</h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Assign Maintenance</DialogTitle>
 
-          <p className="text-sm text-muted-foreground">
+          <DialogDescription>
             Assign this maintenance request to the concerned officer.
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="mt-6 space-y-4">
-          <div>
-            <div className="text-sm font-medium">Reference Number</div>
+        <div className="space-y-6 pt-2">
+          <div className="rounded-md border border-border bg-surface-muted p-4">
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Reference Number
+                </p>
 
-            <div className="mt-1 text-sm text-muted-foreground">
-              {maintenance.referenceNumber}
+                <p className="mt-1 text-sm font-medium text-foreground">
+                  {maintenance.referenceNumber}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Asset
+                </p>
+
+                <p className="mt-1 text-sm text-foreground">
+                  {maintenance.asset
+                    ? `${maintenance.asset.assetCode} - ${maintenance.asset.name}`
+                    : '-'}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div>
-            <div className="text-sm font-medium">Asset</div>
+          <SelectField
+            label="Maintenance Officer"
+            required
+            options={userOptions}
+            placeholder="Select maintenance officer"
+            value={assignedToUserId}
+            onChange={(event) => {
+              setAssignedToUserId(event.target.value);
+              setError(null);
+            }}
+            disabled={isSubmitting}
+            error={error ?? undefined}
+          />
 
-            <div className="mt-1 text-sm text-muted-foreground">
-              {maintenance.asset
-                ? `${maintenance.asset.assetCode} - ${maintenance.asset.name}`
-                : '-'}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="assignedToUserId" className="text-sm font-medium">
-              Maintenance Officer
-            </label>
-
-            <select
-              id="assignedToUserId"
-              value={assignedToUserId}
-              onChange={(event) => setAssignedToUserId(event.target.value)}
-              disabled={isSubmitting}
-              className="w-full rounded-md border px-3 py-2 text-sm"
-            >
-              <option value="">Select Maintenance Officer</option>
-
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.displayName} ({user.username})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button
+          <div className="flex justify-end gap-2 border-t border-border pt-4">
+            <Button
               type="button"
-              onClick={() => onOpenChange(false)}
+              variant="secondary"
               disabled={isSubmitting}
-              className="rounded-md border px-4 py-2 text-sm"
+              onClick={() => onOpenChange(false)}
             >
               Cancel
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
-              onClick={handleAssign}
               disabled={isSubmitting || !assignedToUserId}
-              className="rounded-md border px-4 py-2 text-sm"
+              onClick={handleAssign}
             >
               {isSubmitting ? 'Assigning...' : 'Assign Maintenance'}
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

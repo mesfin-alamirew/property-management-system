@@ -1,6 +1,5 @@
 'use client';
 
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -16,6 +15,7 @@ import { createRetirementAction } from '../actions/retirement.actions';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { SelectField } from '@/components/form/select-field';
 
 type RetirementFormProps = {
   assets: {
@@ -73,39 +73,39 @@ export function RetirementForm({
     }
   }
 
+  const assetOptions = assets.map((asset) => ({
+    value: asset.id,
+    label: `${asset.assetCode} - ${asset.name}`,
+  }));
+
+  const conditionOptions = conditions.map((condition) => ({
+    value: condition.id,
+    label: `${condition.code} - ${condition.name}`,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Retirement Information */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Retirement Information</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Retirement Information
+          </h3>
 
-        {/* Asset */}
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Provide the asset, retirement date, and condition for the retirement
+            request.
+          </p>
         </div>
 
-        {/* Retirement Date */}
+        <SelectField
+          label="Asset"
+          required
+          options={assetOptions}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
+        />
+
         <TextField
           label="Retirement Date"
           type="date"
@@ -114,38 +114,26 @@ export function RetirementForm({
           {...register('retirementDate')}
         />
 
-        {/* Condition */}
-        <div className="space-y-2">
-          <label htmlFor="conditionId" className="text-sm font-medium">
-            Condition
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="conditionId"
-            {...register('conditionId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Condition</option>
-
-            {conditions.map((condition) => (
-              <option key={condition.id} value={condition.id}>
-                {condition.code} - {condition.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.conditionId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.conditionId.message}
-            </p>
-          )}
-        </div>
+        <SelectField
+          label="Condition"
+          required
+          options={conditionOptions}
+          placeholder="Select condition"
+          error={errors.conditionId?.message}
+          {...register('conditionId')}
+        />
       </div>
 
-      {/* Details */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Retirement Details</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Retirement Details
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Document the reason for retirement and any additional information.
+          </p>
+        </div>
 
         <TextAreaField
           label="Reason"
@@ -161,9 +149,11 @@ export function RetirementForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Submitting...' : 'Submit Retirement'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit Retirement'}
+        </Button>
+      </div>
     </form>
   );
 }

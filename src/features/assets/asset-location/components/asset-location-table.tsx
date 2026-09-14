@@ -2,6 +2,9 @@
 
 import type { AssetLocationWithRelations } from '../types/asset-location.types';
 
+import { EmptyState } from '@/components/ui/empty-state';
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
 import {
   Table,
   TableBody,
@@ -11,16 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
-
 type AssetLocationTableProps = {
   assetLocations: AssetLocationWithRelations[];
-
   onEdit: (assetLocation: AssetLocationWithRelations) => void;
-
   onDeactivate: (assetLocation: AssetLocationWithRelations) => void;
-
   deactivatingId: string | null;
 };
 
@@ -30,6 +27,15 @@ export function AssetLocationTable({
   onDeactivate,
   deactivatingId,
 }: AssetLocationTableProps) {
+  if (assetLocations.length === 0) {
+    return (
+      <EmptyState
+        title="No asset locations"
+        description="No asset locations have been created yet."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -38,24 +44,28 @@ export function AssetLocationTable({
           <TableHead>Name</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {assetLocations.map((assetLocation) => (
           <TableRow key={assetLocation.id}>
-            <TableCell>{assetLocation.code}</TableCell>
+            <TableCell className="font-medium text-muted-foreground">
+              {assetLocation.code}
+            </TableCell>
 
-            <TableCell>{assetLocation.name}</TableCell>
+            <TableCell className="font-medium">{assetLocation.name}</TableCell>
 
-            <TableCell>{assetLocation.description ?? '-'}</TableCell>
+            <TableCell className="max-w-md text-muted-foreground">
+              {assetLocation.description ?? '-'}
+            </TableCell>
 
             <TableCell>
               <StatusBadge active={assetLocation.isActive} />
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(assetLocation)}
                 onDeactivate={() => onDeactivate(assetLocation)}

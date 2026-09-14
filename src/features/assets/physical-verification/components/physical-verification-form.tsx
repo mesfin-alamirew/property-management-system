@@ -15,6 +15,8 @@ import { createPhysicalVerificationAction } from '../actions/physical-verificati
 
 import { Button } from '@/components/ui/button';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 
 type PhysicalVerificationFormProps = {
   organizationUnits: {
@@ -78,141 +80,115 @@ export function PhysicalVerificationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Verification */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Verification</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Verification Information
+          </h3>
 
-        <div className="space-y-2">
-          <label htmlFor="title" className="text-sm font-medium">
-            Title
-            <span className="text-destructive"> *</span>
-          </label>
+          <p className="text-xs leading-5 text-muted-foreground">
+            Define what will be verified and the organizational or location
+            scope of the verification.
+          </p>
+        </div>
 
-          <input
-            id="title"
-            type="text"
-            {...register('title')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
+        <div className="space-y-4">
+          <TextField
+            label="Title"
+            required
+            error={errors.title?.message}
             placeholder="Enter verification title"
+            {...register('title')}
           />
 
-          {errors.title?.message && (
-            <p className="text-sm text-destructive">{errors.title.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="scope" className="text-sm font-medium">
-            Scope
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="scope"
+          <SelectField
+            label="Scope"
+            required
+            error={errors.scope?.message}
+            options={[
+              {
+                value: 'ORGANIZATION',
+                label: 'Entire Organization',
+              },
+              {
+                value: 'ORGANIZATION_UNIT',
+                label: 'Organization Unit',
+              },
+              {
+                value: 'LOCATION',
+                label: 'Location',
+              },
+              {
+                value: 'ORGANIZATION_UNIT_LOCATION',
+                label: 'Organization Unit & Location',
+              },
+              {
+                value: 'SELECTED_ASSETS',
+                label: 'Selected Assets',
+              },
+            ]}
+            placeholder="Select Verification Scope"
             {...register('scope')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="ORGANIZATION">Entire Organization</option>
-            <option value="ORGANIZATION_UNIT">Organization Unit</option>
-            <option value="LOCATION">Location</option>
-            <option value="ORGANIZATION_UNIT_LOCATION">
-              Organization Unit & Location
-            </option>
-            <option value="SELECTED_ASSETS">Selected Assets</option>
-          </select>
-
-          {errors.scope?.message && (
-            <p className="text-sm text-destructive">{errors.scope.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="organizationUnitId" className="text-sm font-medium">
-            Organization Unit
-          </label>
-
-          <select
-            id="organizationUnitId"
-            {...register('organizationUnitId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Organization Unit</option>
-
-            {organizationUnits.map((unit) => (
-              <option key={unit.id} value={unit.id}>
-                {unit.code} - {unit.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.organizationUnitId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.organizationUnitId.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="locationId" className="text-sm font-medium">
-            Location
-          </label>
-
-          <select
-            id="locationId"
-            {...register('locationId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Location</option>
-
-            {locations.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.code} - {location.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.locationId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.locationId.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Schedule */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Schedule</h3>
-
-        <div className="space-y-2">
-          <label htmlFor="scheduledAt" className="text-sm font-medium">
-            Scheduled Date
-          </label>
-
-          <input
-            id="scheduledAt"
-            type="datetime-local"
-            {...register('scheduledAt')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
           />
 
-          {errors.scheduledAt?.message && (
-            <p className="text-sm text-destructive">
-              {errors.scheduledAt.message}
-            </p>
-          )}
+          <SelectField
+            label="Organization Unit"
+            error={errors.organizationUnitId?.message}
+            options={organizationUnits.map((unit) => ({
+              value: unit.id,
+              label: `${unit.code} - ${unit.name}`,
+            }))}
+            placeholder="Select Organization Unit"
+            {...register('organizationUnitId')}
+          />
+
+          <SelectField
+            label="Location"
+            error={errors.locationId?.message}
+            options={locations.map((location) => ({
+              value: location.id,
+              label: `${location.code} - ${location.name}`,
+            }))}
+            placeholder="Select Location"
+            {...register('locationId')}
+          />
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Schedule & Notes
+          </h3>
+
+          <p className="text-xs leading-5 text-muted-foreground">
+            Optionally schedule the verification and record any relevant
+            instructions or notes.
+          </p>
         </div>
 
-        <TextAreaField
-          label="Notes"
-          error={errors.notes?.message}
-          {...register('notes')}
-        />
-      </div>
+        <div className="space-y-4">
+          <TextField
+            label="Scheduled Date"
+            type="datetime-local"
+            error={errors.scheduledAt?.message}
+            {...register('scheduledAt')}
+          />
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Creating...' : 'Create Physical Verification'}
-      </Button>
+          <TextAreaField
+            label="Notes"
+            error={errors.notes?.message}
+            {...register('notes')}
+          />
+        </div>
+      </section>
+
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating...' : 'Create Physical Verification'}
+        </Button>
+      </div>
     </form>
   );
 }

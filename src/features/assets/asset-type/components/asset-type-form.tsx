@@ -21,6 +21,7 @@ import type { AssetTypeWithRelations } from '../types/asset-type.types';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { SelectField } from '@/components/form/select-field';
 
 type AssetTypeFormProps = {
   assetType?: AssetTypeWithRelations | null;
@@ -83,11 +84,20 @@ export function AssetTypeForm({
     }
   }
 
+  const categoryOptions = assetCategories.map((category) => ({
+    value: category.id,
+    label: `${category.code} - ${category.name}`,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the asset type name and description.
+          </p>
+        </div>
 
         <TextField
           label="Asset Type Code"
@@ -110,46 +120,36 @@ export function AssetTypeForm({
         />
       </div>
 
-      {/* Classification */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Classification</h3>
-
-        <div className="space-y-2">
-          <label htmlFor="categoryId" className="text-sm font-medium">
-            Asset Category <span className="text-destructive">*</span>
-          </label>
-
-          <select
-            id="categoryId"
-            {...register('categoryId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset Category</option>
-
-            {assetCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.code} - {category.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.categoryId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.categoryId.message}
-            </p>
-          )}
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Classification
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Assign this asset type to an asset category.
+          </p>
         </div>
+
+        <SelectField
+          label="Asset Category"
+          required
+          options={categoryOptions}
+          error={errors.categoryId?.message}
+          {...register('categoryId')}
+        />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? assetType
-            ? 'Updating...'
-            : 'Saving...'
-          : assetType
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? assetType
+              ? 'Updating...'
+              : 'Saving...'
+            : assetType
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

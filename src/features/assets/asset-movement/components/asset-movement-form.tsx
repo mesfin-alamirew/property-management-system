@@ -14,6 +14,7 @@ import {
 import { createAssetMovementAction } from '../actions/asset-movement.actions';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
 type AssetMovementFormProps = {
@@ -60,6 +61,18 @@ export function AssetMovementForm({
     },
   });
 
+  const assetOptions = assets.map((asset) => ({
+    value: asset.id,
+    label: `${asset.assetCode}${
+      asset.assetTag ? ` - ${asset.assetTag}` : ''
+    } - ${asset.name}`,
+  }));
+
+  const locationOptions = locations.map((location) => ({
+    value: location.id,
+    label: `${location.code} - ${location.name}`,
+  }));
+
   async function onSubmit(data: AssetMovementFormData) {
     const result = await createAssetMovementAction(data);
 
@@ -78,67 +91,40 @@ export function AssetMovementForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Movement */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Movement</h3>
-
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode}
-                {asset.assetTag ? ` - ${asset.assetTag}` : ''} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Movement</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Select the asset and destination location for this movement.
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="toLocationId" className="text-sm font-medium">
-            Destination Location
-            <span className="text-destructive"> *</span>
-          </label>
+        <SelectField
+          label="Asset"
+          required
+          options={assetOptions}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
+        />
 
-          <select
-            id="toLocationId"
-            {...register('toLocationId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Destination Location</option>
-
-            {locations.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.code} - {location.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.toLocationId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.toLocationId.message}
-            </p>
-          )}
-        </div>
+        <SelectField
+          label="Destination Location"
+          required
+          options={locationOptions}
+          placeholder="Select destination location"
+          error={errors.toLocationId?.message}
+          {...register('toLocationId')}
+        />
       </div>
 
-      {/* Details */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Details</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Details</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Provide the reason for the movement and any additional notes.
+          </p>
+        </div>
 
         <TextAreaField
           label="Reason"
@@ -154,9 +140,11 @@ export function AssetMovementForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Moving...' : 'Move Asset'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Moving...' : 'Move Asset'}
+        </Button>
+      </div>
     </form>
   );
 }

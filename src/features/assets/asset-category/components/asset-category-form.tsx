@@ -19,6 +19,7 @@ import {
 import type { AssetCategoryWithRelations } from '../types/asset-category.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
@@ -83,11 +84,22 @@ export function AssetCategoryForm({
     }
   }
 
+  const parentOptions = parentCategories
+    .filter((category) => category.id !== assetCategory?.id)
+    .map((category) => ({
+      value: category.id,
+      label: `${category.code} - ${category.name}`,
+    }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the asset category name and description.
+          </p>
+        </div>
 
         <TextField
           label="Asset Category Code"
@@ -110,48 +122,39 @@ export function AssetCategoryForm({
         />
       </div>
 
-      {/* Hierarchy */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Hierarchy</h3>
-
-        <div className="space-y-2">
-          <label htmlFor="parentId" className="text-sm font-medium">
-            Parent Category
-          </label>
-
-          <select
-            id="parentId"
-            {...register('parentId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">None — Root Category</option>
-
-            {parentCategories
-              .filter((category) => category.id !== assetCategory?.id)
-              .map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.code} - {category.name}
-                </option>
-              ))}
-          </select>
-
-          {errors.parentId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.parentId.message}
-            </p>
-          )}
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Hierarchy</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Optionally place this category under another category.
+          </p>
         </div>
+
+        <SelectField
+          label="Parent Category"
+          options={[
+            {
+              value: '',
+              label: 'None — Root Category',
+            },
+            ...parentOptions,
+          ]}
+          error={errors.parentId?.message}
+          {...register('parentId')}
+        />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? assetCategory
-            ? 'Updating...'
-            : 'Saving...'
-          : assetCategory
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? assetCategory
+              ? 'Updating...'
+              : 'Saving...'
+            : assetCategory
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

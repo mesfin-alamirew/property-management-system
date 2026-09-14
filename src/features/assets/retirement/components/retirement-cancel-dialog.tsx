@@ -8,9 +8,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-import { RetirementCancelForm } from './retirement-cancel-form';
-
 import type { RetirementWithRelations } from '../types/retirement.types';
+
+import { RetirementCancelForm } from './retirement-cancel-form';
 
 type RetirementCancelDialogProps = {
   open: boolean;
@@ -37,19 +37,23 @@ export function RetirementCancelDialog({
 
           <DialogDescription>
             Cancel retirement{' '}
-            <span className="font-medium">{retirement.referenceNumber}</span>.
-            Please provide a reason for the cancellation.
+            <span className="font-medium text-foreground">
+              {retirement.referenceNumber}
+            </span>
+            . Please provide a reason for the cancellation.
           </DialogDescription>
         </DialogHeader>
 
-        <RetirementCancelForm
-          retirementId={retirement.id}
-          onSuccess={() => {
-            onSuccess();
-            onOpenChange(false);
-          }}
-          onCancel={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <RetirementCancelForm
+            retirementId={retirement.id}
+            onSuccess={() => {
+              onSuccess();
+              onOpenChange(false);
+            }}
+            onCancel={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

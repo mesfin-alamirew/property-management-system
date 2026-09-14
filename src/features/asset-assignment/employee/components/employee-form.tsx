@@ -19,17 +19,16 @@ import {
 import type { EmployeeWithRelations } from '../types/employee.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 
 type EmployeeFormProps = {
   employee?: EmployeeWithRelations | null;
-
   organizationUnits: {
     id: string;
     code: string;
     name: string;
   }[];
-
   onSuccess?: () => void;
 };
 
@@ -51,7 +50,6 @@ export function EmployeeForm({
     z.output<typeof employeeSchema>
   >({
     resolver: zodResolver(employeeSchema),
-
     defaultValues: {
       employeeNumber: employee?.employeeNumber ?? '',
       firstName: employee?.firstName ?? '',
@@ -74,20 +72,28 @@ export function EmployeeForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
     }
   }
 
+  const organizationUnitOptions = organizationUnits.map((organizationUnit) => ({
+    value: organizationUnit.id,
+    label: `${organizationUnit.code} - ${organizationUnit.name}`,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Enter the employee&apos;s identification and name information.
+          </p>
+        </div>
 
         <TextField
           label="Employee Number"
@@ -117,47 +123,38 @@ export function EmployeeForm({
         />
       </div>
 
-      {/* Organization */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Organization</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Organization
+          </h3>
 
-        <div className="space-y-2">
-          <label htmlFor="organizationUnitId" className="text-sm font-medium">
-            Organization Unit
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="organizationUnitId"
-            {...register('organizationUnitId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Organization Unit</option>
-
-            {organizationUnits.map((organizationUnit) => (
-              <option key={organizationUnit.id} value={organizationUnit.id}>
-                {organizationUnit.code} - {organizationUnit.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.organizationUnitId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.organizationUnitId.message}
-            </p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Select the organizational unit responsible for this employee.
+          </p>
         </div>
+
+        <SelectField
+          label="Organization Unit"
+          required
+          options={organizationUnitOptions}
+          placeholder="Select organization unit"
+          error={errors.organizationUnitId?.message}
+          {...register('organizationUnitId')}
+        />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? employee
-            ? 'Updating...'
-            : 'Saving...'
-          : employee
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? employee
+              ? 'Updating...'
+              : 'Saving...'
+            : employee
+              ? 'Update Employee'
+              : 'Save Employee'}
+        </Button>
+      </div>
     </form>
   );
 }

@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 
 import type { PropertyTenure } from '@/generated/prisma/client';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
-import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
 import { Button } from '@/components/ui/button';
+import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import { deactivatePropertyTenureAction } from '../actions/property-tenure.actions';
 
@@ -67,7 +67,6 @@ export function PropertyTenureWorkspace({
         toast.success('Property Tenure deactivated successfully');
 
         setIsConfirmationOpen(false);
-
         setPropertyTenureToDeactivate(null);
 
         router.refresh();
@@ -83,19 +82,23 @@ export function PropertyTenureWorkspace({
     <MasterDataLayout
       title="Property Tenure"
       description="Manage property tenures."
-      actions={<Button onClick={handleCreate}>Add Property Tenure</Button>}
+      actions={
+        <Button type="button" onClick={handleCreate}>
+          Add Property Tenure
+        </Button>
+      }
     >
-      <PropertyTenureDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        propertyTenure={selectedPropertyTenure}
-      />
-
       <PropertyTenureTable
         propertyTenures={propertyTenures}
         onEdit={handleEdit}
         onDeactivate={handleDeactivate}
         deactivatingId={deactivatingId}
+      />
+
+      <PropertyTenureDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        propertyTenure={selectedPropertyTenure}
       />
 
       <ConfirmationDialog

@@ -2,6 +2,18 @@
 
 import type { OrganizationUnit } from '@/generated/prisma/client';
 
+import { EmptyState } from '@/components/ui/empty-state';
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
 type OrganizationUnitWithRelations = OrganizationUnit & {
   country: {
     name: string;
@@ -12,25 +24,10 @@ type OrganizationUnitWithRelations = OrganizationUnit & {
   } | null;
 };
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
-
 type OrganizationUnitTableProps = {
   organizationUnits: OrganizationUnitWithRelations[];
-
   onEdit: (organizationUnit: OrganizationUnit) => void;
-
   onDeactivate: (organizationUnit: OrganizationUnit) => void;
-
   deactivatingId: string | null;
 };
 
@@ -40,6 +37,15 @@ export function OrganizationUnitTable({
   onDeactivate,
   deactivatingId,
 }: OrganizationUnitTableProps) {
+  if (organizationUnits.length === 0) {
+    return (
+      <EmptyState
+        title="No organization units"
+        description="No organization units have been created yet."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -50,15 +56,20 @@ export function OrganizationUnitTable({
           <TableHead>Country</TableHead>
           <TableHead>Parent</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
+
       <TableBody>
         {organizationUnits.map((organizationUnit) => (
           <TableRow key={organizationUnit.id}>
-            <TableCell>{organizationUnit.code}</TableCell>
+            <TableCell className="font-medium text-muted-foreground">
+              {organizationUnit.code}
+            </TableCell>
 
-            <TableCell>{organizationUnit.name}</TableCell>
+            <TableCell className="font-medium">
+              {organizationUnit.name}
+            </TableCell>
 
             <TableCell>{organizationUnit.type}</TableCell>
 
@@ -70,7 +81,7 @@ export function OrganizationUnitTable({
               <StatusBadge active={organizationUnit.isActive} />
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(organizationUnit)}
                 onDeactivate={() => onDeactivate(organizationUnit)}

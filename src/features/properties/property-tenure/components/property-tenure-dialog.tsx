@@ -14,9 +14,7 @@ import { PropertyTenureForm } from './property-tenure-form';
 
 type PropertyTenureDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
-
   propertyTenure: PropertyTenure | null;
 };
 
@@ -25,16 +23,20 @@ export function PropertyTenureDialog({
   onOpenChange,
   propertyTenure,
 }: PropertyTenureDialogProps) {
+  const isEditing = Boolean(propertyTenure);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {propertyTenure ? 'Edit Property Tenure' : 'Create Property Tenure'}
+            {isEditing ? 'Edit Property Tenure' : 'Create Property Tenure'}
           </DialogTitle>
 
-          <DialogDescription>
-            Enter property tenure information.
+          <DialogDescription className="pt-2">
+            {isEditing
+              ? 'Update the property tenure code, name, and description.'
+              : 'Create a property tenure and provide its identifying information.'}
           </DialogDescription>
         </DialogHeader>
 

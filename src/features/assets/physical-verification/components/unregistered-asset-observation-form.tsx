@@ -14,6 +14,7 @@ import {
 import { createUnregisteredAssetObservationAction } from '../actions/physical-verification.actions';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
@@ -31,11 +32,8 @@ type AssetConditionOption = {
 
 type UnregisteredAssetObservationFormProps = {
   verificationId: string;
-
   assetLocations: AssetLocationOption[];
-
   assetConditions: AssetConditionOption[];
-
   onSuccess?: () => void;
 };
 
@@ -89,103 +87,109 @@ export function UnregisteredAssetObservationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* ============================================================
-          Physical Identification
-      ============================================================ */}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Physical Identification
+          </h3>
 
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Physical Identification</h3>
-
-        <TextField
-          label="Observed Asset Name"
-          required
-          error={errors.observedName?.message}
-          {...register('observedName')}
-        />
-
-        <TextField
-          label="Observed Asset Tag"
-          error={errors.observedAssetTag?.message}
-          {...register('observedAssetTag')}
-        />
-
-        <TextField
-          label="Observed Serial Number"
-          error={errors.observedSerialNumber?.message}
-          {...register('observedSerialNumber')}
-        />
-      </div>
-
-      {/* ============================================================
-          Observation Details
-      ============================================================ */}
-
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Observation Details</h3>
-
-        <div className="space-y-2">
-          <label htmlFor="observedLocationId" className="text-sm font-medium">
-            Observed Location
-          </label>
-
-          <select
-            id="observedLocationId"
-            {...register('observedLocationId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select location</option>
-
-            {assetLocations.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.code} - {location.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.observedLocationId?.message && (
-            <p className="text-sm text-red-500">
-              {errors.observedLocationId.message}
-            </p>
-          )}
+          <p className="text-sm leading-5 text-muted-foreground">
+            Record the identifying information observed for the unregistered
+            asset.
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="observedConditionId" className="text-sm font-medium">
-            Observed Condition
-          </label>
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <TextField
+                label="Observed Asset Name"
+                required
+                error={errors.observedName?.message}
+                {...register('observedName')}
+              />
+            </div>
 
-          <select
-            id="observedConditionId"
-            {...register('observedConditionId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select condition</option>
+            <TextField
+              label="Observed Asset Tag"
+              error={errors.observedAssetTag?.message}
+              {...register('observedAssetTag')}
+            />
 
-            {assetConditions.map((condition) => (
-              <option key={condition.id} value={condition.id}>
-                {condition.code} - {condition.name}
-              </option>
-            ))}
-          </select>
+            <TextField
+              label="Observed Serial Number"
+              error={errors.observedSerialNumber?.message}
+              {...register('observedSerialNumber')}
+            />
+          </div>
+        </div>
+      </section>
 
-          {errors.observedConditionId?.message && (
-            <p className="text-sm text-red-500">
-              {errors.observedConditionId.message}
-            </p>
-          )}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Observation Details
+          </h3>
+
+          <p className="text-sm leading-5 text-muted-foreground">
+            Record where the asset was observed, its condition, and any
+            additional notes.
+          </p>
         </div>
 
-        <TextAreaField
-          label="Notes"
-          error={errors.notes?.message}
-          {...register('notes')}
-        />
-      </div>
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="space-y-5">
+            <div>
+              <SelectField
+                label="Observed Location"
+                options={[
+                  {
+                    value: '',
+                    label: 'Select location',
+                  },
+                  ...assetLocations.map((location) => ({
+                    value: location.id,
+                    label: `${location.code} - ${location.name}`,
+                  })),
+                ]}
+                error={errors.observedLocationId?.message}
+                {...register('observedLocationId')}
+              />
+            </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving...' : 'Record Observation'}
-      </Button>
+            <div>
+              <SelectField
+                label="Observed Condition"
+                options={[
+                  {
+                    value: '',
+                    label: 'Select condition',
+                  },
+                  ...assetConditions.map((condition) => ({
+                    value: condition.id,
+                    label: `${condition.code} - ${condition.name}`,
+                  })),
+                ]}
+                error={errors.observedConditionId?.message}
+                {...register('observedConditionId')}
+              />
+            </div>
+
+            <TextAreaField
+              label="Notes"
+              error={errors.notes?.message}
+              {...register('notes')}
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="flex justify-end border-t border-border pt-5">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Saving...' : 'Record Observation'}
+        </Button>
+      </div>
     </form>
   );
 }

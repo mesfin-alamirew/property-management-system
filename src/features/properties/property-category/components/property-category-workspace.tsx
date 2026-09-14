@@ -84,7 +84,11 @@ export function PropertyCategoryWorkspace({
     <MasterDataLayout
       title="Property Categories"
       description="Manage property categories."
-      actions={<Button onClick={handleCreate}>Add Property Category</Button>}
+      actions={
+        <Button type="button" onClick={handleCreate}>
+          Add Property Category
+        </Button>
+      }
     >
       <PropertyCategoryTable
         propertyCategories={propertyCategories}

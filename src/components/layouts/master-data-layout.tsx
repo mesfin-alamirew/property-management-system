@@ -15,21 +15,25 @@ export function MasterDataLayout({
 }: MasterDataLayoutProps) {
   return (
     <div className="space-y-6">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{title}</h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            {title}
+          </h1>
 
           {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
+              {description}
+            </p>
           )}
         </div>
 
-        {actions && <div>{actions}</div>}
+        {actions && (
+          <div className="flex shrink-0 items-center gap-2">{actions}</div>
+        )}
       </div>
 
-      {/* Content Section */}
-      <div>{children}</div>
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }

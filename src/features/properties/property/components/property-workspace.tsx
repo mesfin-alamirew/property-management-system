@@ -6,13 +6,15 @@ import { useRouter } from 'next/navigation';
 
 import type { Prisma } from '@/generated/prisma/client';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivatePropertyAction } from '../actions/property.actions';
 
-import { PropertyTable } from './property-table';
 import { PropertyDialog } from './property-dialog';
+import { PropertyTable } from './property-table';
+
 type PropertyWithRelations = Prisma.PropertyGetPayload<{
   include: {
     organizationUnit: {
@@ -106,7 +108,9 @@ export function PropertyWorkspace({
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
   const [deactivatingId, setDeactivatingId] = useState<string | null>(null);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   function handleCreate() {
     setSelectedProperty(null);
     setIsDialogOpen(true);
@@ -152,22 +156,18 @@ export function PropertyWorkspace({
       title="Properties"
       description="Manage properties and their related information."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
-          Add Property{' '}
-        </button>
+        <Button type="button" onClick={handleCreate}>
+          Add Property
+        </Button>
       }
     >
-      {' '}
       <PropertyTable
         properties={properties}
         onEdit={handleEdit}
         onDeactivate={handleDeactivate}
         deactivatingId={deactivatingId}
       />
+
       <PropertyDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
@@ -178,6 +178,7 @@ export function PropertyWorkspace({
         propertyTenures={propertyTenures}
         propertyStatuses={propertyStatuses}
       />
+
       <ConfirmationDialog
         open={isConfirmationOpen}
         onOpenChange={setIsConfirmationOpen}

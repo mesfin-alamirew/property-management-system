@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivateAcquisitionMethodAction } from '../actions/acquisition-method.actions';
 import type { AcquisitionMethodListItem } from '../types/acquisition-method.types';
 
-import { AcquisitionMethodTable } from './acquisition-method-table';
 import { AcquisitionMethodDialog } from './acquisition-method-dialog';
+import { AcquisitionMethodTable } from './acquisition-method-table';
 
 type AcquisitionMethodWorkspaceProps = {
   acquisitionMethods: AcquisitionMethodListItem[];
@@ -79,15 +80,11 @@ export function AcquisitionMethodWorkspace({
   return (
     <MasterDataLayout
       title="Acquisition Methods"
-      description="Manage asset acquisition methods."
+      description="Define and manage the methods used to acquire assets."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Acquisition Method
-        </button>
+        </Button>
       }
     >
       <AcquisitionMethodTable

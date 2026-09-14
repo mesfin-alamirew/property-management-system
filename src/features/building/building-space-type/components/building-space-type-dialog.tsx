@@ -5,6 +5,7 @@ import type { BuildingSpaceType } from '@/generated/prisma/client';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -24,17 +25,27 @@ export function BuildingSpaceTypeDialog({
 }: BuildingSpaceTypeDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {spaceType ? 'Edit Building Space Type' : 'Add Building Space Type'}
+            {spaceType
+              ? 'Edit Building Space Type'
+              : 'Create Building Space Type'}
           </DialogTitle>
+
+          <DialogDescription>
+            {spaceType
+              ? 'Update the building space type information.'
+              : 'Enter the information required to create a building space type.'}
+          </DialogDescription>
         </DialogHeader>
 
-        <BuildingSpaceTypeForm
-          spaceType={spaceType}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <BuildingSpaceTypeForm
+            spaceType={spaceType}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

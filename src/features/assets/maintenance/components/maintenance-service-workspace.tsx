@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import type { MaintenanceServiceWithRelations } from '../types/maintenance-service.types';
 
-import { MaintenanceServiceTable } from './maintenance-service-table';
 import { MaintenanceServiceDialog } from './maintenance-service-dialog';
+import { MaintenanceServiceTable } from './maintenance-service-table';
 
 type MaintenanceServiceWorkspaceProps = {
   maintenanceServices: MaintenanceServiceWithRelations[];
@@ -43,13 +44,9 @@ export function MaintenanceServiceWorkspace({
       title="Maintenance Services"
       description="Manage services performed for maintenance records."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Maintenance Service
-        </button>
+        </Button>
       }
     >
       <MaintenanceServiceTable

@@ -15,6 +15,7 @@ import { verifyPhysicalVerificationItemAction } from '../actions/physical-verifi
 import type { PhysicalVerificationItemWithRelations } from '../types/physical-verification.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
@@ -73,205 +74,212 @@ export function PhysicalVerificationItemForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* Expected Information */}
       <section className="space-y-4">
-        <div>
-          <h3 className="text-sm font-semibold">Expected Information</h3>
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Expected Information
+          </h3>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-5 text-muted-foreground">
             Information captured when the verification items were generated.
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <TextField
-            label="Asset Code"
-            value={item.expectedAssetCode}
-            readOnly
-          />
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <TextField
+              label="Asset Code"
+              value={item.expectedAssetCode}
+              readOnly
+            />
 
-          <TextField
-            label="Asset Name"
-            value={item.expectedAssetName}
-            readOnly
-          />
+            <TextField
+              label="Asset Name"
+              value={item.expectedAssetName}
+              readOnly
+            />
 
-          <TextField
-            label="Asset Tag"
-            value={item.expectedAssetTag ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Asset Tag"
+              value={item.expectedAssetTag ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Serial Number"
-            value={item.expectedSerialNumber ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Serial Number"
+              value={item.expectedSerialNumber ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Employee Number"
-            value={item.expectedEmployeeNumber ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Employee Number"
+              value={item.expectedEmployeeNumber ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Employee Name"
-            value={item.expectedEmployeeName ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Employee Name"
+              value={item.expectedEmployeeName ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Location Code"
-            value={item.expectedLocationCode ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Location Code"
+              value={item.expectedLocationCode ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Location Name"
-            value={item.expectedLocationName ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Location Name"
+              value={item.expectedLocationName ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Condition Code"
-            value={item.expectedConditionCode ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Condition Code"
+              value={item.expectedConditionCode ?? ''}
+              readOnly
+            />
 
-          <TextField
-            label="Condition Name"
-            value={item.expectedConditionName ?? ''}
-            readOnly
-          />
+            <TextField
+              label="Condition Name"
+              value={item.expectedConditionName ?? ''}
+              readOnly
+            />
+          </div>
         </div>
       </section>
 
-      {/* Observed Information */}
       <section className="space-y-4">
-        <div>
-          <h3 className="text-sm font-semibold">Observed Information</h3>
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Observed Information
+          </h3>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-5 text-muted-foreground">
             Record the information found during the physical verification.
           </p>
         </div>
 
-        {/* Asset Found */}
-        <div>
-          <label
-            htmlFor="assetFound"
-            className="mb-1 block text-sm font-medium"
-          >
-            Asset Found
-          </label>
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="space-y-5">
+            <SelectField
+              label="Asset Found"
+              options={[
+                {
+                  value: 'true',
+                  label: 'Yes - Asset Found',
+                },
+                {
+                  value: 'false',
+                  label: 'No - Asset Not Found',
+                },
+              ]}
+              value={assetFound ? 'true' : 'false'}
+              onChange={(event) => {
+                setValue('assetFound', event.target.value === 'true', {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                });
+              }}
+              error={errors.assetFound?.message}
+            />
 
-          <select
-            id="assetFound"
-            value={assetFound ? 'true' : 'false'}
-            onChange={(event) => {
-              setValue('assetFound', event.target.value === 'true', {
-                shouldValidate: true,
-                shouldDirty: true,
-              });
-            }}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="true">Yes - Asset Found</option>
-            <option value="false">No - Asset Not Found</option>
-          </select>
+            <div
+              className={
+                assetFound
+                  ? 'grid gap-4 md:grid-cols-2'
+                  : 'grid gap-4 opacity-50 md:grid-cols-2'
+              }
+            >
+              <TextField
+                label="Observed Asset Tag"
+                error={errors.observedAssetTag?.message}
+                disabled={!assetFound}
+                {...register('observedAssetTag')}
+              />
 
-          {errors.assetFound?.message && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.assetFound.message}
-            </p>
-          )}
-        </div>
+              <TextField
+                label="Observed Serial Number"
+                error={errors.observedSerialNumber?.message}
+                disabled={!assetFound}
+                {...register('observedSerialNumber')}
+              />
 
-        {/* Observed Fields */}
-        <div
-          className={
-            assetFound
-              ? 'grid gap-4 md:grid-cols-2'
-              : 'grid gap-4 opacity-50 md:grid-cols-2'
-          }
-        >
-          <TextField
-            label="Observed Asset Tag"
-            error={errors.observedAssetTag?.message}
-            disabled={!assetFound}
-            {...register('observedAssetTag')}
-          />
+              <TextField
+                label="Observed Employee Number"
+                error={errors.observedEmployeeNumber?.message}
+                disabled={!assetFound}
+                {...register('observedEmployeeNumber')}
+              />
 
-          <TextField
-            label="Observed Serial Number"
-            error={errors.observedSerialNumber?.message}
-            disabled={!assetFound}
-            {...register('observedSerialNumber')}
-          />
+              <TextField
+                label="Observed Employee Name"
+                error={errors.observedEmployeeName?.message}
+                disabled={!assetFound}
+                {...register('observedEmployeeName')}
+              />
 
-          <TextField
-            label="Observed Employee Number"
-            error={errors.observedEmployeeNumber?.message}
-            disabled={!assetFound}
-            {...register('observedEmployeeNumber')}
-          />
+              <TextField
+                label="Observed Location Code"
+                error={errors.observedLocationCode?.message}
+                disabled={!assetFound}
+                {...register('observedLocationCode')}
+              />
 
-          <TextField
-            label="Observed Employee Name"
-            error={errors.observedEmployeeName?.message}
-            disabled={!assetFound}
-            {...register('observedEmployeeName')}
-          />
+              <TextField
+                label="Observed Location Name"
+                error={errors.observedLocationName?.message}
+                disabled={!assetFound}
+                {...register('observedLocationName')}
+              />
 
-          <TextField
-            label="Observed Location Code"
-            error={errors.observedLocationCode?.message}
-            disabled={!assetFound}
-            {...register('observedLocationCode')}
-          />
+              <TextField
+                label="Observed Condition Code"
+                error={errors.observedConditionCode?.message}
+                disabled={!assetFound}
+                {...register('observedConditionCode')}
+              />
 
-          <TextField
-            label="Observed Location Name"
-            error={errors.observedLocationName?.message}
-            disabled={!assetFound}
-            {...register('observedLocationName')}
-          />
+              <TextField
+                label="Observed Condition Name"
+                error={errors.observedConditionName?.message}
+                disabled={!assetFound}
+                {...register('observedConditionName')}
+              />
+            </div>
 
-          <TextField
-            label="Observed Condition Code"
-            error={errors.observedConditionCode?.message}
-            disabled={!assetFound}
-            {...register('observedConditionCode')}
-          />
-
-          <TextField
-            label="Observed Condition Name"
-            error={errors.observedConditionName?.message}
-            disabled={!assetFound}
-            {...register('observedConditionName')}
-          />
+            {!assetFound && (
+              <p className="text-sm leading-5 text-muted-foreground">
+                Observed asset details are unavailable because the expected
+                asset was not found during the verification.
+              </p>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* Notes */}
       <section className="space-y-4">
-        <div>
-          <h3 className="text-sm font-semibold">Verification Notes</h3>
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Verification Notes
+          </h3>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-5 text-muted-foreground">
             Add any additional observations or comments.
           </p>
         </div>
 
-        <TextAreaField
-          label="Notes"
-          error={errors.notes?.message}
-          {...register('notes')}
-        />
+        <div className="rounded-md border border-border bg-surface p-5">
+          <TextAreaField
+            label="Notes"
+            error={errors.notes?.message}
+            {...register('notes')}
+          />
+        </div>
       </section>
 
-      {/* Action */}
-      <div className="flex justify-end">
+      <div className="flex justify-end border-t border-border pt-5">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving...' : 'Record Verification'}
         </Button>

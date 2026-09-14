@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import type { BuildingSpaceWithRelations } from '../types/building-space.types';
+
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivateBuildingSpaceAction } from '../actions/building-space.actions';
-import type { BuildingSpaceWithRelations } from '../types/building-space.types';
 
 import { BuildingSpaceTable } from './building-space.table';
 import { BuildingSpaceDialog } from './building-space.dialog';
@@ -93,13 +95,9 @@ export function BuildingSpaceWorkspace({
       title="Building Spaces"
       description="Manage spaces within buildings."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Building Space
-        </button>
+        </Button>
       }
     >
       <BuildingSpaceTable

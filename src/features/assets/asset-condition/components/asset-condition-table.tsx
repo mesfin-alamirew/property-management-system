@@ -2,6 +2,9 @@
 
 import type { AssetConditionWithRelations } from '../types/asset-condition.types';
 
+import { EmptyState } from '@/components/ui/empty-state';
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
 import {
   Table,
   TableBody,
@@ -11,16 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
-
 type AssetConditionTableProps = {
   assetConditions: AssetConditionWithRelations[];
-
   onEdit: (assetCondition: AssetConditionWithRelations) => void;
-
   onDeactivate: (assetCondition: AssetConditionWithRelations) => void;
-
   deactivatingId: string | null;
 };
 
@@ -30,6 +27,15 @@ export function AssetConditionTable({
   onDeactivate,
   deactivatingId,
 }: AssetConditionTableProps) {
+  if (assetConditions.length === 0) {
+    return (
+      <EmptyState
+        title="No asset conditions"
+        description="No asset conditions have been created yet."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -38,24 +44,28 @@ export function AssetConditionTable({
           <TableHead>Name</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {assetConditions.map((assetCondition) => (
           <TableRow key={assetCondition.id}>
-            <TableCell>{assetCondition.code}</TableCell>
+            <TableCell className="font-medium text-muted-foreground">
+              {assetCondition.code}
+            </TableCell>
 
-            <TableCell>{assetCondition.name}</TableCell>
+            <TableCell className="font-medium">{assetCondition.name}</TableCell>
 
-            <TableCell>{assetCondition.description ?? '-'}</TableCell>
+            <TableCell className="max-w-md text-muted-foreground">
+              {assetCondition.description ?? '-'}
+            </TableCell>
 
             <TableCell>
               <StatusBadge active={assetCondition.isActive} />
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(assetCondition)}
                 onDeactivate={() => onDeactivate(assetCondition)}

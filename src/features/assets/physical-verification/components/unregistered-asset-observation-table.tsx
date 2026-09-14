@@ -1,5 +1,6 @@
 'use client';
 
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -20,13 +21,10 @@ export function UnregisteredAssetObservationTable({
 }: UnregisteredAssetObservationTableProps) {
   if (observations.length === 0) {
     return (
-      <div className="rounded-md border p-6 text-center">
-        <p className="font-medium">No unregistered asset observations</p>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          No unregistered assets have been recorded for this verification.
-        </p>
-      </div>
+      <EmptyState
+        title="No unregistered asset observations"
+        description="No unregistered assets have been recorded for this verification."
+      />
     );
   }
 
@@ -34,7 +32,7 @@ export function UnregisteredAssetObservationTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Asset Name</TableHead>
+          <TableHead>Asset</TableHead>
           <TableHead>Asset Tag</TableHead>
           <TableHead>Serial Number</TableHead>
           <TableHead>Location</TableHead>
@@ -48,32 +46,79 @@ export function UnregisteredAssetObservationTable({
       <TableBody>
         {observations.map((observation) => (
           <TableRow key={observation.id}>
-            <TableCell className="font-medium">
-              {observation.observedName}
-            </TableCell>
-
-            <TableCell>{observation.observedAssetTag ?? '-'}</TableCell>
-
-            <TableCell>{observation.observedSerialNumber ?? '-'}</TableCell>
-
             <TableCell>
-              {observation.observedLocation
-                ? `${observation.observedLocation.code} - ${observation.observedLocation.name}`
-                : '-'}
+              <div className="font-medium text-foreground">
+                {observation.observedName}
+              </div>
             </TableCell>
 
             <TableCell>
-              {observation.observedCondition
-                ? `${observation.observedCondition.code} - ${observation.observedCondition.name}`
-                : '-'}
+              {observation.observedAssetTag ? (
+                observation.observedAssetTag
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
             </TableCell>
 
-            <TableCell>{observation.observedAt.toLocaleDateString()}</TableCell>
-
-            <TableCell>{observation.observedByUser.displayName}</TableCell>
+            <TableCell>
+              {observation.observedSerialNumber ? (
+                observation.observedSerialNumber
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
             <TableCell>
-              {observation.registeredAsset ? 'Registered' : 'Not Registered'}
+              {observation.observedLocation ? (
+                <div>
+                  <div className="font-medium text-foreground">
+                    {observation.observedLocation.name}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    {observation.observedLocation.code}
+                  </div>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
+
+            <TableCell>
+              {observation.observedCondition ? (
+                <div>
+                  <div className="font-medium text-foreground">
+                    {observation.observedCondition.name}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    {observation.observedCondition.code}
+                  </div>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
+              {observation.observedAt.toLocaleDateString()}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
+              {observation.observedByUser.displayName}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
+              <span
+                className={[
+                  'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
+                  observation.registeredAsset
+                    ? 'bg-success-surface text-success'
+                    : 'bg-warning-surface text-warning',
+                ].join(' ')}
+              >
+                {observation.registeredAsset ? 'Registered' : 'Not Registered'}
+              </span>
             </TableCell>
           </TableRow>
         ))}

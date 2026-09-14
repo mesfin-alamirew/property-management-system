@@ -62,40 +62,57 @@ export function IncidentResolutionForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Hidden workflow context */}
       <input type="hidden" {...register('incidentId')} />
 
-      {/* Root Cause */}
-      <TextAreaField
-        label="Root Cause"
-        required
-        error={errors.rootCause?.message}
-        {...register('rootCause')}
-      />
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Resolution Information
+          </h3>
 
-      {/* Resolution */}
-      <TextAreaField
-        label="Resolution"
-        required
-        error={errors.resolution?.message}
-        {...register('resolution')}
-      />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Document the cause of the incident and how it was resolved.
+          </p>
+        </div>
 
-      {/* Corrective Action */}
-      <TextAreaField
-        label="Corrective Action"
-        error={errors.correctiveAction?.message}
-        {...register('correctiveAction')}
-      />
+        <TextAreaField
+          label="Root Cause"
+          required
+          error={errors.rootCause?.message}
+          {...register('rootCause')}
+        />
 
-      {/* Notes */}
-      <TextAreaField
-        label="Notes"
-        error={errors.notes?.message}
-        {...register('notes')}
-      />
+        <TextAreaField
+          label="Resolution"
+          required
+          error={errors.resolution?.message}
+          {...register('resolution')}
+        />
 
-      <div className="flex justify-end">
+        <TextAreaField
+          label="Corrective Action"
+          error={errors.correctiveAction?.message}
+          {...register('correctiveAction')}
+        />
+      </div>
+
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add any additional information relevant to the incident resolution.
+          </p>
+        </div>
+
+        <TextAreaField
+          label="Notes"
+          error={errors.notes?.message}
+          {...register('notes')}
+        />
+      </div>
+
+      <div className="flex justify-end border-t border-border pt-4">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Resolving...' : 'Resolve Incident'}
         </Button>

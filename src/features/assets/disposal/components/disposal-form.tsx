@@ -58,11 +58,17 @@ export function DisposalForm({ onSuccess }: DisposalFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Disposal Information */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Disposal Information</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Disposal Information
+          </h3>
 
-        {/* Disposal Date */}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the planned disposal date and method.
+          </p>
+        </div>
+
         <TextField
           label="Disposal Date"
           type="date"
@@ -71,7 +77,6 @@ export function DisposalForm({ onSuccess }: DisposalFormProps) {
           {...register('disposalDate')}
         />
 
-        {/* Disposal Method */}
         <TextField
           label="Disposal Method"
           required
@@ -80,9 +85,16 @@ export function DisposalForm({ onSuccess }: DisposalFormProps) {
         />
       </div>
 
-      {/* Details */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Disposal Details</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Disposal Details
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Provide the reason and any additional notes supporting the disposal.
+          </p>
+        </div>
 
         <TextAreaField
           label="Reason"
@@ -97,9 +109,11 @@ export function DisposalForm({ onSuccess }: DisposalFormProps) {
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Submitting...' : 'Submit Disposal'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit Disposal'}
+        </Button>
+      </div>
     </form>
   );
 }

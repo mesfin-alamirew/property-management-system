@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 import { cn } from '@/lib/utils';
 
@@ -22,13 +23,18 @@ export function TextField({
   const generatedId = React.useId();
 
   const inputId = id ?? generatedId;
+
   return (
-    <div className="space-y-1">
-      <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+    <div className="space-y-1.5">
+      <Label htmlFor={inputId}>
         {label}
 
-        {required && <span className="ml-1 text-red-600">*</span>}
-      </label>
+        {required && (
+          <span className="ml-1 text-danger" aria-hidden="true">
+            *
+          </span>
+        )}
+      </Label>
 
       <Input
         id={inputId}

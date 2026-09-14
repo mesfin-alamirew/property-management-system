@@ -12,7 +12,6 @@ import { RetirementForm } from './retirement-form';
 
 type RetirementDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
 
   assets: {
@@ -36,7 +35,7 @@ export function RetirementDialog({
 }: RetirementDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Create Retirement</DialogTitle>
 
@@ -45,11 +44,13 @@ export function RetirementDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <RetirementForm
-          assets={assets}
-          conditions={conditions}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <RetirementForm
+            assets={assets}
+            conditions={conditions}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

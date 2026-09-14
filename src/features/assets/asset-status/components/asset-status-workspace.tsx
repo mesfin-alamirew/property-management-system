@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
+import { Button } from '@/components/ui/button';
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
 
@@ -81,13 +82,9 @@ export function AssetStatusWorkspace({
       title="Asset Statuses"
       description="Manage asset statuses."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Asset Status
-        </button>
+        </Button>
       }
     >
       <AssetStatusTable

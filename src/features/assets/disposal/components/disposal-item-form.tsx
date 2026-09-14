@@ -18,6 +18,7 @@ import {
 import type { DisposalItemWithRelations } from '../types/disposal-item.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 
 type DisposalItemFormProps = {
   disposalItem?: DisposalItemWithRelations | null;
@@ -55,6 +56,11 @@ export function DisposalItemForm({
     },
   });
 
+  const assetOptions = assets.map((asset) => ({
+    value: asset.id,
+    label: `${asset.assetCode} - ${asset.name}`,
+  }));
+
   async function onSubmit(data: DisposalItemFormData) {
     const result = disposalItem
       ? await updateDisposalItemAction(disposalItem.id, data)
@@ -82,57 +88,59 @@ export function DisposalItemForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Disposal Information */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Disposal Information</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Disposal Information
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add an asset to the selected disposal record.
+          </p>
+        </div>
 
         <input type="hidden" {...register('disposalId')} />
 
         <p className="text-sm text-muted-foreground">
           Disposal:{' '}
-          {disposalItem?.disposal.referenceNumber ?? 'Current disposal'}
+          <span className="font-medium text-foreground">
+            {disposalItem?.disposal.referenceNumber ?? 'Current disposal'}
+          </span>
         </p>
       </div>
 
-      {/* Asset Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Asset Information</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Asset Information
+          </h3>
 
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Select the asset that will be included in this disposal.
+          </p>
         </div>
+
+        <SelectField
+          label="Asset"
+          required
+          options={assetOptions}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
+        />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? disposalItem
-            ? 'Updating...'
-            : 'Saving...'
-          : disposalItem
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? disposalItem
+              ? 'Updating...'
+              : 'Saving...'
+            : disposalItem
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

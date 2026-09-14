@@ -16,7 +16,7 @@ import {
   updateAssetConditionAction,
 } from '../actions/asset-condition.actions';
 
-import { AssetConditionWithRelations } from '../types/asset-condition.types';
+import type { AssetConditionWithRelations } from '../types/asset-condition.types';
 
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/form/text-field';
@@ -24,7 +24,6 @@ import { TextAreaField } from '@/components/form/text-area-field';
 
 type AssetConditionFormProps = {
   assetCondition?: AssetConditionWithRelations | null;
-
   onSuccess?: () => void;
 };
 
@@ -77,9 +76,13 @@ export function AssetConditionForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the asset condition name and description.
+          </p>
+        </div>
 
         <TextField
           label="Asset Condition Code"
@@ -102,15 +105,17 @@ export function AssetConditionForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? assetCondition
-            ? 'Updating...'
-            : 'Saving...'
-          : assetCondition
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? assetCondition
+              ? 'Updating...'
+              : 'Saving...'
+            : assetCondition
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

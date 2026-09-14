@@ -35,9 +35,10 @@ export function DialogContent({
 
       <DialogPrimitive.Content
         className={cn(
-          'fixed left-1/2 top-1/2 z-50 w-full max-w-lg',
+          'fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg',
           '-translate-x-1/2 -translate-y-1/2',
-          'rounded-lg border bg-white p-6 shadow-lg',
+          'rounded-lg border border-border bg-surface p-6 shadow-xl',
+          'focus:outline-none',
           className,
         )}
         {...props}
@@ -51,7 +52,10 @@ export function DialogHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('mb-4 flex flex-col space-y-1', className)} {...props} />
+    <div
+      className={cn('mb-5 flex flex-col space-y-1.5', className)}
+      {...props}
+    />
   );
 }
 
@@ -61,7 +65,7 @@ export function DialogTitle({
 }: React.ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
-      className={cn('text-lg font-semibold', className)}
+      className={cn('text-lg font-semibold text-foreground', className)}
       {...props}
     />
   );
@@ -73,7 +77,7 @@ export function DialogDescription({
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
   return (
     <DialogPrimitive.Description
-      className={cn('text-sm text-gray-500', className)}
+      className={cn('text-sm leading-5 text-muted-foreground', className)}
       {...props}
     />
   );

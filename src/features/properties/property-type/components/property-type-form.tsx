@@ -5,21 +5,20 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 
+import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 import { Button } from '@/components/ui/button';
 
 import type { PropertyType } from '@/generated/prisma/client';
 
 import {
-  propertyTypeSchema,
-  type PropertyTypeFormData,
-} from '../schemas/property-type.schema';
-
-import {
   createPropertyTypeAction,
   updatePropertyTypeAction,
 } from '../actions/property-type.actions';
-import { TextField } from '@/components/form/text-field';
-import { TextAreaField } from '@/components/form/text-area-field';
+import {
+  propertyTypeSchema,
+  type PropertyTypeFormData,
+} from '../schemas/property-type.schema';
 
 type PropertyTypeFormProps = {
   propertyType?: PropertyType | null;
@@ -70,36 +69,40 @@ export function PropertyTypeForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <TextField
-        label="Code"
-        required
-        error={errors.code?.message}
-        {...register('code')}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-4">
+        <TextField
+          label="Code"
+          required
+          error={errors.code?.message}
+          {...register('code')}
+        />
 
-      <TextField
-        label="Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+        <TextField
+          label="Name"
+          required
+          error={errors.name?.message}
+          {...register('name')}
+        />
 
-      <TextAreaField
-        label="Description"
-        error={errors.description?.message}
-        {...register('description')}
-      />
+        <TextAreaField
+          label="Description"
+          error={errors.description?.message}
+          {...register('description')}
+        />
+      </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? propertyType
-            ? 'Updating...'
-            : 'Saving...'
-          : propertyType
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? propertyType
+              ? 'Updating...'
+              : 'Saving...'
+            : propertyType
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

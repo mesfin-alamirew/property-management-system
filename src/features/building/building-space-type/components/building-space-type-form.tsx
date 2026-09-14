@@ -18,13 +18,12 @@ import {
   updateBuildingSpaceTypeAction,
 } from '../actions/building-space-type.actions';
 
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
+import { Button } from '@/components/ui/button';
 
 type BuildingSpaceTypeFormProps = {
   spaceType?: BuildingSpaceType | null;
-
   onSuccess?: () => void;
 };
 
@@ -66,9 +65,7 @@ export function BuildingSpaceTypeForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
@@ -77,35 +74,50 @@ export function BuildingSpaceTypeForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <TextField
-        label="Code"
-        required
-        error={errors.code?.message}
-        {...register('code')}
-      />
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Space Type Information
+          </h3>
 
-      <TextField
-        label="Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Enter the identifying and descriptive information for this space
+            type.
+          </p>
+        </div>
 
-      <TextAreaField
-        label="Description"
-        error={errors.description?.message}
-        {...register('description')}
-      />
+        <TextField
+          label="Code"
+          required
+          error={errors.code?.message}
+          {...register('code')}
+        />
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? spaceType
-            ? 'Updating...'
-            : 'Saving...'
-          : spaceType
-            ? 'Update'
-            : 'Save'}
-      </Button>
+        <TextField
+          label="Name"
+          required
+          error={errors.name?.message}
+          {...register('name')}
+        />
+
+        <TextAreaField
+          label="Description"
+          error={errors.description?.message}
+          {...register('description')}
+        />
+      </div>
+
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? spaceType
+              ? 'Updating...'
+              : 'Saving...'
+            : spaceType
+              ? 'Update Space Type'
+              : 'Save Space Type'}
+        </Button>
+      </div>
     </form>
   );
 }

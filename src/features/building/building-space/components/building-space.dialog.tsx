@@ -14,9 +14,7 @@ import { BuildingSpaceForm } from './building-space.form';
 
 type BuildingSpaceDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
-
   space?: BuildingSpaceWithRelations | null;
 
   buildings: {
@@ -41,23 +39,27 @@ export function BuildingSpaceDialog({
 }: BuildingSpaceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {space ? 'Edit Building Space' : 'Create Building Space'}
           </DialogTitle>
 
           <DialogDescription>
-            Enter building space information.
+            {space
+              ? 'Update the building space information.'
+              : 'Enter the information required to create a building space.'}
           </DialogDescription>
         </DialogHeader>
 
-        <BuildingSpaceForm
-          space={space}
-          buildings={buildings}
-          spaceTypes={spaceTypes}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <BuildingSpaceForm
+            space={space}
+            buildings={buildings}
+            spaceTypes={spaceTypes}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

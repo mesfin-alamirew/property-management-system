@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -27,13 +28,10 @@ export function PhysicalVerificationItemTable({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-md border p-6 text-center">
-        <p className="font-medium">No verification items</p>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Verification items have not been generated yet.
-        </p>
-      </div>
+      <EmptyState
+        title="No verification items"
+        description="Verification items have not been generated yet."
+      />
     );
   }
 
@@ -45,40 +43,84 @@ export function PhysicalVerificationItemTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Asset Code</TableHead>
-          <TableHead>Asset Name</TableHead>
+          <TableHead>Asset</TableHead>
           <TableHead>Asset Tag</TableHead>
           <TableHead>Serial Number</TableHead>
           <TableHead>Employee</TableHead>
           <TableHead>Location</TableHead>
           <TableHead>Condition</TableHead>
           <TableHead>Result</TableHead>
-          <TableHead className="text-right">Action</TableHead>
+          <TableHead className="whitespace-nowrap">Action</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {items.map((item) => (
           <TableRow key={item.id}>
-            <TableCell className="font-medium">
-              {item.expectedAssetCode}
+            <TableCell>
+              <div className="font-medium text-foreground">
+                {item.expectedAssetCode}
+              </div>
+
+              <div className="text-xs text-muted-foreground">
+                {item.expectedAssetName}
+              </div>
             </TableCell>
 
-            <TableCell>{item.expectedAssetName}</TableCell>
+            <TableCell>
+              {item.expectedAssetTag ? (
+                item.expectedAssetTag
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{item.expectedAssetTag ?? '-'}</TableCell>
+            <TableCell>
+              {item.expectedSerialNumber ? (
+                item.expectedSerialNumber
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{item.expectedSerialNumber ?? '-'}</TableCell>
+            <TableCell>
+              {item.expectedEmployeeName ? (
+                item.expectedEmployeeName
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{item.expectedEmployeeName ?? '-'}</TableCell>
+            <TableCell>
+              {item.expectedLocationName ? (
+                item.expectedLocationName
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{item.expectedLocationName ?? '-'}</TableCell>
+            <TableCell>
+              {item.expectedConditionName ? (
+                item.expectedConditionName
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{item.expectedConditionName ?? '-'}</TableCell>
+            <TableCell className="whitespace-nowrap">
+              <span
+                className={[
+                  'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
+                  item.result === 'PENDING'
+                    ? 'bg-warning-surface text-warning'
+                    : 'bg-success-surface text-success',
+                ].join(' ')}
+              >
+                {item.result}
+              </span>
+            </TableCell>
 
-            <TableCell>{item.result}</TableCell>
-
-            <TableCell className="text-right">
+            <TableCell className="whitespace-nowrap">
               <Button
                 type="button"
                 variant="secondary"

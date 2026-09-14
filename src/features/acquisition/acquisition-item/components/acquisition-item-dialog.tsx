@@ -40,16 +40,16 @@ export function AcquisitionItemDialog({
 }: AcquisitionItemDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {acquisitionItem ? 'Edit Acquisition Item' : 'Add Acquisition Item'}
           </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className="pt-2">
             {acquisitionItem
-              ? 'Update acquisition item information.'
-              : 'Enter the information required to add an acquisition item.'}
+              ? 'Update the acquisition and cost information for this asset.'
+              : 'Associate an asset with an acquisition and record its costs.'}
           </DialogDescription>
         </DialogHeader>
 

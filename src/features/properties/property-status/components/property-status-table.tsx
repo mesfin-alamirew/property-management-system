@@ -2,6 +2,9 @@
 
 import type { PropertyStatus } from '@/generated/prisma/client';
 
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -10,9 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
 
 type PropertyStatusTableProps = {
   propertyStatuses: PropertyStatus[];
@@ -27,36 +27,54 @@ export function PropertyStatusTable({
   onDeactivate,
   deactivatingId,
 }: PropertyStatusTableProps) {
+  if (propertyStatuses.length === 0) {
+    return (
+      <EmptyState
+        title="No property statuses found"
+        description="There are no property statuses to display."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Code</TableHead>
-
-          <TableHead>Name</TableHead>
-
+          <TableHead>Property Status</TableHead>
           <TableHead>Description</TableHead>
-
           <TableHead>Status</TableHead>
-
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {propertyStatuses.map((propertyStatus) => (
           <TableRow key={propertyStatus.id}>
-            <TableCell>{propertyStatus.code}</TableCell>
-
-            <TableCell>{propertyStatus.name}</TableCell>
-
-            <TableCell>{propertyStatus.description ?? '-'}</TableCell>
-
             <TableCell>
-              <StatusBadge active={propertyStatus.isActive} />
+              <div className="font-medium text-foreground">
+                {propertyStatus.code}
+              </div>
+
+              <div className="text-xs text-muted-foreground">
+                {propertyStatus.name}
+              </div>
             </TableCell>
 
             <TableCell>
+              {propertyStatus.description ? (
+                <span className="text-sm text-foreground">
+                  {propertyStatus.description}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
+              <StatusBadge active={propertyStatus.isActive} />
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(propertyStatus)}
                 onDeactivate={() => onDeactivate(propertyStatus)}

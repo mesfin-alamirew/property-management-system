@@ -1561,3 +1561,45 @@ Within each group, we'll continue exactly as we have been doing:
 inspect → fix architecture → TypeScript → READ test → denied mutation tests → authorized mutation tests → mark complete.
 
 This keeps the authorization audit systematic and avoids introducing UI/UX changes before the functional work is finished.
+
+
+
+UI/UX Roadmap
+
+Phase 1 — Foundation
+
+Application shell
+Design system
+Typography
+Colors
+Spacing
+Buttons
+Forms
+Tables
+Dialogs
+Badges, alerts, and states
+
+Phase 2 — Core Experience
+11. Dashboard
+12. Master-data pages
+13. Asset management
+14. Acquisition & assignment
+15. Property & building management
+16. Verification
+17. Maintenance & incidents
+18. Retirement & disposal
+
+Phase 3 — Reporting
+19. Report layouts
+20. Filters
+21. Report tables
+22. Detail views
+23. Summary/KPI presentation
+
+Phase 4 — Final Polish
+24. Responsive behavior
+25. Accessibility
+26. Consistency review
+27. Loading/empty/error states
+28. Navigation/usability review
+29. Final visual QA

@@ -12,7 +12,6 @@ import { AssetAssignmentForm } from './asset-assignment-form';
 
 type AssetAssignmentDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
 
   assets: {
@@ -39,7 +38,7 @@ export function AssetAssignmentDialog({
 }: AssetAssignmentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Assign Asset</DialogTitle>
 
@@ -48,11 +47,13 @@ export function AssetAssignmentDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <AssetAssignmentForm
-          assets={assets}
-          employees={employees}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <AssetAssignmentForm
+            assets={assets}
+            employees={employees}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

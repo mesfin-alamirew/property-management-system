@@ -25,11 +25,8 @@ type AssetConditionOption = {
 type UnregisteredAssetObservationDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-
   verificationId: string;
-
   assetLocations: AssetLocationOption[];
-
   assetConditions: AssetConditionOption[];
 };
 
@@ -42,11 +39,11 @@ export function UnregisteredAssetObservationDialog({
 }: UnregisteredAssetObservationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Record Unregistered Asset Observation</DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className="pt-2">
             Record an asset that was physically observed but is not included in
             the registered verification items.
           </DialogDescription>

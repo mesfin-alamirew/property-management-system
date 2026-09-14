@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import type { AcquisitionItemWithRelations } from '../types/acquisition-item.types';
@@ -60,15 +61,11 @@ export function AcquisitionItemWorkspace({
   return (
     <MasterDataLayout
       title="Acquisition Items"
-      description="Manage assets included in acquisitions."
+      description="Manage the assets recorded as part of each acquisition."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Acquisition Item
-        </button>
+        </Button>
       }
     >
       <AcquisitionItemTable

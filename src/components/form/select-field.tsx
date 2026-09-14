@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 import { Select } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+
 import { cn } from '@/lib/utils';
 
 import type { LookupOption } from '@/types/lookup-option';
@@ -29,12 +31,16 @@ export function SelectField({
   const selectId = id ?? generatedId;
 
   return (
-    <div className="space-y-1">
-      <label htmlFor={selectId} className="text-sm font-medium text-gray-700">
+    <div className="space-y-1.5">
+      <Label htmlFor={selectId}>
         {label}
 
-        {required && <span className="ml-1 text-red-600">*</span>}
-      </label>
+        {required && (
+          <span className="ml-1 text-danger" aria-hidden="true">
+            *
+          </span>
+        )}
+      </Label>
 
       <Select
         id={selectId}

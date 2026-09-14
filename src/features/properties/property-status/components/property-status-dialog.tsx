@@ -14,9 +14,7 @@ import { PropertyStatusForm } from './property-status-form';
 
 type PropertyStatusDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
-
   propertyStatus: PropertyStatus | null;
 };
 
@@ -25,16 +23,20 @@ export function PropertyStatusDialog({
   onOpenChange,
   propertyStatus,
 }: PropertyStatusDialogProps) {
+  const isEditing = Boolean(propertyStatus);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {propertyStatus ? 'Edit Property Status' : 'Create Property Status'}
+            {isEditing ? 'Edit Property Status' : 'Create Property Status'}
           </DialogTitle>
 
-          <DialogDescription>
-            Enter property status information.
+          <DialogDescription className="pt-2">
+            {isEditing
+              ? 'Update the property status code, name, and description.'
+              : 'Create a property status and provide its identifying information.'}
           </DialogDescription>
         </DialogHeader>
 

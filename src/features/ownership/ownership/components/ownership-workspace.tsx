@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivateOwnershipAction } from '../actions/ownership.actions';
 import type { OwnershipWithRelations } from '../types/ownership.types';
@@ -93,13 +94,9 @@ export function OwnershipWorkspace({
       title="Ownership"
       description="Manage property ownership records."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Ownership
-        </button>
+        </Button>
       }
     >
       <OwnershipTable

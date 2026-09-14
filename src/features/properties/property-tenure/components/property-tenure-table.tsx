@@ -2,6 +2,9 @@
 
 import type { PropertyTenure } from '@/generated/prisma/client';
 
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -10,9 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
 
 type PropertyTenureTableProps = {
   propertyTenures: PropertyTenure[];
@@ -27,36 +27,54 @@ export function PropertyTenureTable({
   onDeactivate,
   deactivatingId,
 }: PropertyTenureTableProps) {
+  if (propertyTenures.length === 0) {
+    return (
+      <EmptyState
+        title="No property tenures found"
+        description="There are no property tenures to display."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Code</TableHead>
-
-          <TableHead>Name</TableHead>
-
+          <TableHead>Property Tenure</TableHead>
           <TableHead>Description</TableHead>
-
           <TableHead>Status</TableHead>
-
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {propertyTenures.map((propertyTenure) => (
           <TableRow key={propertyTenure.id}>
-            <TableCell>{propertyTenure.code}</TableCell>
-
-            <TableCell>{propertyTenure.name}</TableCell>
-
-            <TableCell>{propertyTenure.description ?? '-'}</TableCell>
-
             <TableCell>
-              <StatusBadge active={propertyTenure.isActive} />
+              <div className="font-medium text-foreground">
+                {propertyTenure.code}
+              </div>
+
+              <div className="text-xs text-muted-foreground">
+                {propertyTenure.name}
+              </div>
             </TableCell>
 
             <TableCell>
+              {propertyTenure.description ? (
+                <span className="text-sm text-foreground">
+                  {propertyTenure.description}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
+              <StatusBadge active={propertyTenure.isActive} />
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(propertyTenure)}
                 onDeactivate={() => onDeactivate(propertyTenure)}

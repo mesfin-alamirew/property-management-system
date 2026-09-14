@@ -64,6 +64,16 @@ export function RetirementCancelForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <input type="hidden" {...register('retirementId')} />
 
+      <div>
+        <h3 className="text-sm font-semibold text-foreground">
+          Cancellation Details
+        </h3>
+
+        <p className="mt-1 text-xs text-muted-foreground">
+          Provide the reason for cancelling this retirement request.
+        </p>
+      </div>
+
       <TextAreaField
         label="Cancellation Reason"
         required
@@ -71,7 +81,7 @@ export function RetirementCancelForm({
         {...register('cancellationReason')}
       />
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 border-t border-border pt-4">
         <Button
           type="button"
           variant="secondary"

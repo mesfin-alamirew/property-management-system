@@ -1,7 +1,5 @@
 'use client';
 
-import type { PropertyCategory } from '@/generated/prisma/client';
-
 import {
   Dialog,
   DialogContent,
@@ -9,6 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
+import type { PropertyCategory } from '@/generated/prisma/client';
 
 import { PropertyCategoryForm } from './property-category-form';
 
@@ -25,18 +25,20 @@ export function PropertyCategoryDialog({
   propertyCategory,
   parentCategories,
 }: PropertyCategoryDialogProps) {
+  const isEditing = Boolean(propertyCategory);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {propertyCategory
-              ? 'Edit Property Category'
-              : 'Create Property Category'}
+            {isEditing ? 'Edit Property Category' : 'Create Property Category'}
           </DialogTitle>
 
-          <DialogDescription>
-            Enter property category information.
+          <DialogDescription className="pt-2">
+            {isEditing
+              ? 'Update the property category information and its parent category.'
+              : 'Create a property category and optionally assign it to a parent category.'}
           </DialogDescription>
         </DialogHeader>
 

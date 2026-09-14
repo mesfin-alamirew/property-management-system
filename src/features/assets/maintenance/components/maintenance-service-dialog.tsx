@@ -9,11 +9,11 @@ import {
 } from '@/components/ui/dialog';
 
 import type { MaintenanceServiceRecord } from '../types/maintenance-service.types';
+
 import { MaintenanceServiceForm } from './maintenance-service.form';
 
 type MaintenanceServiceDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
 
   maintenanceService?: MaintenanceServiceRecord | null;
@@ -33,7 +33,7 @@ export function MaintenanceServiceDialog({
 }: MaintenanceServiceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {maintenanceService
@@ -48,11 +48,13 @@ export function MaintenanceServiceDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <MaintenanceServiceForm
-          maintenanceService={maintenanceService}
-          maintenances={maintenances}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <MaintenanceServiceForm
+            maintenanceService={maintenanceService}
+            maintenances={maintenances}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

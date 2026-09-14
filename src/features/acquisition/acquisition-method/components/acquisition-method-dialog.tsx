@@ -25,7 +25,7 @@ export function AcquisitionMethodDialog({
 }: AcquisitionMethodDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {acquisitionMethod
@@ -33,8 +33,10 @@ export function AcquisitionMethodDialog({
               : 'Create Acquisition Method'}
           </DialogTitle>
 
-          <DialogDescription>
-            Enter acquisition method information.
+          <DialogDescription className="pt-2">
+            {acquisitionMethod
+              ? 'Update the acquisition method details and status.'
+              : 'Define a method that can be used when registering asset acquisitions.'}
           </DialogDescription>
         </DialogHeader>
 

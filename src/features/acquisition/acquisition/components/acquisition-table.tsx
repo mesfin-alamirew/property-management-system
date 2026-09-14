@@ -1,7 +1,6 @@
 'use client';
 
-import type { AcquisitionWithRelations } from '../types/acquisition.types';
-
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -10,12 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
 import { RowActionButtons } from '@/components/common/row-action-buttons';
+
+import type { AcquisitionWithRelations } from '../types/acquisition.types';
 
 type AcquisitionTableProps = {
   acquisitions: AcquisitionWithRelations[];
-
   onEdit: (acquisition: AcquisitionWithRelations) => void;
 };
 
@@ -23,13 +22,22 @@ export function AcquisitionTable({
   acquisitions,
   onEdit,
 }: AcquisitionTableProps) {
+  if (acquisitions.length === 0) {
+    return (
+      <EmptyState
+        title="No acquisitions"
+        description="No acquisitions have been registered yet."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Acquisition Number</TableHead>
+          <TableHead>Acquisition</TableHead>
           <TableHead>Date</TableHead>
-          <TableHead>Acquisition Method</TableHead>
+          <TableHead>Method</TableHead>
           <TableHead>Supplier</TableHead>
           <TableHead>Reference Number</TableHead>
           <TableHead>Total Amount</TableHead>
@@ -42,31 +50,67 @@ export function AcquisitionTable({
       <TableBody>
         {acquisitions.map((acquisition) => (
           <TableRow key={acquisition.id}>
-            <TableCell className="font-medium">
-              {acquisition.acquisitionNumber}
+            <TableCell>
+              <div className="font-medium text-foreground">
+                {acquisition.acquisitionNumber}
+              </div>
+
+              {acquisition.description && (
+                <div className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
+                  {acquisition.description}
+                </div>
+              )}
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               {new Date(acquisition.acquisitionDate).toLocaleDateString()}
             </TableCell>
 
             <TableCell>
-              {acquisition.acquisitionMethod
-                ? `${acquisition.acquisitionMethod.code} - ${acquisition.acquisitionMethod.name}`
-                : '-'}
+              {acquisition.acquisitionMethod ? (
+                <div>
+                  <div className="font-medium text-foreground">
+                    {acquisition.acquisitionMethod.name}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    {acquisition.acquisitionMethod.code}
+                  </div>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
             </TableCell>
 
-            <TableCell>{acquisition.supplierName ?? '-'}</TableCell>
+            <TableCell>
+              {acquisition.supplierName ? (
+                acquisition.supplierName
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{acquisition.referenceNumber ?? '-'}</TableCell>
+            <TableCell>
+              {acquisition.referenceNumber ? (
+                acquisition.referenceNumber
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
-            <TableCell>{acquisition.totalAmount?.toString() ?? '-'}</TableCell>
+            <TableCell className="whitespace-nowrap text-right">
+              {acquisition.totalAmount?.toString() ?? '—'}
+            </TableCell>
 
-            <TableCell>{acquisition.currency ?? '-'}</TableCell>
+            <TableCell>
+              {acquisition.currency ?? (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </TableCell>
 
             <TableCell>{acquisition.items.length}</TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons onEdit={() => onEdit(acquisition)} />
             </TableCell>
           </TableRow>

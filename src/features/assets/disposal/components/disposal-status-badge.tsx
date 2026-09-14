@@ -12,17 +12,19 @@ const statusLabels: Record<DisposalStatus, string> = {
 };
 
 export function WorkflowStatusBadge({ status }: WorkflowStatusBadgeProps) {
+  const statusClasses: Record<DisposalStatus, string> = {
+    DRAFT: 'bg-surface-muted text-muted-foreground',
+    REQUESTED: 'bg-info-surface text-info',
+    APPROVED: 'bg-success-surface text-success',
+    CANCELLED: 'bg-danger-surface text-danger',
+  };
+
   return (
     <span
       className={[
         'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
-        status === 'DRAFT' && 'bg-gray-100 text-gray-700',
-        status === 'REQUESTED' && 'bg-blue-100 text-blue-700',
-        status === 'APPROVED' && 'bg-green-100 text-green-700',
-        status === 'CANCELLED' && 'bg-red-100 text-red-700',
-      ]
-        .filter(Boolean)
-        .join(' ')}
+        statusClasses[status],
+      ].join(' ')}
     >
       {statusLabels[status]}
     </span>

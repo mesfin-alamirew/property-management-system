@@ -21,6 +21,8 @@ import type { IncidentWithRelations } from '../types/incident.types';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { SelectField } from '@/components/form/select-field';
+
 const incidentTypes = [
   'DAMAGE',
   'LOSS',
@@ -72,6 +74,7 @@ export function IncidentForm({
       notes: incident?.notes ?? '',
     },
   });
+
   async function onSubmit(data: IncidentFormValues) {
     const validatedData = incidentSchema.parse(data);
 
@@ -93,104 +96,61 @@ export function IncidentForm({
       toast.error(result.message);
     }
   }
-  console.log('INCIDENT FORM ERRORS:', errors);
+
+  const assetOptions = assets.map((asset) => ({
+    value: asset.id,
+    label: `${asset.assetCode} - ${asset.name}`,
+  }));
+
+  const incidentTypeOptions = incidentTypes.map((type) => ({
+    value: type,
+    label: type,
+  }));
+
+  const incidentSeverityOptions = incidentSeverities.map((severity) => ({
+    value: severity,
+    label: severity,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Incident Information */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Incident Information</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Incident Information
+          </h3>
 
-        {/* Asset */}
-        <div className="space-y-2">
-          <label htmlFor="assetId" className="text-sm font-medium">
-            Asset
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="assetId"
-            {...register('assetId')}
-            className={`w-full rounded-md border px-3 py-2 text-sm ${
-              errors.assetId
-                ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500'
-                : 'border-input bg-background'
-            }`}
-          >
-            <option value="">Select Asset</option>
-
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.assetCode} - {asset.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.assetId?.message && (
-            <p className="text-sm text-destructive">{errors.assetId.message}</p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Identify the affected asset and classify the incident.
+          </p>
         </div>
 
-        {/* Incident Type */}
-        <div className="space-y-2">
-          <label htmlFor="type" className="text-sm font-medium">
-            Incident Type
-            <span className="text-destructive"> *</span>
-          </label>
+        <SelectField
+          label="Asset"
+          required
+          options={assetOptions}
+          placeholder="Select asset"
+          error={errors.assetId?.message}
+          {...register('assetId')}
+        />
 
-          <select
-            id="type"
-            {...register('type')}
-            className={`w-full rounded-md border px-3 py-2 text-sm ${
-              errors.assetId
-                ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500'
-                : 'border-input bg-background'
-            }`}
-          >
-            <option value="">Select Incident Type</option>
+        <SelectField
+          label="Incident Type"
+          required
+          options={incidentTypeOptions}
+          placeholder="Select incident type"
+          error={errors.type?.message}
+          {...register('type')}
+        />
 
-            {incidentTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-
-          {errors.type?.message && (
-            <p className="text-sm text-destructive">{errors.type.message}</p>
-          )}
-        </div>
-
-        {/* Severity */}
-        <div className="space-y-2">
-          <label htmlFor="severity" className="text-sm font-medium">
-            Severity
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="severity"
-            {...register('severity')}
-            className={`w-full rounded-md border px-3 py-2 text-sm ${
-              errors.assetId
-                ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500'
-                : 'border-input bg-background'
-            }`}
-          >
-            <option value="">Select Severity</option>
-
-            {incidentSeverities.map((severity) => (
-              <option key={severity} value={severity}>
-                {severity}
-              </option>
-            ))}
-          </select>
-
-          {errors.severity?.message && (
-            <p className="text-sm text-destructive">
-              {errors.severity.message}
-            </p>
-          )}
-        </div>
+        <SelectField
+          label="Severity"
+          required
+          options={incidentSeverityOptions}
+          placeholder="Select severity"
+          error={errors.severity?.message}
+          {...register('severity')}
+        />
 
         <TextField
           label="Title"
@@ -200,9 +160,16 @@ export function IncidentForm({
         />
       </div>
 
-      {/* Incident Date */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Incident Date</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Incident Date
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record when the incident occurred.
+          </p>
+        </div>
 
         <TextField
           label="Incident Date"
@@ -213,9 +180,16 @@ export function IncidentForm({
         />
       </div>
 
-      {/* Details */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Details</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Incident Details
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Provide additional information about the incident.
+          </p>
+        </div>
 
         <TextAreaField
           label="Description"
@@ -230,15 +204,17 @@ export function IncidentForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? incident
-            ? 'Updating...'
-            : 'Submitting...'
-          : incident
-            ? 'Update'
-            : 'Report Incident'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? incident
+              ? 'Updating...'
+              : 'Submitting...'
+            : incident
+              ? 'Update'
+              : 'Report Incident'}
+        </Button>
+      </div>
     </form>
   );
 }

@@ -14,7 +14,6 @@ import { BuildingForm } from './building-form';
 
 type BuildingDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
 
   building?: BuildingWithRelations | null;
@@ -48,22 +47,28 @@ export function BuildingDialog({
 }: BuildingDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {building ? 'Edit Building' : 'Create Building'}
           </DialogTitle>
 
-          <DialogDescription>Enter building information.</DialogDescription>
+          <DialogDescription>
+            {building
+              ? 'Update building information.'
+              : 'Enter the information required to create a building.'}
+          </DialogDescription>
         </DialogHeader>
 
-        <BuildingForm
-          building={building}
-          properties={properties}
-          buildingTypes={buildingTypes}
-          buildingConditions={buildingConditions}
-          onSuccess={() => onOpenChange(false)}
-        />
+        <div className="pt-2">
+          <BuildingForm
+            building={building}
+            properties={properties}
+            buildingTypes={buildingTypes}
+            buildingConditions={buildingConditions}
+            onSuccess={() => onOpenChange(false)}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -24,7 +24,6 @@ import { TextAreaField } from '@/components/form/text-area-field';
 
 type AssetStatusFormProps = {
   assetStatus?: AssetStatusWithRelations | null;
-
   onSuccess?: () => void;
 };
 
@@ -77,9 +76,13 @@ export function AssetStatusForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Define the asset status name and description.
+          </p>
+        </div>
 
         <TextField
           label="Asset Status Code"
@@ -102,15 +105,17 @@ export function AssetStatusForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? assetStatus
-            ? 'Updating...'
-            : 'Saving...'
-          : assetStatus
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? assetStatus
+              ? 'Updating...'
+              : 'Saving...'
+            : assetStatus
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

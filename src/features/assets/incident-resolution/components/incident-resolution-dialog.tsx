@@ -36,15 +36,17 @@ export function IncidentResolutionDialog({
           <DialogTitle>Resolve Incident</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="rounded-md border bg-muted/30 p-4">
-            <div className="text-xs font-medium uppercase text-muted-foreground">
+        <div className="space-y-6">
+          <div className="rounded-md border border-border bg-surface-muted p-4">
+            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Incident
             </div>
 
-            <div className="mt-1 font-medium">{incident.referenceNumber}</div>
+            <div className="mt-1 font-medium text-foreground">
+              {incident.referenceNumber}
+            </div>
 
-            <div className="text-sm text-muted-foreground">
+            <div className="mt-1 text-sm text-muted-foreground">
               {incident.title}
             </div>
           </div>

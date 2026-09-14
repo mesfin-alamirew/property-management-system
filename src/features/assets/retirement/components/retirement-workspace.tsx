@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+
 import type { RetirementWithRelations } from '../types/retirement.types';
 
 import { RetirementTable } from './retirement-table';
@@ -53,49 +56,38 @@ export function RetirementWorkspace({
 
     if (result.success) {
       toast.success('Retirement requested successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
     }
   }
+
   async function handleApprove(retirement: RetirementWithRelations) {
     const result = await approveRetirementAction(retirement.id);
 
     if (result.success) {
       toast.success('Retirement approved successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
     }
   }
+
   function handleCancel(retirement: RetirementWithRelations) {
     setSelectedRetirement(retirement);
     setIsCancelDialogOpen(true);
   }
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Retirement</h1>
-
-          <p className="text-sm text-muted-foreground">
-            Create and manage asset retirement requests.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+    <MasterDataLayout
+      title="Retirement"
+      description="Create and manage asset retirement requests."
+      actions={
+        <Button type="button" onClick={handleCreate}>
           Create Retirement
-        </button>
-      </div>
-
-      {/* Retirement Table */}
+        </Button>
+      }
+    >
       <RetirementTable
         retirements={retirements}
         onRequest={handleRequest}
@@ -103,14 +95,13 @@ export function RetirementWorkspace({
         onCancel={handleCancel}
       />
 
-      {/* Retirement Dialog */}
       <RetirementDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         assets={assets}
         conditions={conditions}
       />
-      {/* Retirement Cancel Dialog */}
+
       <RetirementCancelDialog
         open={isCancelDialogOpen}
         onOpenChange={(open) => {
@@ -125,6 +116,6 @@ export function RetirementWorkspace({
           setSelectedRetirement(null);
         }}
       />
-    </div>
+    </MasterDataLayout>
   );
 }

@@ -18,9 +18,10 @@ import {
   updatePropertyAction,
 } from '../actions/property.actions';
 
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
+import { Button } from '@/components/ui/button';
 
 type PropertyFormProps = {
   property?: Property | null;
@@ -126,237 +127,225 @@ export function PropertyForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
     }
   }
 
+  const organizationUnitOptions = organizationUnits.map((organizationUnit) => ({
+    value: organizationUnit.id,
+    label: `${organizationUnit.code} - ${organizationUnit.name}`,
+  }));
+
+  const propertyTypeOptions = propertyTypes.map((propertyType) => ({
+    value: propertyType.id,
+    label: `${propertyType.code} - ${propertyType.name}`,
+  }));
+
+  const propertyCategoryOptions = propertyCategories.map(
+    (propertyCategory) => ({
+      value: propertyCategory.id,
+      label: `${propertyCategory.code} - ${propertyCategory.name}`,
+    }),
+  );
+
+  const propertyTenureOptions = propertyTenures.map((propertyTenure) => ({
+    value: propertyTenure.id,
+    label: `${propertyTenure.code} - ${propertyTenure.name}`,
+  }));
+
+  const propertyStatusOptions = propertyStatuses.map((propertyStatus) => ({
+    value: propertyStatus.id,
+    label: `${propertyStatus.code} - ${propertyStatus.name}`,
+  }));
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <TextField
-        label="Property Code"
-        required
-        error={errors.propertyCode?.message}
-        {...register('propertyCode')}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Property Information
+          </h3>
 
-      <TextField
-        label="Property Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Enter the property&apos;s identifying and descriptive information.
+          </p>
+        </div>
 
-      <TextField
-        label="Display Name"
-        error={errors.displayName?.message}
-        {...register('displayName')}
-      />
+        <TextField
+          label="Property Code"
+          required
+          error={errors.propertyCode?.message}
+          {...register('propertyCode')}
+        />
 
-      <TextAreaField
-        label="Description"
-        error={errors.description?.message}
-        {...register('description')}
-      />
+        <TextField
+          label="Property Name"
+          required
+          error={errors.name?.message}
+          {...register('name')}
+        />
 
-      <TextAreaField
-        label="Address"
-        error={errors.address?.message}
-        {...register('address')}
-      />
+        <TextField
+          label="Display Name"
+          error={errors.displayName?.message}
+          {...register('displayName')}
+        />
 
-      <TextField
-        label="City"
-        error={errors.city?.message}
-        {...register('city')}
-      />
+        <TextAreaField
+          label="Description"
+          error={errors.description?.message}
+          {...register('description')}
+        />
+      </div>
 
-      <TextField
-        label="State / Province"
-        error={errors.stateProvince?.message}
-        {...register('stateProvince')}
-      />
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Location</h3>
 
-      <TextField
-        label="Postal Code"
-        error={errors.postalCode?.message}
-        {...register('postalCode')}
-      />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Provide the property address and geographic coordinates.
+          </p>
+        </div>
 
-      <TextField
-        label="Latitude"
-        type="number"
-        step="any"
-        error={errors.latitude?.message}
-        {...register('latitude')}
-      />
+        <TextAreaField
+          label="Address"
+          error={errors.address?.message}
+          {...register('address')}
+        />
 
-      <TextField
-        label="Longitude"
-        type="number"
-        step="any"
-        error={errors.longitude?.message}
-        {...register('longitude')}
-      />
+        <TextField
+          label="City"
+          error={errors.city?.message}
+          {...register('city')}
+        />
 
-      <TextField
-        label="Construction Date"
-        type="date"
-        error={errors.constructionDate?.message}
-        {...register('constructionDate')}
-      />
+        <TextField
+          label="State / Province"
+          error={errors.stateProvince?.message}
+          {...register('stateProvince')}
+        />
 
-      <TextField
-        label="Gross Area (sqm)"
-        type="number"
-        step="any"
-        error={errors.grossAreaSqm?.message}
-        {...register('grossAreaSqm')}
-      />
+        <TextField
+          label="Postal Code"
+          error={errors.postalCode?.message}
+          {...register('postalCode')}
+        />
 
-      <div className="space-y-2">
-        <label htmlFor="organizationUnitId" className="text-sm font-medium">
-          Organization Unit <span className="text-destructive">*</span>
-        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Latitude"
+            type="number"
+            step="any"
+            error={errors.latitude?.message}
+            {...register('latitude')}
+          />
 
-        <select
-          id="organizationUnitId"
+          <TextField
+            label="Longitude"
+            type="number"
+            step="any"
+            error={errors.longitude?.message}
+            {...register('longitude')}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Physical Information
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record the property&apos;s construction date and gross area.
+          </p>
+        </div>
+
+        <TextField
+          label="Construction Date"
+          type="date"
+          error={errors.constructionDate?.message}
+          {...register('constructionDate')}
+        />
+
+        <TextField
+          label="Gross Area (sqm)"
+          type="number"
+          step="any"
+          error={errors.grossAreaSqm?.message}
+          {...register('grossAreaSqm')}
+        />
+      </div>
+
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Classification
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Assign the property to its organizational unit and applicable
+            classification records.
+          </p>
+        </div>
+
+        <SelectField
+          label="Organization Unit"
+          required
+          options={organizationUnitOptions}
+          placeholder="Select organization unit"
+          error={errors.organizationUnitId?.message}
           {...register('organizationUnitId')}
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="">Select Organization Unit</option>
+        />
 
-          {organizationUnits.map((organizationUnit) => (
-            <option key={organizationUnit.id} value={organizationUnit.id}>
-              {organizationUnit.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.organizationUnitId?.message && (
-          <p className="text-sm text-destructive">
-            {errors.organizationUnitId.message}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="propertyTypeId" className="text-sm font-medium">
-          Property Type <span className="text-destructive">*</span>
-        </label>
-
-        <select
-          id="propertyTypeId"
+        <SelectField
+          label="Property Type"
+          required
+          options={propertyTypeOptions}
+          placeholder="Select property type"
+          error={errors.propertyTypeId?.message}
           {...register('propertyTypeId')}
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="">Select Property Type</option>
+        />
 
-          {propertyTypes.map((propertyType) => (
-            <option key={propertyType.id} value={propertyType.id}>
-              {propertyType.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.propertyTypeId?.message && (
-          <p className="text-sm text-destructive">
-            {errors.propertyTypeId.message}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="propertyCategoryId" className="text-sm font-medium">
-          Property Category
-        </label>
-
-        <select
-          id="propertyCategoryId"
+        <SelectField
+          label="Property Category"
+          options={propertyCategoryOptions}
+          placeholder="None"
+          error={errors.propertyCategoryId?.message}
           {...register('propertyCategoryId')}
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="">None</option>
+        />
 
-          {propertyCategories.map((propertyCategory) => (
-            <option key={propertyCategory.id} value={propertyCategory.id}>
-              {propertyCategory.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.propertyCategoryId?.message && (
-          <p className="text-sm text-destructive">
-            {errors.propertyCategoryId.message}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="propertyTenureId" className="text-sm font-medium">
-          Property Tenure
-        </label>
-
-        <select
-          id="propertyTenureId"
+        <SelectField
+          label="Property Tenure"
+          options={propertyTenureOptions}
+          placeholder="None"
+          error={errors.propertyTenureId?.message}
           {...register('propertyTenureId')}
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="">None</option>
+        />
 
-          {propertyTenures.map((propertyTenure) => (
-            <option key={propertyTenure.id} value={propertyTenure.id}>
-              {propertyTenure.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.propertyTenureId?.message && (
-          <p className="text-sm text-destructive">
-            {errors.propertyTenureId.message}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="propertyStatusId" className="text-sm font-medium">
-          Property Status
-        </label>
-
-        <select
-          id="propertyStatusId"
+        <SelectField
+          label="Property Status"
+          options={propertyStatusOptions}
+          placeholder="None"
+          error={errors.propertyStatusId?.message}
           {...register('propertyStatusId')}
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="">None</option>
-
-          {propertyStatuses.map((propertyStatus) => (
-            <option key={propertyStatus.id} value={propertyStatus.id}>
-              {propertyStatus.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.propertyStatusId?.message && (
-          <p className="text-sm text-destructive">
-            {errors.propertyStatusId.message}
-          </p>
-        )}
+        />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? property
-            ? 'Updating...'
-            : 'Saving...'
-          : property
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? property
+              ? 'Updating...'
+              : 'Saving...'
+            : property
+              ? 'Update Property'
+              : 'Save Property'}
+        </Button>
+      </div>
     </form>
   );
 }

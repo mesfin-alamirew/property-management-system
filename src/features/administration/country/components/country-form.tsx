@@ -1,28 +1,23 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { toast } from 'sonner';
-
 import { useRouter } from 'next/navigation';
 
 import type { Country } from '@/generated/prisma/client';
 
-import { countrySchema, type CountryFormData } from '../schemas/country.schema';
+import { TextField } from '@/components/form/text-field';
+import { Button } from '@/components/ui/button';
 
 import {
   createCountryAction,
   updateCountryAction,
 } from '../actions/country.actions';
-
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { countrySchema, type CountryFormData } from '../schemas/country.schema';
 
 type CountryFormProps = {
   country?: Country | null;
-
   onSuccess?: () => void;
 };
 
@@ -66,30 +61,34 @@ export function CountryForm({ country, onSuccess }: CountryFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <TextField
-        label="Code"
-        required
-        error={errors.code?.message}
-        {...register('code')}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-4">
+        <TextField
+          label="Code"
+          required
+          error={errors.code?.message}
+          {...register('code')}
+        />
 
-      <TextField
-        label="Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+        <TextField
+          label="Name"
+          required
+          error={errors.name?.message}
+          {...register('name')}
+        />
+      </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? country
-            ? 'Updating...'
-            : 'Saving...'
-          : country
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? country
+              ? 'Updating...'
+              : 'Saving...'
+            : country
+              ? 'Update'
+              : 'Save'}
+        </Button>
+      </div>
     </form>
   );
 }

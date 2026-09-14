@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { Button } from '@/components/ui/button';
 
 import { returnAssetAssignmentAction } from '../actions/asset-assignment.actions';
 
@@ -91,13 +92,9 @@ export function AssetAssignmentWorkspace({
       title="Asset Assignments"
       description="Manage asset assignments and accountability."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Assign Asset
-        </button>
+        </Button>
       }
     >
       <AssetAssignmentTable

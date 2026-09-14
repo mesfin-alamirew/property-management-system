@@ -2,6 +2,7 @@
 
 import type { AssetMovementWithRelations } from '../types/asset-movement.types';
 
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Table,
   TableBody,
@@ -18,6 +19,15 @@ type AssetMovementTableProps = {
 export function AssetMovementTable({
   assetMovements,
 }: AssetMovementTableProps) {
+  if (assetMovements.length === 0) {
+    return (
+      <EmptyState
+        title="No asset movements"
+        description="No asset movements have been recorded yet."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -47,15 +57,19 @@ export function AssetMovementTable({
                 : '-'}
             </TableCell>
 
-            <TableCell>
+            <TableCell className="font-medium">
               {movement.toLocation.code} - {movement.toLocation.name}
             </TableCell>
 
             <TableCell>{movement.movedByUser.displayName}</TableCell>
 
-            <TableCell>{movement.movedAt.toLocaleDateString()}</TableCell>
+            <TableCell className="whitespace-nowrap">
+              {movement.movedAt.toLocaleDateString()}
+            </TableCell>
 
-            <TableCell>{movement.reason}</TableCell>
+            <TableCell className="max-w-md text-muted-foreground">
+              {movement.reason}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

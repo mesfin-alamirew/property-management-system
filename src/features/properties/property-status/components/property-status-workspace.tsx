@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 
 import type { PropertyStatus } from '@/generated/prisma/client';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
-import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
 import { Button } from '@/components/ui/button';
+import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import { deactivatePropertyStatusAction } from '../actions/property-status.actions';
 
@@ -67,7 +67,6 @@ export function PropertyStatusWorkspace({
         toast.success('Property Status deactivated successfully');
 
         setIsConfirmationOpen(false);
-
         setPropertyStatusToDeactivate(null);
 
         router.refresh();
@@ -83,19 +82,23 @@ export function PropertyStatusWorkspace({
     <MasterDataLayout
       title="Property Status"
       description="Manage property statuses."
-      actions={<Button onClick={handleCreate}>Add Property Status</Button>}
+      actions={
+        <Button type="button" onClick={handleCreate}>
+          Add Property Status
+        </Button>
+      }
     >
-      <PropertyStatusDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        propertyStatus={selectedPropertyStatus}
-      />
-
       <PropertyStatusTable
         propertyStatuses={propertyStatuses}
         onEdit={handleEdit}
         onDeactivate={handleDeactivate}
         deactivatingId={deactivatingId}
+      />
+
+      <PropertyStatusDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        propertyStatus={selectedPropertyStatus}
       />
 
       <ConfirmationDialog

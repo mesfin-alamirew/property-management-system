@@ -18,9 +18,10 @@ import {
   updateBuildingSpaceAction,
 } from '../actions/building-space.actions';
 
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
+import { Button } from '@/components/ui/button';
 
 type BuildingSpaceFormProps = {
   space?: BuildingSpaceWithRelations | null;
@@ -85,120 +86,139 @@ export function BuildingSpaceForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
     }
   }
 
+  const buildingOptions = buildings.map((building) => ({
+    value: building.id,
+    label: `${building.buildingCode} - ${building.name}`,
+  }));
+
+  const spaceTypeOptions = spaceTypes.map((spaceType) => ({
+    value: spaceType.id,
+    label: `${spaceType.code} - ${spaceType.name}`,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div>
-        <label htmlFor="buildingId" className="mb-2 block text-sm font-medium">
-          Building
-        </label>
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Space Information
+          </h3>
 
-        <select
-          id="buildingId"
+          <p className="mt-1 text-xs text-muted-foreground">
+            Identify the building space and associate it with its building and
+            space type.
+          </p>
+        </div>
+
+        <SelectField
+          label="Building"
+          required
+          options={buildingOptions}
+          placeholder="Select building"
+          error={errors.buildingId?.message}
           {...register('buildingId')}
-          className="w-full rounded-md border px-3 py-2"
-        >
-          <option value="">Select building</option>
+        />
 
-          {buildings.map((building) => (
-            <option key={building.id} value={building.id}>
-              {building.buildingCode} — {building.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.buildingId?.message && (
-          <p className="mt-1 text-sm text-destructive">
-            {errors.buildingId.message}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor="spaceTypeId" className="mb-2 block text-sm font-medium">
-          Space Type
-        </label>
-
-        <select
-          id="spaceTypeId"
+        <SelectField
+          label="Space Type"
+          required
+          options={spaceTypeOptions}
+          placeholder="Select space type"
+          error={errors.spaceTypeId?.message}
           {...register('spaceTypeId')}
-          className="w-full rounded-md border px-3 py-2"
-        >
-          <option value="">Select space type</option>
+        />
 
-          {spaceTypes.map((spaceType) => (
-            <option key={spaceType.id} value={spaceType.id}>
-              {spaceType.code} — {spaceType.name}
-            </option>
-          ))}
-        </select>
+        <TextField
+          label="Code"
+          required
+          error={errors.code?.message}
+          {...register('code')}
+        />
 
-        {errors.spaceTypeId?.message && (
-          <p className="mt-1 text-sm text-destructive">
-            {errors.spaceTypeId.message}
-          </p>
-        )}
+        <TextField
+          label="Name"
+          required
+          error={errors.name?.message}
+          {...register('name')}
+        />
       </div>
 
-      <TextField
-        label="Code"
-        required
-        error={errors.code?.message}
-        {...register('code')}
-      />
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Physical Information
+          </h3>
 
-      <TextField
-        label="Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record the location, area, and capacity of the space.
+          </p>
+        </div>
 
-      <TextField
-        label="Floor Number"
-        type="number"
-        error={errors.floorNumber?.message}
-        {...register('floorNumber')}
-      />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Floor Number"
+            type="number"
+            step="1"
+            error={errors.floorNumber?.message}
+            {...register('floorNumber')}
+          />
 
-      <TextField
-        label="Area (sqm)"
-        type="number"
-        step="0.01"
-        error={errors.areaSqm?.message}
-        {...register('areaSqm')}
-      />
+          <TextField
+            label="Area (sqm)"
+            type="number"
+            min="0"
+            step="0.01"
+            error={errors.areaSqm?.message}
+            {...register('areaSqm')}
+          />
 
-      <TextField
-        label="Capacity"
-        type="number"
-        error={errors.capacity?.message}
-        {...register('capacity')}
-      />
+          <TextField
+            label="Capacity"
+            type="number"
+            min="0"
+            step="1"
+            error={errors.capacity?.message}
+            {...register('capacity')}
+          />
+        </div>
+      </div>
 
-      <TextAreaField
-        label="Notes"
-        error={errors.notes?.message}
-        {...register('notes')}
-      />
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Additional Information
+          </h3>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? space
-            ? 'Updating...'
-            : 'Saving...'
-          : space
-            ? 'Update'
-            : 'Save'}
-      </Button>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add any additional notes about this building space.
+          </p>
+        </div>
+
+        <TextAreaField
+          label="Notes"
+          error={errors.notes?.message}
+          {...register('notes')}
+        />
+      </div>
+
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? space
+              ? 'Updating...'
+              : 'Saving...'
+            : space
+              ? 'Update Building Space'
+              : 'Save Building Space'}
+        </Button>
+      </div>
     </form>
   );
 }

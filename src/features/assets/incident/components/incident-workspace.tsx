@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+
 import type { IncidentWithRelations } from '../types/incident.types';
 
 import { IncidentTable } from './incident-table';
@@ -121,27 +124,15 @@ export function IncidentWorkspace({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Incidents</h1>
-
-          <p className="text-sm text-muted-foreground">
-            Create and manage asset incidents and their resolution.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+    <MasterDataLayout
+      title="Incidents"
+      description="Create and manage asset incidents and their resolution."
+      actions={
+        <Button type="button" onClick={handleCreate}>
           Create Incident
-        </button>
-      </div>
-
-      {/* Incident Table */}
+        </Button>
+      }
+    >
       <IncidentTable
         incidents={incidents}
         onEdit={handleEdit}
@@ -153,7 +144,6 @@ export function IncidentWorkspace({
         onCancel={handleCancel}
       />
 
-      {/* Incident Dialog */}
       <IncidentDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
@@ -161,7 +151,6 @@ export function IncidentWorkspace({
         assets={assets}
       />
 
-      {/* Incident Assignment Dialog */}
       <IncidentAssignmentDialog
         open={isAssignmentDialogOpen}
         onOpenChange={setIsAssignmentDialogOpen}
@@ -169,7 +158,6 @@ export function IncidentWorkspace({
         users={users}
       />
 
-      {/* Incident Resolution Dialog */}
       <IncidentResolutionDialog
         open={isResolutionDialogOpen}
         onOpenChange={setIsResolutionDialogOpen}
@@ -183,6 +171,6 @@ export function IncidentWorkspace({
             : null
         }
       />
-    </div>
+    </MasterDataLayout>
   );
 }

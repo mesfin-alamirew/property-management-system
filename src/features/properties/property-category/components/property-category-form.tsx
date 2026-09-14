@@ -1,5 +1,6 @@
 'use client';
 
+import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -18,8 +19,9 @@ import {
 } from '../actions/property-category.actions';
 
 import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
 
 type PropertyCategoryFormProps = {
   propertyCategory?: PropertyCategory | null;
@@ -39,7 +41,11 @@ export function PropertyCategoryForm({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<
+    z.input<typeof propertyCategorySchema>,
+    unknown,
+    z.output<typeof propertyCategorySchema>
+  >({
     resolver: zodResolver(propertyCategorySchema),
 
     defaultValues: {
@@ -72,63 +78,83 @@ export function PropertyCategoryForm({
     }
   }
 
+  const availableParentCategories = parentCategories.filter(
+    (category) => category.id !== propertyCategory?.id,
+  );
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <TextField
-        label="Code"
-        required
-        error={errors.code?.message}
-        {...register('code')}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      {/* Category Information */}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Category Information
+          </h3>
 
-      <TextField
-        label="Name"
-        required
-        error={errors.name?.message}
-        {...register('name')}
-      />
+          <p className="text-xs leading-5 text-muted-foreground">
+            Provide the identifying information used to classify properties.
+          </p>
+        </div>
 
-      <TextAreaField
-        label="Description"
-        error={errors.description?.message}
-        {...register('description')}
-      />
+        <div className="space-y-4">
+          <TextField
+            label="Code"
+            required
+            error={errors.code?.message}
+            {...register('code')}
+          />
 
-      <div className="space-y-2">
-        <label htmlFor="parentId" className="text-sm font-medium">
-          Parent Category
-        </label>
+          <TextField
+            label="Name"
+            required
+            error={errors.name?.message}
+            {...register('name')}
+          />
 
-        <select
-          id="parentId"
+          <TextAreaField
+            label="Description"
+            error={errors.description?.message}
+            {...register('description')}
+          />
+        </div>
+      </section>
+
+      {/* Hierarchy */}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Category Hierarchy
+          </h3>
+
+          <p className="text-xs leading-5 text-muted-foreground">
+            Optionally assign this category to a parent category. Leave it
+            unselected to create a root category.
+          </p>
+        </div>
+
+        <SelectField
+          label="Parent Category"
+          options={availableParentCategories.map((category) => ({
+            value: category.id,
+            label: `${category.code} - ${category.name}`,
+          }))}
+          placeholder="None (Root Category)"
+          error={errors.parentId?.message}
           {...register('parentId')}
-          className="w-full rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="">None (Root Category)</option>
+        />
+      </section>
 
-          {parentCategories
-            .filter((category) => category.id !== propertyCategory?.id)
-            .map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-        </select>
-
-        {errors.parentId?.message && (
-          <p className="text-sm text-destructive">{errors.parentId.message}</p>
-        )}
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? propertyCategory
+              ? 'Updating...'
+              : 'Saving...'
+            : propertyCategory
+              ? 'Update Property Category'
+              : 'Save Property Category'}
+        </Button>
       </div>
-
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? propertyCategory
-            ? 'Updating...'
-            : 'Saving...'
-          : propertyCategory
-            ? 'Update'
-            : 'Save'}
-      </Button>
     </form>
   );
 }

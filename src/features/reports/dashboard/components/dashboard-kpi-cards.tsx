@@ -8,18 +8,42 @@ type KpiCardProps = {
   label: string;
   value: number;
   description: string;
+  emphasis?: 'default' | 'danger';
 };
 
-function KpiCard({ label, value, description }: KpiCardProps) {
+function KpiCard({
+  label,
+  value,
+  description,
+  emphasis = 'default',
+}: KpiCardProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5">
-      <p className="text-sm font-medium text-gray-600">{label}</p>
+    <div
+      className={[
+        'rounded-lg border bg-surface p-5',
+        'transition-shadow hover:shadow-sm',
+        emphasis === 'danger' ? 'border-danger/20' : 'border-border',
+      ].join(' ')}
+    >
+      <p
+        className={[
+          'text-sm font-medium',
+          emphasis === 'danger' ? 'text-danger' : 'text-muted-foreground',
+        ].join(' ')}
+      >
+        {label}
+      </p>
 
-      <p className="mt-2 text-3xl font-semibold text-gray-900">
+      <p
+        className={[
+          'mt-2 text-3xl font-semibold tracking-tight',
+          emphasis === 'danger' ? 'text-danger' : 'text-foreground',
+        ].join(' ')}
+      >
         {value.toLocaleString()}
       </p>
 
-      <p className="mt-1 text-sm text-gray-500">{description}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -49,12 +73,14 @@ export function DashboardKpiCards({ kpis }: DashboardKpiCardsProps) {
         label="Exceptions"
         value={kpis.totalExceptions}
         description="Current accountability exceptions"
+        emphasis="danger"
       />
 
       <KpiCard
         label="High Exceptions"
         value={kpis.highExceptions}
         description="Exceptions requiring prompt attention"
+        emphasis="danger"
       />
     </div>
   );

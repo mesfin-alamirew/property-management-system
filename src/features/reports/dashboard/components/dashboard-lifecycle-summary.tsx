@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import type { DashboardLifecycleSummary } from '../types/dashboard.types';
 
 type DashboardLifecycleSummaryProps = {
@@ -13,12 +14,14 @@ type LifecycleItemProps = {
 
 function LifecycleItem({ label, value, description }: LifecycleItemProps) {
   return (
-    <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-      <p className="text-sm font-medium text-gray-700">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-gray-900">
+    <div className="rounded-md border border-border bg-surface-muted p-4">
+      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+
+      <p className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
         {value.toLocaleString()}
       </p>
-      <p className="mt-1 text-sm text-gray-500">{description}</p>
+
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -27,10 +30,13 @@ export function DashboardLifecycleSummary({
   lifecycle,
 }: DashboardLifecycleSummaryProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5">
+    <div className="rounded-lg border border-border bg-surface p-5">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Lifecycle</h2>
-        <p className="mt-1 text-sm text-gray-600">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">
+          Lifecycle
+        </h2>
+
+        <p className="mt-1 text-sm leading-5 text-muted-foreground">
           Assets currently moving through retirement and disposal processes.
         </p>
       </div>
@@ -61,17 +67,17 @@ export function DashboardLifecycleSummary({
         />
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-4">
+      <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
         <Link
           href="/reports/retirements"
-          className="text-sm font-medium text-gray-700 hover:text-gray-900"
+          className="text-sm font-medium text-primary transition-colors hover:text-primary-hover focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-1"
         >
           View Retirement Report
         </Link>
 
         <Link
           href="/reports/disposals"
-          className="text-sm font-medium text-gray-700 hover:text-gray-900"
+          className="text-sm font-medium text-primary transition-colors hover:text-primary-hover focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-1"
         >
           View Disposal Report
         </Link>

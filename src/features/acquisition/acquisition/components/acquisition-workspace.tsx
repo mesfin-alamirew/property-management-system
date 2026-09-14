@@ -3,11 +3,12 @@
 import { useState } from 'react';
 
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import type { AcquisitionWithRelations } from '../types/acquisition.types';
 
-import { AcquisitionTable } from './acquisition-table';
 import { AcquisitionDialog } from './acquisition-dialog';
+import { AcquisitionTable } from './acquisition-table';
 
 type AcquisitionWorkspaceProps = {
   acquisitions: AcquisitionWithRelations[];
@@ -43,13 +44,9 @@ export function AcquisitionWorkspace({
       title="Acquisitions"
       description="Register and manage asset acquisitions."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Register Acquisition
-        </button>
+        </Button>
       }
     >
       <AcquisitionTable acquisitions={acquisitions} onEdit={handleEdit} />

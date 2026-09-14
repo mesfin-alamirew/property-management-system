@@ -1,21 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 
 import type { MaintenanceWithRelations } from '../types/maintenance.types';
 
-import { MaintenanceTable } from './maintenance-table';
-import { MaintenanceDialog } from './maintenance-dialog';
-import { toast } from 'sonner';
-import { requestMaintenanceAction } from '../actions/maintenance.actions';
-import { useRouter } from 'next/navigation';
-
 import {
   approveMaintenanceAction,
-  startMaintenanceAction,
   completeMaintenanceAction,
+  requestMaintenanceAction,
+  startMaintenanceAction,
 } from '../actions/maintenance.actions';
+
 import { MaintenanceAssignmentDialog } from './maintenance-assignment-dialog';
+import { MaintenanceDialog } from './maintenance-dialog';
+import { MaintenanceTable } from './maintenance-table';
 
 type MaintenanceWorkspaceProps = {
   maintenances: MaintenanceWithRelations[];
@@ -59,6 +62,7 @@ export function MaintenanceWorkspace({
     setSelectedMaintenance(maintenance);
     setIsDialogOpen(true);
   }
+
   function handleAssign(maintenance: MaintenanceWithRelations) {
     setMaintenanceToAssign(maintenance);
     setIsAssignmentDialogOpen(true);
@@ -69,7 +73,6 @@ export function MaintenanceWorkspace({
 
     if (result.success) {
       toast.success('Maintenance requested successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
@@ -81,56 +84,44 @@ export function MaintenanceWorkspace({
 
     if (result.success) {
       toast.success('Maintenance approved successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
     }
   }
+
   async function handleStart(maintenance: MaintenanceWithRelations) {
     const result = await startMaintenanceAction(maintenance.id);
 
     if (result.success) {
       toast.success('Maintenance started successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
     }
   }
+
   async function handleComplete(maintenance: MaintenanceWithRelations) {
     const result = await completeMaintenanceAction(maintenance.id);
 
     if (result.success) {
       toast.success('Maintenance completed successfully');
-
       router.refresh();
     } else {
       toast.error(result.message);
     }
   }
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Maintenance</h1>
-
-          <p className="text-sm text-muted-foreground">
-            Create and manage maintenance requests and services.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+    <MasterDataLayout
+      title="Maintenance"
+      description="Create and manage maintenance requests and services."
+      actions={
+        <Button type="button" onClick={handleCreate}>
           Create Maintenance
-        </button>
-      </div>
-
-      {/* Maintenance Table */}
+        </Button>
+      }
+    >
       <MaintenanceTable
         maintenances={maintenances}
         onEdit={handleEdit}
@@ -141,7 +132,6 @@ export function MaintenanceWorkspace({
         onComplete={handleComplete}
       />
 
-      {/* Maintenance Dialog */}
       <MaintenanceDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
@@ -149,13 +139,19 @@ export function MaintenanceWorkspace({
         assets={assets}
         users={users}
       />
-      {/*. Assignment Dialog */}
+
       <MaintenanceAssignmentDialog
         open={isAssignmentDialogOpen}
-        onOpenChange={setIsAssignmentDialogOpen}
+        onOpenChange={(open) => {
+          setIsAssignmentDialogOpen(open);
+
+          if (!open) {
+            setMaintenanceToAssign(null);
+          }
+        }}
         maintenance={maintenanceToAssign}
         users={users}
       />
-    </div>
+    </MasterDataLayout>
   );
 }

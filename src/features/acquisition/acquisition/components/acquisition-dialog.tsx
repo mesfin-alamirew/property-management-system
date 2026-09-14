@@ -14,11 +14,8 @@ import { AcquisitionForm } from './acquisition-form';
 
 type AcquisitionDialogProps = {
   open: boolean;
-
   onOpenChange: (open: boolean) => void;
-
   acquisition?: AcquisitionWithRelations | null;
-
   acquisitionMethods: {
     id: string;
     code: string;
@@ -32,18 +29,20 @@ export function AcquisitionDialog({
   acquisition,
   acquisitionMethods,
 }: AcquisitionDialogProps) {
+  const isEditing = Boolean(acquisition);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
-            {acquisition ? 'Edit Acquisition' : 'Register Acquisition'}
+            {isEditing ? 'Edit Acquisition' : 'Register Acquisition'}
           </DialogTitle>
 
-          <DialogDescription>
-            {acquisition
-              ? 'Update acquisition information.'
-              : 'Enter the information required to register an acquisition.'}
+          <DialogDescription className="pt-2">
+            {isEditing
+              ? 'Update the acquisition information below.'
+              : 'Enter the information required to register an asset acquisition.'}
           </DialogDescription>
         </DialogHeader>
 

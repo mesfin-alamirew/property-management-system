@@ -19,6 +19,7 @@ import {
 import type { AcquisitionWithRelations } from '../types/acquisition.types';
 
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/form/select-field';
 import { TextField } from '@/components/form/text-field';
 import { TextAreaField } from '@/components/form/text-area-field';
 
@@ -91,115 +92,152 @@ export function AcquisitionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Acquisition Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Acquisition Information</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Acquisition Information
+          </h3>
 
-        <TextField
-          label="Acquisition Date"
-          type="date"
-          required
-          error={errors.acquisitionDate?.message}
-          {...register('acquisitionDate')}
-        />
-
-        <div className="space-y-2">
-          <label htmlFor="acquisitionMethodId" className="text-sm font-medium">
-            Acquisition Method
-            <span className="text-destructive"> *</span>
-          </label>
-
-          <select
-            id="acquisitionMethodId"
-            {...register('acquisitionMethodId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Acquisition Method</option>
-
-            {acquisitionMethods.map((method) => (
-              <option key={method.id} value={method.id}>
-                {method.code} - {method.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.acquisitionMethodId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.acquisitionMethodId.message}
-            </p>
-          )}
+          <p className="text-sm leading-5 text-muted-foreground">
+            Identify the acquisition date and method used to obtain the assets.
+          </p>
         </div>
+
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <TextField
+              label="Acquisition Date"
+              type="date"
+              required
+              error={errors.acquisitionDate?.message}
+              {...register('acquisitionDate')}
+            />
+
+            <SelectField
+              label="Acquisition Method"
+              required
+              options={[
+                {
+                  value: '',
+                  label: 'Select acquisition method',
+                },
+                ...acquisitionMethods.map((method) => ({
+                  value: method.id,
+                  label: `${method.code} - ${method.name}`,
+                })),
+              ]}
+              error={errors.acquisitionMethodId?.message}
+              {...register('acquisitionMethodId')}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Source Information
+          </h3>
+
+          <p className="text-sm leading-5 text-muted-foreground">
+            Record the supplier and funding information associated with the
+            acquisition.
+          </p>
+        </div>
+
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <TextField
+              label="Supplier Name"
+              error={errors.supplierName?.message}
+              {...register('supplierName')}
+            />
+
+            <TextField
+              label="Reference Number"
+              error={errors.referenceNumber?.message}
+              {...register('referenceNumber')}
+            />
+
+            <TextField
+              label="Funding Source"
+              error={errors.fundingSource?.message}
+              {...register('fundingSource')}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Financial Information
+          </h3>
+
+          <p className="text-sm leading-5 text-muted-foreground">
+            Record the financial value and currency of the acquisition.
+          </p>
+        </div>
+
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <TextField
+              label="Total Amount"
+              type="number"
+              step="0.01"
+              error={errors.totalAmount?.message}
+              {...register('totalAmount')}
+            />
+
+            <TextField
+              label="Currency"
+              error={errors.currency?.message}
+              {...register('currency')}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">
+            Description & Notes
+          </h3>
+
+          <p className="text-sm leading-5 text-muted-foreground">
+            Add supporting information about the acquisition.
+          </p>
+        </div>
+
+        <div className="rounded-md border border-border bg-surface p-5">
+          <div className="space-y-4">
+            <TextAreaField
+              label="Description"
+              error={errors.description?.message}
+              {...register('description')}
+            />
+
+            <TextAreaField
+              label="Notes"
+              error={errors.notes?.message}
+              {...register('notes')}
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="flex justify-end border-t border-border pt-5">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? acquisition
+              ? 'Updating...'
+              : 'Saving...'
+            : acquisition
+              ? 'Update Acquisition'
+              : 'Save Acquisition'}
+        </Button>
       </div>
-
-      {/* Source Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Source Information</h3>
-
-        <TextField
-          label="Supplier Name"
-          error={errors.supplierName?.message}
-          {...register('supplierName')}
-        />
-
-        <TextField
-          label="Reference Number"
-          error={errors.referenceNumber?.message}
-          {...register('referenceNumber')}
-        />
-
-        <TextField
-          label="Funding Source"
-          error={errors.fundingSource?.message}
-          {...register('fundingSource')}
-        />
-      </div>
-
-      {/* Financial Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Financial Information</h3>
-
-        <TextField
-          label="Total Amount"
-          type="number"
-          step="0.01"
-          error={errors.totalAmount?.message}
-          {...register('totalAmount')}
-        />
-
-        <TextField
-          label="Currency"
-          error={errors.currency?.message}
-          {...register('currency')}
-        />
-      </div>
-
-      {/* Description */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Description</h3>
-
-        <TextAreaField
-          label="Description"
-          error={errors.description?.message}
-          {...register('description')}
-        />
-
-        <TextAreaField
-          label="Notes"
-          error={errors.notes?.message}
-          {...register('notes')}
-        />
-      </div>
-
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? acquisition
-            ? 'Updating...'
-            : 'Saving...'
-          : acquisition
-            ? 'Update'
-            : 'Save'}
-      </Button>
     </form>
   );
 }

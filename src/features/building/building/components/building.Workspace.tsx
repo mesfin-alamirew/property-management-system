@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { ConfirmationDialog } from '@/components/common/confirmation-dialog';
+import { MasterDataLayout } from '@/components/layouts/master-data-layout';
+import { Button } from '@/components/ui/button';
 
 import { deactivateBuildingAction } from '../actions/building.actions';
 import type { BuildingWithRelations } from '../types/building.types';
 
-import { BuildingTable } from './building-table';
 import { BuildingDialog } from './building-dialog';
+import { BuildingTable } from './building-table';
 
 type BuildingWorkspaceProps = {
   buildings: BuildingWithRelations[];
@@ -100,13 +101,9 @@ export function BuildingWorkspace({
       title="Buildings"
       description="Manage buildings and their related information."
       actions={
-        <button
-          type="button"
-          onClick={handleCreate}
-          className="rounded-md border px-4 py-2 text-sm"
-        >
+        <Button type="button" onClick={handleCreate}>
           Add Building
-        </button>
+        </Button>
       }
     >
       <BuildingTable

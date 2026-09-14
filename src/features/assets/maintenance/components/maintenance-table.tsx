@@ -2,6 +2,9 @@
 
 import type { MaintenanceWithRelations } from '../types/maintenance.types';
 
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -11,24 +14,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { RowActionButtons } from '@/components/common/row-action-buttons';
 import { WorkflowStatusBadge } from './maintenance-status-badge';
 
 type MaintenanceTableProps = {
   maintenances: MaintenanceWithRelations[];
 
   onEdit: (maintenance: MaintenanceWithRelations) => void;
-
   onRequest: (maintenance: MaintenanceWithRelations) => void;
-
   onAssign: (maintenance: MaintenanceWithRelations) => void;
-
   onApprove: (maintenance: MaintenanceWithRelations) => void;
-
   onStart: (maintenance: MaintenanceWithRelations) => void;
-
   onComplete: (maintenance: MaintenanceWithRelations) => void;
 };
+
 export function MaintenanceTable({
   maintenances,
   onEdit,
@@ -38,6 +36,15 @@ export function MaintenanceTable({
   onStart,
   onComplete,
 }: MaintenanceTableProps) {
+  if (maintenances.length === 0) {
+    return (
+      <EmptyState
+        title="No maintenance records found"
+        description="There are no maintenance requests to display."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -50,99 +57,117 @@ export function MaintenanceTable({
           <TableHead>Requested By</TableHead>
           <TableHead>Scheduled At</TableHead>
           <TableHead>Assigned To</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {maintenances.map((maintenance) => (
           <TableRow key={maintenance.id}>
-            <TableCell className="font-medium">
+            <TableCell className="font-medium text-foreground">
               {maintenance.referenceNumber}
             </TableCell>
 
             <TableCell>
-              {maintenance.asset
-                ? `${maintenance.asset.assetCode} - ${maintenance.asset.name}`
-                : '-'}
+              {maintenance.asset ? (
+                <>
+                  <span className="font-medium text-foreground">
+                    {maintenance.asset.assetCode}
+                  </span>{' '}
+                  <span className="text-muted-foreground">
+                    - {maintenance.asset.name}
+                  </span>
+                </>
+              ) : (
+                '-'
+              )}
             </TableCell>
 
-            <TableCell>{maintenance.type}</TableCell>
+            <TableCell className="whitespace-nowrap">
+              {maintenance.type}
+            </TableCell>
 
-            <TableCell>{maintenance.title}</TableCell>
+            <TableCell className="max-w-xs">
+              <span className="line-clamp-2">{maintenance.title}</span>
+            </TableCell>
 
             <TableCell>
               <WorkflowStatusBadge status={maintenance.status} />
             </TableCell>
 
             <TableCell>
-              {maintenance.requestedByUser
-                ? maintenance.requestedByUser.displayName
-                : '-'}
+              {maintenance.requestedByUser?.displayName ?? '-'}
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               {maintenance.scheduledAt
                 ? maintenance.scheduledAt.toLocaleString()
                 : '-'}
             </TableCell>
 
             <TableCell>
-              {maintenance.assignedToUser
-                ? maintenance.assignedToUser.displayName
-                : '-'}
+              {maintenance.assignedToUser?.displayName ?? '-'}
             </TableCell>
 
-            <TableCell>
-              <RowActionButtons onEdit={() => onEdit(maintenance)} />
+            <TableCell className="whitespace-nowrap">
+              <div className="flex items-center gap-2">
+                <RowActionButtons onEdit={() => onEdit(maintenance)} />
 
-              {maintenance.status === 'DRAFT' && (
-                <button
-                  type="button"
-                  onClick={() => onRequest(maintenance)}
-                  className="ml-2 rounded-md border px-3 py-1 text-sm"
-                >
-                  Request
-                </button>
-              )}
+                {maintenance.status === 'DRAFT' && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="px-3 py-1.5"
+                    onClick={() => onRequest(maintenance)}
+                  >
+                    Request
+                  </Button>
+                )}
 
-              {maintenance.status === 'ASSIGNED' && (
-                <button
-                  type="button"
-                  onClick={() => onApprove(maintenance)}
-                  className="ml-2 rounded-md border px-3 py-1 text-sm"
-                >
-                  Approve
-                </button>
-              )}
-              {maintenance.status === 'REQUESTED' && (
-                <button
-                  type="button"
-                  onClick={() => onAssign(maintenance)}
-                  className="ml-2 rounded-md border px-3 py-1 text-sm"
-                >
-                  Assign
-                </button>
-              )}
-              {maintenance.status === 'APPROVED' && (
-                <button
-                  type="button"
-                  onClick={() => onStart(maintenance)}
-                  className="ml-2 rounded-md border px-3 py-1 text-sm"
-                >
-                  Start
-                </button>
-              )}
+                {maintenance.status === 'REQUESTED' && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="px-3 py-1.5"
+                    onClick={() => onAssign(maintenance)}
+                  >
+                    Assign
+                  </Button>
+                )}
 
-              {maintenance.status === 'IN_PROGRESS' && (
-                <button
-                  type="button"
-                  onClick={() => onComplete(maintenance)}
-                  className="ml-2 rounded-md border px-3 py-1 text-sm"
-                >
-                  Complete
-                </button>
-              )}
+                {maintenance.status === 'ASSIGNED' && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    className="px-3 py-1.5"
+                    onClick={() => onApprove(maintenance)}
+                  >
+                    Approve
+                  </Button>
+                )}
+
+                {maintenance.status === 'APPROVED' && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    className="px-3 py-1.5"
+                    onClick={() => onStart(maintenance)}
+                  >
+                    Start
+                  </Button>
+                )}
+
+                {maintenance.status === 'IN_PROGRESS' && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    className="px-3 py-1.5"
+                    onClick={() => onComplete(maintenance)}
+                  >
+                    Complete
+                  </Button>
+                )}
+              </div>
             </TableCell>
           </TableRow>
         ))}

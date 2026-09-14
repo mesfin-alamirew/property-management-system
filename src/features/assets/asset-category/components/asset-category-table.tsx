@@ -2,6 +2,9 @@
 
 import type { AssetCategoryWithRelations } from '../types/asset-category.types';
 
+import { EmptyState } from '@/components/ui/empty-state';
+import { RowActionButtons } from '@/components/common/row-action-buttons';
+import { StatusBadge } from '@/components/common/status-badge';
 import {
   Table,
   TableBody,
@@ -11,16 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { StatusBadge } from '@/components/common/status-badge';
-import { RowActionButtons } from '@/components/common/row-action-buttons';
-
 type AssetCategoryTableProps = {
   assetCategories: AssetCategoryWithRelations[];
-
   onEdit: (assetCategory: AssetCategoryWithRelations) => void;
-
   onDeactivate: (assetCategory: AssetCategoryWithRelations) => void;
-
   deactivatingId: string | null;
 };
 
@@ -30,6 +27,15 @@ export function AssetCategoryTable({
   onDeactivate,
   deactivatingId,
 }: AssetCategoryTableProps) {
+  if (assetCategories.length === 0) {
+    return (
+      <EmptyState
+        title="No asset categories"
+        description="No asset categories have been created yet."
+      />
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -39,16 +45,18 @@ export function AssetCategoryTable({
           <TableHead>Parent Category</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="whitespace-nowrap">Actions</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {assetCategories.map((assetCategory) => (
           <TableRow key={assetCategory.id}>
-            <TableCell>{assetCategory.code}</TableCell>
+            <TableCell className="font-medium text-muted-foreground">
+              {assetCategory.code}
+            </TableCell>
 
-            <TableCell>{assetCategory.name}</TableCell>
+            <TableCell className="font-medium">{assetCategory.name}</TableCell>
 
             <TableCell>
               {assetCategory.parent
@@ -56,13 +64,15 @@ export function AssetCategoryTable({
                 : '-'}
             </TableCell>
 
-            <TableCell>{assetCategory.description ?? '-'}</TableCell>
+            <TableCell className="max-w-md text-muted-foreground">
+              {assetCategory.description ?? '-'}
+            </TableCell>
 
             <TableCell>
               <StatusBadge active={assetCategory.isActive} />
             </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               <RowActionButtons
                 onEdit={() => onEdit(assetCategory)}
                 onDeactivate={() => onDeactivate(assetCategory)}

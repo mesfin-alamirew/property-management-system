@@ -18,9 +18,10 @@ import {
 
 import type { BuildingWithRelations } from '../types/building.types';
 
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 import { TextAreaField } from '@/components/form/text-area-field';
+import { TextField } from '@/components/form/text-field';
+import { Button } from '@/components/ui/button';
 
 type BuildingFormProps = {
   building?: BuildingWithRelations | null;
@@ -86,10 +87,12 @@ export function BuildingForm({
         building?.numberOfBasements !== undefined
           ? building.numberOfBasements.toString()
           : '',
+
       yearBuilt:
         building?.yearBuilt !== null && building?.yearBuilt !== undefined
           ? building.yearBuilt.toString()
           : '',
+
       yearRenovated:
         building?.yearRenovated !== null &&
         building?.yearRenovated !== undefined
@@ -124,6 +127,7 @@ export function BuildingForm({
         building?.parkingCapacity !== undefined
           ? building.parkingCapacity.toString()
           : '',
+
       accessibilityFeatures: building?.accessibilityFeatures ?? '',
       notes: building?.notes ?? '',
     },
@@ -142,20 +146,40 @@ export function BuildingForm({
       );
 
       reset();
-
       router.refresh();
-
       onSuccess?.();
     } else {
       toast.error(result.message);
     }
   }
 
+  const propertyOptions = properties.map((property) => ({
+    value: property.id,
+    label: `${property.propertyCode} - ${property.name}`,
+  }));
+
+  const buildingTypeOptions = buildingTypes.map((buildingType) => ({
+    value: buildingType.id,
+    label: `${buildingType.code} - ${buildingType.name}`,
+  }));
+
+  const buildingConditionOptions = buildingConditions.map(
+    (buildingCondition) => ({
+      value: buildingCondition.id,
+      label: `${buildingCondition.code} - ${buildingCondition.name}`,
+    }),
+  );
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Identity */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Identity</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Identity</h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Enter the building&apos;s identifying and descriptive information.
+          </p>
+        </div>
 
         <TextField
           label="Building Code"
@@ -178,194 +202,184 @@ export function BuildingForm({
         />
       </div>
 
-      {/* Relationships */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Relationships</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Relationships
+          </h3>
 
-        <div className="space-y-2">
-          <label htmlFor="propertyId" className="text-sm font-medium">
-            Property <span className="text-destructive">*</span>
-          </label>
-
-          <select
-            id="propertyId"
-            {...register('propertyId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Property</option>
-
-            {properties.map((property) => (
-              <option key={property.id} value={property.id}>
-                {property.propertyCode} - {property.name}
-              </option>
-            ))}
-          </select>
-
-          {errors.propertyId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.propertyId.message}
-            </p>
-          )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Associate the building with its property and classification records.
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="buildingTypeId" className="text-sm font-medium">
-            Building Type <span className="text-destructive">*</span>
-          </label>
+        <SelectField
+          label="Property"
+          required
+          options={propertyOptions}
+          placeholder="Select property"
+          error={errors.propertyId?.message}
+          {...register('propertyId')}
+        />
 
-          <select
-            id="buildingTypeId"
-            {...register('buildingTypeId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">Select Building Type</option>
+        <SelectField
+          label="Building Type"
+          required
+          options={buildingTypeOptions}
+          placeholder="Select building type"
+          error={errors.buildingTypeId?.message}
+          {...register('buildingTypeId')}
+        />
 
-            {buildingTypes.map((buildingType) => (
-              <option key={buildingType.id} value={buildingType.id}>
-                {buildingType.name}
-              </option>
-            ))}
-          </select>
+        <SelectField
+          label="Building Condition"
+          options={buildingConditionOptions}
+          placeholder="None"
+          error={errors.buildingConditionId?.message}
+          {...register('buildingConditionId')}
+        />
+      </div>
 
-          {errors.buildingTypeId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.buildingTypeId.message}
-            </p>
-          )}
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Physical Characteristics
+          </h3>
+
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record the building&apos;s capacity and structural characteristics.
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="buildingConditionId" className="text-sm font-medium">
-            Building Condition
-          </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Number of Floors"
+            type="number"
+            min="0"
+            step="1"
+            error={errors.numberOfFloors?.message}
+            {...register('numberOfFloors')}
+          />
 
-          <select
-            id="buildingConditionId"
-            {...register('buildingConditionId')}
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="">None</option>
+          <TextField
+            label="Number of Basements"
+            type="number"
+            min="0"
+            step="1"
+            error={errors.numberOfBasements?.message}
+            {...register('numberOfBasements')}
+          />
 
-            {buildingConditions.map((buildingCondition) => (
-              <option key={buildingCondition.id} value={buildingCondition.id}>
-                {buildingCondition.name}
-              </option>
-            ))}
-          </select>
+          <TextField
+            label="Number of Rooms"
+            type="number"
+            min="0"
+            step="1"
+            error={errors.numberOfRooms?.message}
+            {...register('numberOfRooms')}
+          />
 
-          {errors.buildingConditionId?.message && (
-            <p className="text-sm text-destructive">
-              {errors.buildingConditionId.message}
-            </p>
-          )}
+          <TextField
+            label="Number of Units"
+            type="number"
+            min="0"
+            step="1"
+            error={errors.numberOfUnits?.message}
+            {...register('numberOfUnits')}
+          />
+
+          <TextField
+            label="Parking Capacity"
+            type="number"
+            min="0"
+            step="1"
+            error={errors.parkingCapacity?.message}
+            {...register('parkingCapacity')}
+          />
         </div>
       </div>
 
-      {/* Physical Characteristics */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Physical Characteristics</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Areas</h3>
 
-        <TextField
-          label="Number of Floors"
-          type="number"
-          min="0"
-          step="1"
-          error={errors.numberOfFloors?.message}
-          {...register('numberOfFloors')}
-        />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record the building&apos;s total and usable floor areas.
+          </p>
+        </div>
 
-        <TextField
-          label="Number of Basements"
-          type="number"
-          min="0"
-          step="1"
-          error={errors.numberOfBasements?.message}
-          {...register('numberOfBasements')}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Floor Area (sqm)"
+            type="number"
+            min="0"
+            step="any"
+            error={errors.floorAreaSqm?.message}
+            {...register('floorAreaSqm')}
+          />
 
-        <TextField
-          label="Number of Rooms"
-          type="number"
-          min="0"
-          step="1"
-          error={errors.numberOfRooms?.message}
-          {...register('numberOfRooms')}
-        />
-
-        <TextField
-          label="Number of Units"
-          type="number"
-          min="0"
-          step="1"
-          error={errors.numberOfUnits?.message}
-          {...register('numberOfUnits')}
-        />
-
-        <TextField
-          label="Parking Capacity"
-          type="number"
-          min="0"
-          step="1"
-          error={errors.parkingCapacity?.message}
-          {...register('parkingCapacity')}
-        />
+          <TextField
+            label="Usable Area (sqm)"
+            type="number"
+            min="0"
+            step="any"
+            error={errors.usableAreaSqm?.message}
+            {...register('usableAreaSqm')}
+          />
+        </div>
       </div>
 
-      {/* Areas */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Areas</h3>
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Construction
+          </h3>
 
-        <TextField
-          label="Floor Area (sqm)"
-          type="number"
-          min="0"
-          step="any"
-          error={errors.floorAreaSqm?.message}
-          {...register('floorAreaSqm')}
-        />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record construction and renovation information.
+          </p>
+        </div>
 
-        <TextField
-          label="Usable Area (sqm)"
-          type="number"
-          min="0"
-          step="any"
-          error={errors.usableAreaSqm?.message}
-          {...register('usableAreaSqm')}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Year Built"
+            type="number"
+            min="1800"
+            max={new Date().getFullYear()}
+            step="1"
+            error={errors.yearBuilt?.message}
+            {...register('yearBuilt')}
+          />
+
+          <TextField
+            label="Year Renovated"
+            type="number"
+            min="1800"
+            max={new Date().getFullYear()}
+            step="1"
+            error={errors.yearRenovated?.message}
+            {...register('yearRenovated')}
+          />
+        </div>
       </div>
 
-      {/* Construction */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Construction</h3>
-        <TextField
-          label="Year Built"
-          type="number"
-          min="1800"
-          max={new Date().getFullYear()}
-          step="1"
-          error={errors.yearBuilt?.message}
-          {...register('yearBuilt')}
-        />
+      <div className="space-y-4 border-t border-border pt-5">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
+            Additional Information
+          </h3>
 
-        <TextField
-          label="Year Renovated"
-          type="number"
-          min="1800"
-          max={new Date().getFullYear()}
-          step="1"
-          error={errors.yearRenovated?.message}
-          {...register('yearRenovated')}
-        />
-      </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Record accessibility information and any additional notes.
+          </p>
+        </div>
 
-      {/* Additional Information */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Additional Information</h3>
         <TextAreaField
           label="Accessibility Features"
           error={errors.accessibilityFeatures?.message}
           {...register('accessibilityFeatures')}
         />
+
         <TextAreaField
           label="Notes"
           error={errors.notes?.message}
@@ -373,15 +387,17 @@ export function BuildingForm({
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? building
-            ? 'Updating...'
-            : 'Saving...'
-          : building
-            ? 'Update'
-            : 'Save'}
-      </Button>
+      <div className="flex justify-end border-t border-border pt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? building
+              ? 'Updating...'
+              : 'Saving...'
+            : building
+              ? 'Update Building'
+              : 'Save Building'}
+        </Button>
+      </div>
     </form>
   );
 }
