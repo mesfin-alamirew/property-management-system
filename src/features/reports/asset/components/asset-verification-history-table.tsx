@@ -30,7 +30,7 @@ export function AssetVerificationHistoryTable({
 }: AssetVerificationHistoryTableProps) {
   if (rows.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="px-5 py-4 text-sm text-muted-foreground">
         No physical verification history is available for this asset.
       </p>
     );
@@ -39,51 +39,92 @@ export function AssetVerificationHistoryTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Verification</TableHead>
-          <TableHead>Expected Employee</TableHead>
-          <TableHead>Observed Employee</TableHead>
-          <TableHead>Expected Location</TableHead>
-          <TableHead>Observed Location</TableHead>
-          <TableHead>Expected Condition</TableHead>
-          <TableHead>Observed Condition</TableHead>
-          <TableHead>Result</TableHead>
-          <TableHead>Verified By</TableHead>
-          <TableHead>Verified Date</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="whitespace-nowrap font-semibold">
+            Verification
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Expected Employee
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Observed Employee
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Expected Location
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Observed Location
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Expected Condition
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Observed Condition
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Result
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Verified By
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Verified Date
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.id}>
-            <TableCell>
-              <div>
-                <div className="font-medium text-gray-900">
+          <TableRow
+            key={row.id}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
+            <TableCell className="min-w-48 text-foreground">
+              <div className="space-y-1">
+                <div className="font-medium">
                   {row.verification.referenceNumber}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted-foreground">
                   {row.verification.title}
                 </div>
               </div>
             </TableCell>
 
-            <TableCell>{row.expectedEmployeeName ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.expectedEmployeeName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.observedEmployeeName ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.observedEmployeeName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.expectedLocationName ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.expectedLocationName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.observedLocationName ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.observedLocationName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.expectedConditionName ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.expectedConditionName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.observedConditionName ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.observedConditionName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.result}</TableCell>
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
+              {row.result}
+            </TableCell>
 
-            <TableCell>{row.verifiedByUser?.displayName ?? '—'}</TableCell>
+            <TableCell className="whitespace-nowrap text-foreground">
+              {row.verifiedByUser?.displayName ?? '—'}
+            </TableCell>
 
-            <TableCell>{formatDate(row.verifiedAt)}</TableCell>
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.verifiedAt)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

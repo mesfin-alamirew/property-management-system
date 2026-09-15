@@ -1,10 +1,12 @@
+import Link from 'next/link';
+
 import type {
   AssignmentDetail,
   AssignmentHistoryRow,
 } from '../types/assignment.types';
 
 import { AssignmentHistoryTable } from './assignment-history-table';
-import Link from 'next/link';
+
 type AssignmentDetailPageProps = {
   detail: AssignmentDetail;
   history: AssignmentHistoryRow[];
@@ -38,171 +40,137 @@ export function AssignmentDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Asset Assignment Detail
           </h1>
 
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
             View the asset assignment record and its assignment history.
           </p>
         </div>
 
         <Link
           href="/reports/assignments"
-          className="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex shrink-0 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Back to Assignment Report
         </Link>
       </div>
 
-      <section className="rounded-md border p-6">
-        <h2 className="text-lg font-semibold">Asset Information</h2>
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
+          Asset Information
+        </h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <dt className="text-sm text-muted-foreground">Asset Code</dt>
-            <dd className="font-medium">{detail.asset.assetCode}</dd>
-          </div>
+        <dl className="mt-5 grid gap-x-6 gap-y-5 md:grid-cols-2 lg:grid-cols-3">
+          <DetailField label="Asset Code" value={detail.asset.assetCode} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Asset Tag</dt>
-            <dd className="font-medium">{detail.asset.assetTag ?? '—'}</dd>
-          </div>
+          <DetailField label="Asset Tag" value={detail.asset.assetTag ?? '—'} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Asset Name</dt>
-            <dd className="font-medium">{detail.asset.name}</dd>
-          </div>
+          <DetailField label="Asset Name" value={detail.asset.name} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Asset Type</dt>
-            <dd className="font-medium">{detail.asset.assetType.name}</dd>
-          </div>
+          <DetailField label="Asset Type" value={detail.asset.assetType.name} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Status</dt>
-            <dd className="font-medium">{detail.asset.status.name}</dd>
-          </div>
+          <DetailField label="Status" value={detail.asset.status.name} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Condition</dt>
-            <dd className="font-medium">{detail.asset.condition.name}</dd>
-          </div>
+          <DetailField label="Condition" value={detail.asset.condition.name} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Manufacturer</dt>
-            <dd className="font-medium">{detail.asset.manufacturer ?? '—'}</dd>
-          </div>
+          <DetailField
+            label="Manufacturer"
+            value={detail.asset.manufacturer ?? '—'}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Model</dt>
-            <dd className="font-medium">{detail.asset.model ?? '—'}</dd>
-          </div>
+          <DetailField label="Model" value={detail.asset.model ?? '—'} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Serial Number</dt>
-            <dd className="font-medium">{detail.asset.serialNumber ?? '—'}</dd>
-          </div>
+          <DetailField
+            label="Serial Number"
+            value={detail.asset.serialNumber ?? '—'}
+          />
         </dl>
       </section>
 
-      <section className="rounded-md border p-6">
-        <h2 className="text-lg font-semibold">Current Location</h2>
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
+          Current Location
+        </h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
-          <div>
-            <dt className="text-sm text-muted-foreground">Location</dt>
-            <dd className="font-medium">
-              {detail.asset.location?.name ?? '—'}
-            </dd>
-          </div>
+        <dl className="mt-5 grid gap-x-6 gap-y-5 md:grid-cols-2">
+          <DetailField
+            label="Location"
+            value={detail.asset.location?.name ?? '—'}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Location Code</dt>
-            <dd className="font-medium">
-              {detail.asset.location?.code ?? '—'}
-            </dd>
-          </div>
+          <DetailField
+            label="Location Code"
+            value={detail.asset.location?.code ?? '—'}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Organization Unit</dt>
-            <dd className="font-medium">
-              {detail.asset.location?.organizationUnit.name ?? '—'}
-            </dd>
-          </div>
+          <DetailField
+            label="Organization Unit"
+            value={detail.asset.location?.organizationUnit.name ?? '—'}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">
-              Organization Unit Code
-            </dt>
-            <dd className="font-medium">
-              {detail.asset.location?.organizationUnit.code ?? '—'}
-            </dd>
-          </div>
+          <DetailField
+            label="Organization Unit Code"
+            value={detail.asset.location?.organizationUnit.code ?? '—'}
+          />
         </dl>
       </section>
 
-      <section className="rounded-md border p-6">
-        <h2 className="text-lg font-semibold">Assignment Information</h2>
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
+          Assignment Information
+        </h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <dt className="text-sm text-muted-foreground">Employee</dt>
-            <dd className="font-medium">{employeeName}</dd>
-          </div>
+        <dl className="mt-5 grid gap-x-6 gap-y-5 md:grid-cols-2 lg:grid-cols-3">
+          <DetailField label="Employee" value={employeeName} />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Employee Number</dt>
-            <dd className="font-medium">{detail.employee.employeeNumber}</dd>
-          </div>
+          <DetailField
+            label="Employee Number"
+            value={detail.employee.employeeNumber}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">
-              Employee Organization Unit
-            </dt>
-            <dd className="font-medium">
-              {detail.employee.organizationUnit.name}
-            </dd>
-          </div>
+          <DetailField
+            label="Employee Organization Unit"
+            value={detail.employee.organizationUnit.name}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Assigned Date</dt>
-            <dd className="font-medium">{formatDate(detail.assignedAt)}</dd>
-          </div>
+          <DetailField
+            label="Assigned Date"
+            value={formatDate(detail.assignedAt)}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Returned Date</dt>
-            <dd className="font-medium">{formatDate(detail.returnedAt)}</dd>
-          </div>
+          <DetailField
+            label="Returned Date"
+            value={formatDate(detail.returnedAt)}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Assignment Status</dt>
-            <dd className="font-medium">{assignmentStatus}</dd>
-          </div>
+          <DetailField label="Assignment Status" value={assignmentStatus} />
         </dl>
       </section>
 
-      <section className="rounded-md border p-6">
-        <h2 className="text-lg font-semibold">Processing Information</h2>
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
+          Processing Information
+        </h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
-          <div>
-            <dt className="text-sm text-muted-foreground">Assigned By</dt>
-            <dd className="font-medium">{detail.assignedByUser.displayName}</dd>
-          </div>
+        <dl className="mt-5 grid gap-x-6 gap-y-5 md:grid-cols-2">
+          <DetailField
+            label="Assigned By"
+            value={detail.assignedByUser.displayName}
+          />
 
-          <div>
-            <dt className="text-sm text-muted-foreground">Returned By</dt>
-            <dd className="font-medium">
-              {detail.returnedByUser?.displayName ?? '—'}
-            </dd>
-          </div>
+          <DetailField
+            label="Returned By"
+            value={detail.returnedByUser?.displayName ?? '—'}
+          />
 
           <div className="md:col-span-2">
-            <dt className="text-sm text-muted-foreground">Notes</dt>
-            <dd className="whitespace-pre-wrap font-medium">
+            <dt className="text-sm font-medium text-muted-foreground">Notes</dt>
+
+            <dd className="mt-1 whitespace-pre-wrap text-sm text-foreground">
               {detail.notes ?? '—'}
             </dd>
           </div>
@@ -211,15 +179,32 @@ export function AssignmentDetailPage({
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold">Assignment History</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            Assignment History
+          </h2>
 
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm leading-5 text-muted-foreground">
             Complete assignment history for this asset.
           </p>
         </div>
 
         <AssignmentHistoryTable rows={history} />
       </section>
+    </div>
+  );
+}
+
+type DetailFieldProps = {
+  label: string;
+  value: string;
+};
+
+function DetailField({ label, value }: DetailFieldProps) {
+  return (
+    <div>
+      <dt className="text-sm font-medium text-muted-foreground">{label}</dt>
+
+      <dd className="mt-1 text-sm text-foreground">{value}</dd>
     </div>
   );
 }

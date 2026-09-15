@@ -48,7 +48,7 @@ export function AuditReportWorkspace({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="space-y-6">
       <AuditReportFilters
         users={users}
         actions={actions}
@@ -57,13 +57,18 @@ export function AuditReportWorkspace({
       />
 
       {error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          role="alert"
+          className="rounded-lg border border-danger-surface bg-danger-surface px-4 py-3 text-sm text-danger"
+        >
           {error}
         </div>
       ) : null}
 
       {isPending ? (
-        <div className="text-sm text-gray-500">Loading audit records...</div>
+        <div className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
+          Loading audit records...
+        </div>
       ) : null}
 
       <AuditReportTable rows={rows} />

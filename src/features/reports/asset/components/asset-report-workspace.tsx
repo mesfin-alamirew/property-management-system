@@ -3,12 +3,13 @@
 import { useState, useTransition } from 'react';
 
 import { getAssetReportAction } from '../actions/asset.actions';
-import { AssetReportFilters } from './asset-report-filters';
-import { AssetReportTable } from './asset-report-table';
 import type {
   AssetReportFilters as AssetReportFiltersType,
   AssetReportRow,
 } from '../types/asset.types';
+
+import { AssetReportFilters } from './asset-report-filters';
+import { AssetReportTable } from './asset-report-table';
 
 type LookupOption = {
   id: string;
@@ -38,9 +39,7 @@ export function AssetReportWorkspace({
   initialRows,
 }: AssetReportWorkspaceProps) {
   const [rows, setRows] = useState<AssetReportRow[]>(initialRows);
-
   const [error, setError] = useState<string | null>(null);
-
   const [isPending, startTransition] = useTransition();
 
   function handleApply(filters: AssetReportFiltersType) {
@@ -71,15 +70,26 @@ export function AssetReportWorkspace({
         onApply={handleApply}
       />
 
-      {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
+      {error ? (
+        <div
+          className="rounded-md border border-danger/20 bg-danger-surface px-4 py-3"
+          role="alert"
+        >
+          <p className="text-sm font-medium text-danger">{error}</p>
         </div>
-      )}
+      ) : null}
 
       {isPending ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-sm text-gray-500">
-          Loading asset report...
+        <div
+          className="flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-3"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+
+          <p className="text-sm text-muted-foreground">
+            Loading asset report...
+          </p>
         </div>
       ) : (
         <AssetReportTable rows={rows} />

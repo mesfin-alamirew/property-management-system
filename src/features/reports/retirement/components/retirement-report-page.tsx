@@ -16,7 +16,7 @@ export async function RetirementReportPage() {
 
   if (!reportResult.success) {
     return (
-      <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <div className="rounded-lg border border-danger-surface bg-danger-surface px-4 py-3 text-sm text-danger">
         {reportResult.message}
       </div>
     );
@@ -25,10 +25,10 @@ export async function RetirementReportPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           Retirement Report
         </h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
           View asset retirement records, decisions, responsible officers, and
           cancellation details.
         </p>

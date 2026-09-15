@@ -36,7 +36,7 @@ export function AssetAssignmentHistoryTable({
 }: AssetAssignmentHistoryTableProps) {
   if (rows.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="px-5 py-4 text-sm text-muted-foreground">
         No assignment history is available for this asset.
       </p>
     );
@@ -45,33 +45,64 @@ export function AssetAssignmentHistoryTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Employee</TableHead>
-          <TableHead>Employee No.</TableHead>
-          <TableHead>Assigned Date</TableHead>
-          <TableHead>Returned Date</TableHead>
-          <TableHead>Assigned By</TableHead>
-          <TableHead>Returned By</TableHead>
-          <TableHead>Notes</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="whitespace-nowrap font-semibold">
+            Employee
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Employee No.
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Assigned Date
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Returned Date
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Assigned By
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Returned By
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Notes
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.id}>
-            <TableCell>{formatEmployee(row.employee)}</TableCell>
+          <TableRow
+            key={row.id}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
+              {formatEmployee(row.employee)}
+            </TableCell>
 
-            <TableCell>{row.employee.employeeNumber}</TableCell>
+            <TableCell className="whitespace-nowrap text-foreground">
+              {row.employee.employeeNumber}
+            </TableCell>
 
-            <TableCell>{formatDate(row.assignedAt)}</TableCell>
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.assignedAt)}
+            </TableCell>
 
-            <TableCell>{formatDate(row.returnedAt)}</TableCell>
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.returnedAt)}
+            </TableCell>
 
-            <TableCell>{row.assignedByUser.displayName}</TableCell>
+            <TableCell className="whitespace-nowrap text-foreground">
+              {row.assignedByUser.displayName}
+            </TableCell>
 
-            <TableCell>{row.returnedByUser?.displayName ?? '—'}</TableCell>
+            <TableCell className="whitespace-nowrap text-foreground">
+              {row.returnedByUser?.displayName ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.notes ?? '—'}</TableCell>
+            <TableCell className="min-w-48 text-foreground">
+              {row.notes ?? '—'}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

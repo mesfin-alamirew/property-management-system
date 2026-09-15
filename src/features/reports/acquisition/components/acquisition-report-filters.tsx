@@ -4,6 +4,8 @@ import { useState, type FormEvent } from 'react';
 
 import type { AcquisitionReportFilters } from '../types/acquisition.types';
 
+import { Button } from '@/components/ui/button';
+
 type AcquisitionMethodOption = {
   id: string;
   code: string;
@@ -53,17 +55,19 @@ export function AcquisitionReportFilters({
     onFilter({});
   }
 
+  const inputClassName =
+    'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20';
+
+  const labelClassName = 'mb-1.5 block text-sm font-medium text-foreground';
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 rounded-lg border border-gray-200 bg-white p-4"
+      className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm"
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
-          <label
-            htmlFor="acquisition-report-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="acquisition-report-search" className={labelClassName}>
             Search
           </label>
 
@@ -73,15 +77,12 @@ export function AcquisitionReportFilters({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Acquisition no., supplier, reference..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+            className={inputClassName}
           />
         </div>
 
         <div>
-          <label
-            htmlFor="acquisition-report-method"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="acquisition-report-method" className={labelClassName}>
             Acquisition Method
           </label>
 
@@ -89,7 +90,7 @@ export function AcquisitionReportFilters({
             id="acquisition-report-method"
             value={acquisitionMethodId}
             onChange={(event) => setAcquisitionMethodId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+            className={inputClassName}
           >
             <option value="">All methods</option>
 
@@ -104,7 +105,7 @@ export function AcquisitionReportFilters({
         <div>
           <label
             htmlFor="acquisition-report-supplier"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className={labelClassName}
           >
             Supplier
           </label>
@@ -115,48 +116,50 @@ export function AcquisitionReportFilters({
             value={supplierName}
             onChange={(event) => setSupplierName(event.target.value)}
             placeholder="Supplier name"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+            className={inputClassName}
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="acquisition-report-date-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Date From
-          </label>
+        <div className="md:col-span-2 lg:col-span-1">
+          <div className="mb-1.5 text-sm font-medium text-foreground">
+            Acquisition Date Range
+          </div>
 
-          <input
-            id="acquisition-report-date-from"
-            type="date"
-            value={dateFrom}
-            onChange={(event) => setDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
-          />
-        </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label htmlFor="acquisition-report-date-from" className="sr-only">
+                Date From
+              </label>
 
-        <div>
-          <label
-            htmlFor="acquisition-report-date-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Date To
-          </label>
+              <input
+                id="acquisition-report-date-from"
+                type="date"
+                value={dateFrom}
+                onChange={(event) => setDateFrom(event.target.value)}
+                className={inputClassName}
+              />
+            </div>
 
-          <input
-            id="acquisition-report-date-to"
-            type="date"
-            value={dateTo}
-            onChange={(event) => setDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
-          />
+            <div>
+              <label htmlFor="acquisition-report-date-to" className="sr-only">
+                Date To
+              </label>
+
+              <input
+                id="acquisition-report-date-to"
+                type="date"
+                value={dateTo}
+                onChange={(event) => setDateTo(event.target.value)}
+                className={inputClassName}
+              />
+            </div>
+          </div>
         </div>
 
         <div>
           <label
             htmlFor="acquisition-report-funding-source"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className={labelClassName}
           >
             Funding Source
           </label>
@@ -167,14 +170,14 @@ export function AcquisitionReportFilters({
             value={fundingSource}
             onChange={(event) => setFundingSource(event.target.value)}
             placeholder="Funding source"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+            className={inputClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="acquisition-report-currency"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className={labelClassName}
           >
             Currency
           </label>
@@ -185,26 +188,19 @@ export function AcquisitionReportFilters({
             value={currency}
             onChange={(event) => setCurrency(event.target.value)}
             placeholder="e.g. ETB, USD"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+            className={`${inputClassName} uppercase`}
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="submit"
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-        >
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <Button type="submit" variant="primary">
           Apply Filters
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
+        <Button type="button" variant="secondary" onClick={handleReset}>
           Reset
-        </button>
+        </Button>
       </div>
     </form>
   );

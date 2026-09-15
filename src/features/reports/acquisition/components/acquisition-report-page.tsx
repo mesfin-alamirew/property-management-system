@@ -20,11 +20,11 @@ export function AcquisitionReportPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           Acquisition Report
         </h1>
 
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
           Review acquisitions, acquisition methods, suppliers, funding sources,
           acquired items, and acquisition values.
         </p>

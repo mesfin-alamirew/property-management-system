@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import type { AuditReportFilters } from '../types/audit.types';
 
 type AuditReportFiltersProps = {
@@ -51,40 +53,46 @@ export function AuditReportFilters({
     onApply({});
   }
 
+  const fieldClassName =
+    'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20 disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <label
             htmlFor="audit-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Search
           </label>
+
           <input
             id="audit-search"
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Action, entity, description..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="audit-user"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             User
           </label>
+
           <select
             id="audit-user"
             value={userId}
             onChange={(event) => setUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="">All users</option>
+
             {users.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.displayName} ({user.username})
@@ -96,17 +104,19 @@ export function AuditReportFilters({
         <div>
           <label
             htmlFor="audit-action"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Action
           </label>
+
           <select
             id="audit-action"
             value={action}
             onChange={(event) => setAction(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="">All actions</option>
+
             {actions.map((value) => (
               <option key={value} value={value}>
                 {value}
@@ -118,17 +128,19 @@ export function AuditReportFilters({
         <div>
           <label
             htmlFor="audit-entity-type"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Entity Type
           </label>
+
           <select
             id="audit-entity-type"
             value={entityType}
             onChange={(event) => setEntityType(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="">All entity types</option>
+
             {entityTypes.map((value) => (
               <option key={value} value={value}>
                 {value}
@@ -140,52 +152,46 @@ export function AuditReportFilters({
         <div>
           <label
             htmlFor="audit-date-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Date From
           </label>
+
           <input
             id="audit-date-from"
             type="date"
             value={dateFrom}
             onChange={(event) => setDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="audit-date-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Date To
           </label>
+
           <input
             id="audit-date-to"
             type="date"
             value={dateTo}
             onChange={(event) => setDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={handleApply}
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-        >
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <Button type="button" variant="primary" onClick={handleApply}>
           Apply Filters
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
+        <Button type="button" variant="secondary" onClick={handleReset}>
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );

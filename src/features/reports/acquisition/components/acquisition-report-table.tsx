@@ -2,6 +2,8 @@
 
 import type { AcquisitionReportRow } from '../types/acquisition.types';
 
+import Link from 'next/link';
+
 import {
   Table,
   TableBody,
@@ -10,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Link from 'next/link';
+
 type AcquisitionReportTableProps = {
   acquisitions: AcquisitionReportRow[];
 };
@@ -21,46 +23,76 @@ export function AcquisitionReportTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Acquisition No.</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead>Acquisition Method</TableHead>
-          <TableHead>Supplier</TableHead>
-          <TableHead>Reference No.</TableHead>
-          <TableHead>Funding Source</TableHead>
-          <TableHead>Items</TableHead>
-          <TableHead>Total Amount</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="whitespace-nowrap font-semibold">
+            Acquisition No.
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Date
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Acquisition Method
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Supplier
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Reference No.
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Funding Source
+          </TableHead>
+          <TableHead className="whitespace-nowrap text-right font-semibold">
+            Items
+          </TableHead>
+          <TableHead className="whitespace-nowrap text-right font-semibold">
+            Total Amount
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {acquisitions.map((acquisition) => (
-          <TableRow key={acquisition.id}>
-            <TableCell className="font-medium">
+          <TableRow
+            key={acquisition.id}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
+            <TableCell className="whitespace-nowrap font-medium">
               <Link
                 href={`/reports/acquisitions/${acquisition.id}`}
-                className="text-blue-600 hover:underline"
+                className="text-primary hover:text-primary-hover hover:underline"
               >
                 {acquisition.acquisitionNumber}
               </Link>
             </TableCell>
-            <TableCell>{formatDate(acquisition.acquisitionDate)}</TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(acquisition.acquisitionDate)}
+            </TableCell>
+
+            <TableCell className="min-w-52 text-foreground">
               {acquisition.acquisitionMethod
                 ? `${acquisition.acquisitionMethod.code} - ${acquisition.acquisitionMethod.name}`
                 : '-'}
             </TableCell>
 
-            <TableCell>{acquisition.supplierName ?? '-'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {acquisition.supplierName ?? '-'}
+            </TableCell>
 
-            <TableCell>{acquisition.referenceNumber ?? '-'}</TableCell>
+            <TableCell className="whitespace-nowrap text-foreground">
+              {acquisition.referenceNumber ?? '-'}
+            </TableCell>
 
-            <TableCell>{acquisition.fundingSource ?? '-'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {acquisition.fundingSource ?? '-'}
+            </TableCell>
 
-            <TableCell>{acquisition.itemCount}</TableCell>
+            <TableCell className="whitespace-nowrap text-right tabular-nums text-foreground">
+              {acquisition.itemCount}
+            </TableCell>
 
-            <TableCell>
+            <TableCell className="whitespace-nowrap text-right font-medium tabular-nums text-foreground">
               {formatAmount(acquisition.totalAmount, acquisition.currency)}
             </TableCell>
           </TableRow>

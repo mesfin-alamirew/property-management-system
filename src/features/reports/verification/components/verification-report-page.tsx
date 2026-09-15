@@ -18,10 +18,11 @@ export async function VerificationReportPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           Physical Verification Report
         </h1>
-        <p className="mt-1 text-sm text-gray-600">
+
+        <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
           Review physical verification activities, verification results,
           discrepancies, and unregistered assets.
         </p>

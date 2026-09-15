@@ -1,6 +1,6 @@
+import { AccessDenied } from '@/components/ui/access-denied';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
-import { AccessDenied } from '@/components/ui/access-denied';
 
 import { getAssetReport } from '../queries/asset.queries';
 import {
@@ -51,14 +51,20 @@ export async function AssetReportPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Asset Report</h1>
-
-        <p className="mt-1 text-sm text-gray-600">
-          Review the organization&apos;s assets, current status, condition,
-          location, assignment, and acquisition information.
+      <header>
+        <p className="text-xs font-medium uppercase tracking-wider text-primary">
+          Asset management report
         </p>
-      </div>
+
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+          Asset Report
+        </h1>
+
+        <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
+          Review assets by classification, status, condition, location,
+          assignment, and acquisition information.
+        </p>
+      </header>
 
       <AssetReportWorkspace
         assetTypes={assetTypes}

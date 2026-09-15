@@ -22,6 +22,9 @@ type MovementReportFiltersProps = {
   onApply: (filters: MovementReportFiltersType) => void;
 };
 
+const inputClassName =
+  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20';
+
 export function MovementReportFilters({
   assets,
   locations,
@@ -61,12 +64,12 @@ export function MovementReportFilters({
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div>
+    <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             Search
           </label>
@@ -77,14 +80,14 @@ export function MovementReportFilters({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Asset, reason, notes..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           />
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-asset"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             Asset
           </label>
@@ -93,7 +96,7 @@ export function MovementReportFilters({
             id="movement-asset"
             value={assetId}
             onChange={(event) => setAssetId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           >
             <option value="">All assets</option>
 
@@ -105,10 +108,10 @@ export function MovementReportFilters({
           </select>
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-from-location"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             From Location
           </label>
@@ -117,7 +120,7 @@ export function MovementReportFilters({
             id="movement-from-location"
             value={fromLocationId}
             onChange={(event) => setFromLocationId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           >
             <option value="">All source locations</option>
 
@@ -129,10 +132,10 @@ export function MovementReportFilters({
           </select>
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-to-location"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             To Location
           </label>
@@ -141,7 +144,7 @@ export function MovementReportFilters({
             id="movement-to-location"
             value={toLocationId}
             onChange={(event) => setToLocationId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           >
             <option value="">All destination locations</option>
 
@@ -153,10 +156,10 @@ export function MovementReportFilters({
           </select>
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-moved-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             Moved By
           </label>
@@ -165,7 +168,7 @@ export function MovementReportFilters({
             id="movement-moved-by"
             value={movedByUserId}
             onChange={(event) => setMovedByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           >
             <option value="">All officers</option>
 
@@ -177,10 +180,10 @@ export function MovementReportFilters({
           </select>
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-date-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             Moved Date From
           </label>
@@ -190,14 +193,14 @@ export function MovementReportFilters({
             type="date"
             value={movedDateFrom}
             onChange={(event) => setMovedDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           />
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label
             htmlFor="movement-date-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             Moved Date To
           </label>
@@ -207,16 +210,16 @@ export function MovementReportFilters({
             type="date"
             value={movedDateTo}
             onChange={(event) => setMovedDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={inputClassName}
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={handleApply}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Apply Filters
         </button>
@@ -224,7 +227,7 @@ export function MovementReportFilters({
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Reset
         </button>

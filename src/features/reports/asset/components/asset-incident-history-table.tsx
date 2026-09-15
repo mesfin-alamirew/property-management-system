@@ -30,7 +30,7 @@ export function AssetIncidentHistoryTable({
 }: AssetIncidentHistoryTableProps) {
   if (rows.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="px-5 py-4 text-sm text-muted-foreground">
         No incident history is available for this asset.
       </p>
     );
@@ -39,33 +39,78 @@ export function AssetIncidentHistoryTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Reference</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Severity</TableHead>
-          <TableHead>Title</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Incident Date</TableHead>
-          <TableHead>Reported By</TableHead>
-          <TableHead>Resolved</TableHead>
-          <TableHead>Closed</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="whitespace-nowrap font-semibold">
+            Reference
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Type
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Severity
+          </TableHead>
+          <TableHead className="min-w-48 whitespace-nowrap font-semibold">
+            Title
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Status
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Incident Date
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Reported By
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Resolved
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Closed
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.id}>
-            <TableCell>{row.referenceNumber}</TableCell>
-            <TableCell>{row.type}</TableCell>
-            <TableCell>{row.severity}</TableCell>
-            <TableCell>{row.title}</TableCell>
-            <TableCell>{row.status}</TableCell>
-            <TableCell>{formatDate(row.incidentDate)}</TableCell>
+          <TableRow
+            key={row.id}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
+              {row.referenceNumber}
+            </TableCell>
 
-            <TableCell>{row.reportedByUser.displayName}</TableCell>
+            <TableCell className="whitespace-nowrap text-foreground">
+              {row.type}
+            </TableCell>
 
-            <TableCell>{formatDate(row.resolvedAt)}</TableCell>
-            <TableCell>{formatDate(row.closedAt)}</TableCell>
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
+              {row.severity}
+            </TableCell>
+
+            <TableCell className="min-w-48 text-foreground">
+              {row.title}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
+              {row.status}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.incidentDate)}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap text-foreground">
+              {row.reportedByUser.displayName}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.resolvedAt)}
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.closedAt)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

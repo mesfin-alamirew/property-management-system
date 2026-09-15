@@ -4,6 +4,8 @@ import { useState, type FormEvent } from 'react';
 
 import type { AcquisitionSummaryFilters } from '../types/acquisition.types';
 
+import { Button } from '@/components/ui/button';
+
 type AcquisitionSummaryFiltersProps = {
   onFilter: (filters: AcquisitionSummaryFilters) => void;
 };
@@ -30,62 +32,64 @@ export function AcquisitionSummaryFilters({
     onFilter({});
   }
 
+  const inputClassName =
+    'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20';
+
   return (
     <form
-      className="space-y-4 rounded-lg border border-gray-200 bg-white p-4"
+      className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm"
       onSubmit={handleSubmit}
     >
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label
-            htmlFor="summary-date-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Date From
-          </label>
-
-          <input
-            id="summary-date-from"
-            type="date"
-            value={dateFrom}
-            onChange={(event) => setDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
-          />
+      <div>
+        <div className="mb-1.5 text-sm font-medium text-foreground">
+          Acquisition Date Range
         </div>
 
-        <div>
-          <label
-            htmlFor="summary-date-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Date To
-          </label>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label
+              htmlFor="summary-date-from"
+              className="mb-1.5 block text-sm text-muted-foreground"
+            >
+              Date From
+            </label>
 
-          <input
-            id="summary-date-to"
-            type="date"
-            value={dateTo}
-            onChange={(event) => setDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
-          />
+            <input
+              id="summary-date-from"
+              type="date"
+              value={dateFrom}
+              onChange={(event) => setDateFrom(event.target.value)}
+              className={inputClassName}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="summary-date-to"
+              className="mb-1.5 block text-sm text-muted-foreground"
+            >
+              Date To
+            </label>
+
+            <input
+              id="summary-date-to"
+              type="date"
+              value={dateTo}
+              onChange={(event) => setDateTo(event.target.value)}
+              className={inputClassName}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="submit"
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-        >
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <Button type="submit" variant="primary">
           Apply Filters
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
+        <Button type="button" variant="secondary" onClick={handleReset}>
           Reset
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+
 import type {
   AccountabilityExceptionSeverity,
   AccountabilityExceptionType,
@@ -74,13 +77,16 @@ export function AccountabilityReportFilters({
     (value) => value !== undefined && value !== '',
   );
 
+  const fieldClassName =
+    'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20 disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-2">
           <label
             htmlFor="accountability-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Search
           </label>
@@ -91,14 +97,14 @@ export function AccountabilityReportFilters({
             value={search}
             onChange={(event) => handleSearchChange(event.target.value)}
             placeholder="Asset code, tag, name, details, evidence..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="accountability-exception-type"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Exception Type
           </label>
@@ -109,7 +115,7 @@ export function AccountabilityReportFilters({
             onChange={(event) =>
               updateFilter('exceptionType', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           >
             <option value="">All</option>
 
@@ -124,7 +130,7 @@ export function AccountabilityReportFilters({
         <div>
           <label
             htmlFor="accountability-severity"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Severity
           </label>
@@ -133,7 +139,7 @@ export function AccountabilityReportFilters({
             id="accountability-severity"
             value={filters.severity ?? ''}
             onChange={(event) => updateFilter('severity', event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           >
             <option value="">All</option>
 
@@ -148,7 +154,7 @@ export function AccountabilityReportFilters({
         <div>
           <label
             htmlFor="accountability-organization-unit"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Organization Unit
           </label>
@@ -159,7 +165,7 @@ export function AccountabilityReportFilters({
             onChange={(event) =>
               updateFilter('organizationUnitId', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           >
             <option value="">All</option>
 
@@ -174,7 +180,7 @@ export function AccountabilityReportFilters({
         <div>
           <label
             htmlFor="accountability-location"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Location
           </label>
@@ -183,7 +189,7 @@ export function AccountabilityReportFilters({
             id="accountability-location"
             value={filters.locationId ?? ''}
             onChange={(event) => updateFilter('locationId', event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           >
             <option value="">All</option>
 
@@ -198,7 +204,7 @@ export function AccountabilityReportFilters({
         <div>
           <label
             htmlFor="accountability-asset-type"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Asset Type
           </label>
@@ -209,7 +215,7 @@ export function AccountabilityReportFilters({
             onChange={(event) =>
               updateFilter('assetTypeId', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           >
             <option value="">All</option>
 
@@ -224,7 +230,7 @@ export function AccountabilityReportFilters({
         <div>
           <label
             htmlFor="accountability-asset-status"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Asset Status
           </label>
@@ -235,7 +241,7 @@ export function AccountabilityReportFilters({
             onChange={(event) =>
               updateFilter('assetStatusId', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className={fieldClassName}
           >
             <option value="">All</option>
 
@@ -249,14 +255,10 @@ export function AccountabilityReportFilters({
       </div>
 
       {hasFilters && (
-        <div className="mt-4 flex justify-end">
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900"
-          >
+        <div className="mt-5 flex justify-end border-t border-border pt-4">
+          <Button type="button" variant="secondary" onClick={clearFilters}>
             Clear Filters
-          </button>
+          </Button>
         </div>
       )}
     </div>

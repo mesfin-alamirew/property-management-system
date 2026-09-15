@@ -21,23 +21,34 @@ export function AcquisitionSummaryMethodTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Acquisition Method</TableHead>
-          <TableHead>Acquisitions</TableHead>
-          <TableHead>Items</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="font-semibold">Acquisition Method</TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Acquisitions
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Items
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {methods.map((method) => (
-          <TableRow key={method.acquisitionMethodId}>
+          <TableRow
+            key={method.acquisitionMethodId}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
             <TableCell className="font-medium">
               {method.code} - {method.name}
             </TableCell>
 
-            <TableCell>{method.acquisitionCount}</TableCell>
+            <TableCell className="whitespace-nowrap tabular-nums">
+              {method.acquisitionCount}
+            </TableCell>
 
-            <TableCell>{method.itemCount}</TableCell>
+            <TableCell className="whitespace-nowrap tabular-nums">
+              {method.itemCount}
+            </TableCell>
           </TableRow>
         ))}
 
@@ -45,7 +56,7 @@ export function AcquisitionSummaryMethodTable({
           <TableRow>
             <TableCell
               colSpan={3}
-              className="py-6 text-center text-sm text-gray-500"
+              className="px-5 py-4 text-center text-sm text-muted-foreground"
             >
               No acquisition method data is available.
             </TableCell>

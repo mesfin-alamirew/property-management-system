@@ -34,46 +34,75 @@ function formatDate(date: Date | null) {
 export function AssignmentHistoryTable({ rows }: AssignmentHistoryTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-md border p-6 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border border-border bg-surface px-5 py-8 text-center text-sm text-muted-foreground shadow-sm">
         No assignment history found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Employee</TableHead>
-            <TableHead>Employee Number</TableHead>
-            <TableHead>Assigned Date</TableHead>
-            <TableHead>Returned Date</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Assigned By</TableHead>
-            <TableHead>Returned By</TableHead>
-            <TableHead>Notes</TableHead>
+          <TableRow className="bg-surface-muted/60">
+            <TableHead className="whitespace-nowrap font-semibold">
+              Employee
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Employee Number
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Assigned Date
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Returned Date
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Status
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Assigned By
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Returned By
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Notes
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{formatEmployeeName(row.employee)}</TableCell>
+            <TableRow
+              key={row.id}
+              className="transition-colors hover:bg-surface-muted/50"
+            >
+              <TableCell className="font-medium">
+                {formatEmployeeName(row.employee)}
+              </TableCell>
 
-              <TableCell>{row.employee.employeeNumber}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {row.employee.employeeNumber}
+              </TableCell>
 
-              <TableCell>{formatDate(row.assignedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap tabular-nums">
+                {formatDate(row.assignedAt)}
+              </TableCell>
 
-              <TableCell>{formatDate(row.returnedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap tabular-nums">
+                {formatDate(row.returnedAt)}
+              </TableCell>
 
-              <TableCell>{row.returnedAt ? 'RETURNED' : 'CURRENT'}</TableCell>
+              <TableCell className="whitespace-nowrap font-medium">
+                {row.returnedAt ? 'RETURNED' : 'CURRENT'}
+              </TableCell>
 
               <TableCell>{row.assignedByUser.displayName}</TableCell>
 
               <TableCell>{row.returnedByUser?.displayName ?? '—'}</TableCell>
 
-              <TableCell>{row.notes ?? '—'}</TableCell>
+              <TableCell className="min-w-48">{row.notes ?? '—'}</TableCell>
             </TableRow>
           ))}
         </TableBody>

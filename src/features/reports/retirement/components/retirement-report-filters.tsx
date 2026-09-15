@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import type { RetirementReportFilters as RetirementReportFiltersType } from '../types/retirement.types';
 
 type RetirementReportFiltersProps = {
@@ -23,6 +25,9 @@ type RetirementReportFiltersProps = {
 };
 
 const retirementStatuses = ['DRAFT', 'REQUESTED', 'APPROVED', 'CANCELLED'];
+
+const fieldClassName =
+  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20 disabled:cursor-not-allowed disabled:opacity-50';
 
 export function RetirementReportFilters({
   assets,
@@ -69,12 +74,12 @@ export function RetirementReportFilters({
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
+    <div className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <label
             htmlFor="retirement-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Search
           </label>
@@ -85,14 +90,14 @@ export function RetirementReportFilters({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Reference, reason, asset..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="retirement-status"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Status
           </label>
@@ -101,7 +106,7 @@ export function RetirementReportFilters({
             id="retirement-status"
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All statuses</option>
 
@@ -116,7 +121,7 @@ export function RetirementReportFilters({
         <div>
           <label
             htmlFor="retirement-asset"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Asset
           </label>
@@ -125,7 +130,7 @@ export function RetirementReportFilters({
             id="retirement-asset"
             value={assetId}
             onChange={(event) => setAssetId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All assets</option>
 
@@ -140,7 +145,7 @@ export function RetirementReportFilters({
         <div>
           <label
             htmlFor="retirement-condition"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Condition
           </label>
@@ -149,7 +154,7 @@ export function RetirementReportFilters({
             id="retirement-condition"
             value={conditionId}
             onChange={(event) => setConditionId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All conditions</option>
 
@@ -164,7 +169,7 @@ export function RetirementReportFilters({
         <div>
           <label
             htmlFor="retirement-requested-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Requested By
           </label>
@@ -173,7 +178,7 @@ export function RetirementReportFilters({
             id="retirement-requested-by"
             value={requestedByUserId}
             onChange={(event) => setRequestedByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All requesters</option>
 
@@ -188,7 +193,7 @@ export function RetirementReportFilters({
         <div>
           <label
             htmlFor="retirement-approved-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Approved By
           </label>
@@ -197,7 +202,7 @@ export function RetirementReportFilters({
             id="retirement-approved-by"
             value={approvedByUserId}
             onChange={(event) => setApprovedByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All approvers</option>
 
@@ -212,7 +217,7 @@ export function RetirementReportFilters({
         <div>
           <label
             htmlFor="retirement-cancelled-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Cancelled By
           </label>
@@ -221,7 +226,7 @@ export function RetirementReportFilters({
             id="retirement-cancelled-by"
             value={cancelledByUserId}
             onChange={(event) => setCancelledByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All cancellers</option>
 
@@ -236,7 +241,7 @@ export function RetirementReportFilters({
         <div>
           <label
             htmlFor="retirement-date-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Retirement Date From
           </label>
@@ -246,14 +251,14 @@ export function RetirementReportFilters({
             type="date"
             value={retirementDateFrom}
             onChange={(event) => setRetirementDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="retirement-date-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Retirement Date To
           </label>
@@ -263,27 +268,19 @@ export function RetirementReportFilters({
             type="date"
             value={retirementDateTo}
             onChange={(event) => setRetirementDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={handleApply}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <Button type="button" variant="primary" onClick={handleApply}>
           Apply Filters
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
+        <Button type="button" variant="secondary" onClick={handleReset}>
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -57,13 +57,17 @@ export function IncidentReportWorkspace({
       />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
+        <div className="rounded-lg border border-danger-surface bg-danger-surface px-4 py-3">
+          <p className="text-sm font-medium text-danger">{error}</p>
         </div>
       )}
 
       {isPending && (
-        <p className="text-sm text-gray-500">Loading incident report...</p>
+        <div className="rounded-md border border-border bg-surface-muted px-4 py-3">
+          <p className="text-sm text-muted-foreground">
+            Loading incident report...
+          </p>
+        </div>
       )}
 
       <IncidentReportTable rows={rows} />

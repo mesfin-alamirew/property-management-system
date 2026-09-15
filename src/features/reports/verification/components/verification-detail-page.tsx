@@ -93,13 +93,14 @@ export function VerificationDetailPage({
   unregisteredObservations,
 }: VerificationDetailPageProps) {
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Physical Verification Detail
           </h1>
-          <p className="mt-1 text-sm text-gray-600">
+
+          <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
             View the verification record, results, discrepancies, and
             unregistered asset observations.
           </p>
@@ -107,51 +108,55 @@ export function VerificationDetailPage({
 
         <Link
           href="/reports/verifications"
-          className="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex shrink-0 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Back to Verification Report
         </Link>
       </div>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
           Verification Information
         </h2>
 
-        <dl className="mt-6 grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+        <dl className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <dt className="text-sm font-medium text-gray-500">
+            <dt className="text-sm font-medium text-muted-foreground">
               Reference Number
             </dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dd className="mt-1 text-sm font-medium text-foreground">
               {verification.referenceNumber}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Title</dt>
-            <dd className="mt-1 text-sm text-gray-900">{verification.title}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">Title</dt>
+            <dd className="mt-1 text-sm text-foreground">
+              {verification.title}
+            </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Scope</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">Scope</dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatScope(verification.scope)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Status</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Status
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatStatus(verification.status)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">
+            <dt className="text-sm font-medium text-muted-foreground">
               Organization Unit
             </dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dd className="mt-1 text-sm text-foreground">
               {verification.organizationUnit
                 ? `${verification.organizationUnit.code} - ${verification.organizationUnit.name}`
                 : '—'}
@@ -159,8 +164,10 @@ export function VerificationDetailPage({
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Location</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Location
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {verification.location
                 ? `${verification.location.code} - ${verification.location.name}`
                 : '—'}
@@ -168,40 +175,44 @@ export function VerificationDetailPage({
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">
+            <dt className="text-sm font-medium text-muted-foreground">
               Scheduled Date
             </dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dd className="mt-1 text-sm text-foreground">
               {formatDate(verification.scheduledAt)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Started Date</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Started Date
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatDate(verification.startedAt)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">
+            <dt className="text-sm font-medium text-muted-foreground">
               Completed Date
             </dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dd className="mt-1 text-sm text-foreground">
               {formatDate(verification.completedAt)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Created By</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Created By
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {verification.createdByUser.displayName}
             </dd>
           </div>
 
           <div className="md:col-span-2">
-            <dt className="text-sm font-medium text-gray-500">Notes</dt>
-            <dd className="mt-1 whitespace-pre-wrap text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">Notes</dt>
+            <dd className="mt-1 whitespace-pre-wrap text-sm text-foreground">
               {verification.notes || '—'}
             </dd>
           </div>
@@ -209,35 +220,39 @@ export function VerificationDetailPage({
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-foreground">
           Verification Summary
         </h2>
 
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm text-gray-500">Items</p>
-            <p className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-muted-foreground">Items</p>
+            <p className="mt-1 text-2xl font-semibold text-foreground">
               {verification.itemCount}
             </p>
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm text-gray-500">Verified</p>
-            <p className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-muted-foreground">
+              Verified
+            </p>
+            <p className="mt-1 text-2xl font-semibold text-foreground">
               {verification.verifiedCount}
             </p>
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm text-gray-500">Pending</p>
-            <p className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-muted-foreground">Pending</p>
+            <p className="mt-1 text-2xl font-semibold text-foreground">
               {verification.pendingCount}
             </p>
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm text-gray-500">Discrepancies</p>
-            <p className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+            <p className="text-sm font-medium text-muted-foreground">
+              Discrepancies
+            </p>
+            <p className="mt-1 text-2xl font-semibold text-foreground">
               {verification.discrepancyCount}
             </p>
           </div>
@@ -245,21 +260,21 @@ export function VerificationDetailPage({
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-foreground">
           Result Breakdown
         </h2>
 
-        <div className="mt-4 rounded-lg border border-gray-200 bg-white">
-          <dl className="divide-y divide-gray-200">
+        <div className="mt-4 overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+          <dl className="divide-y divide-border">
             {resultSummary.map((summary) => (
               <div
                 key={summary.result}
-                className="flex items-center justify-between px-5 py-4"
+                className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-surface-muted/50"
               >
-                <dt className="text-sm text-gray-700">
+                <dt className="text-sm text-foreground">
                   {formatResult(summary.result)}
                 </dt>
-                <dd className="text-sm font-semibold text-gray-900">
+                <dd className="text-sm font-semibold text-foreground">
                   {summary.count}
                 </dd>
               </div>
@@ -270,10 +285,10 @@ export function VerificationDetailPage({
 
       <section>
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             Verification Items
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm leading-5 text-muted-foreground">
             Expected values compared with values observed during physical
             verification.
           </p>
@@ -284,10 +299,10 @@ export function VerificationDetailPage({
 
       <section>
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             Unregistered Asset Observations
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm leading-5 text-muted-foreground">
             Assets observed during verification that were not part of the
             registered verification items.
           </p>

@@ -57,13 +57,17 @@ export function MaintenanceReportWorkspace({
       />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-danger bg-danger-surface px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
 
       {isPending && (
-        <p className="text-sm text-gray-500">Loading maintenance report...</p>
+        <div className="rounded-lg border border-border bg-surface-muted px-4 py-3">
+          <p className="text-sm font-medium text-muted-foreground">
+            Loading maintenance report...
+          </p>
+        </div>
       )}
 
       <MaintenanceReportTable rows={rows} />

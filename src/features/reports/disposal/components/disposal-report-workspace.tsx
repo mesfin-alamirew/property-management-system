@@ -59,14 +59,16 @@ export function DisposalReportWorkspace({
       {error && (
         <div
           role="alert"
-          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-lg border border-danger-surface bg-danger-surface px-4 py-3 text-sm text-danger"
         >
           {error}
         </div>
       )}
 
       {isPending && (
-        <div className="text-sm text-gray-500">Loading disposal report...</div>
+        <div className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
+          Loading disposal report...
+        </div>
       )}
 
       <DisposalReportTable rows={rows} />

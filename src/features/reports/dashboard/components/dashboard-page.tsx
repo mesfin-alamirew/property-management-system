@@ -28,16 +28,24 @@ export function DashboardPage({
 }: DashboardPageProps) {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          Management Dashboard
-        </h1>
+      <header>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-wider text-primary">
+              Management overview
+            </p>
 
-        <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
-          Overview of asset portfolio, accountability, verification, operations,
-          lifecycle activity, and organizational performance.
-        </p>
-      </div>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+              Management Dashboard
+            </h1>
+
+            <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
+              Overview of asset portfolio, accountability, verification,
+              operations, lifecycle activity, and organizational performance.
+            </p>
+          </div>
+        </div>
+      </header>
 
       <DashboardWorkspace
         initialData={initialData}

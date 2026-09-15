@@ -74,16 +74,27 @@ export function AssignmentReportWorkspace({
       />
 
       {error ? (
-        <div className="rounded-md border p-4 text-sm">{error}</div>
-      ) : null}
-
-      {isPending ? (
-        <div className="text-sm text-muted-foreground">
-          Loading assignments...
+        <div
+          role="alert"
+          className="rounded-lg border border-danger bg-danger-surface px-4 py-3 text-sm text-danger"
+        >
+          {error}
         </div>
       ) : null}
 
-      <AssignmentReportTable rows={rows} />
+      <div className="relative">
+        {isPending ? (
+          <div className="absolute inset-0 z-10 flex items-start justify-center rounded-lg bg-surface/70 pt-8 backdrop-blur-[1px]">
+            <div className="rounded-md border border-border bg-surface px-4 py-2 shadow-sm">
+              <p className="text-sm font-medium text-muted-foreground">
+                Loading assignments...
+              </p>
+            </div>
+          </div>
+        ) : null}
+
+        <AssignmentReportTable rows={rows} />
+      </div>
     </div>
   );
 }

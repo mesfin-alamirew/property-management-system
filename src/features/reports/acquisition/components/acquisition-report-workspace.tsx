@@ -56,15 +56,19 @@ export function AcquisitionReportWorkspace({
       />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-danger bg-danger-surface px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
 
       <div className="relative">
         {loading && (
-          <div className="absolute inset-0 z-10 flex items-start justify-center bg-white/60 pt-8">
-            <p className="text-sm text-gray-600">Loading report...</p>
+          <div className="absolute inset-0 z-10 flex items-start justify-center rounded-lg bg-surface/70 pt-8 backdrop-blur-[1px]">
+            <div className="rounded-md border border-border bg-surface px-4 py-2 shadow-sm">
+              <p className="text-sm font-medium text-muted-foreground">
+                Loading report...
+              </p>
+            </div>
           </div>
         )}
 

@@ -1,20 +1,68 @@
 'use client';
 
-import type { DashboardFilters } from '../types/dashboard.types';
+import { useMemo } from 'react';
 
-type LookupOption = {
-  id: string;
-  code: string;
-  name: string;
-};
+import type { DashboardFilters as DashboardFilterValues } from '../types/dashboard.types';
 
 type DashboardFiltersProps = {
-  filters: DashboardFilters;
-  organizationUnits: LookupOption[];
-  assetTypes: LookupOption[];
-  assetStatuses: LookupOption[];
-  onChange: (filters: DashboardFilters) => void;
+  filters: DashboardFilterValues;
+  organizationUnits: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+  assetTypes: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+  assetStatuses: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+  onChange: (filters: DashboardFilterValues) => void;
 };
+
+type FilterSelectProps = {
+  label: string;
+  value: string | undefined;
+  options: {
+    id: string;
+    code: string;
+    name: string;
+  }[];
+  onChange: (value: string) => void;
+};
+
+function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
+  return (
+    <label className="min-w-0 space-y-1.5">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+
+      <select
+        value={value ?? ''}
+        onChange={(event) => onChange(event.target.value)}
+        className={[
+          'w-full rounded-md border border-border bg-surface px-3 py-2',
+          'text-sm text-foreground shadow-sm',
+          'transition-colors',
+          'hover:border-muted-foreground/40',
+          'focus:border-primary focus:outline-none',
+          'focus:ring-2 focus:ring-focus-ring focus:ring-offset-1',
+        ].join(' ')}
+      >
+        <option value="">All</option>
+
+        {options.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.code} — {option.name}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 export function DashboardFilters({
   filters,
@@ -23,7 +71,21 @@ export function DashboardFilters({
   assetStatuses,
   onChange,
 }: DashboardFiltersProps) {
-  function updateFilter(key: keyof DashboardFilters, value: string) {
+  const hasFilters = Boolean(
+    filters.organizationUnitId || filters.assetTypeId || filters.assetStatusId,
+  );
+
+  const activeFilterCount = useMemo(
+    () =>
+      [
+        filters.organizationUnitId,
+        filters.assetTypeId,
+        filters.assetStatusId,
+      ].filter(Boolean).length,
+    [filters.organizationUnitId, filters.assetTypeId, filters.assetStatusId],
+  );
+
+  function updateFilter(key: keyof DashboardFilterValues, value: string) {
     onChange({
       ...filters,
       [key]: value || undefined,
@@ -34,95 +96,85 @@ export function DashboardFilters({
     onChange({});
   }
 
-  const hasFilters =
-    Boolean(filters.organizationUnitId) ||
-    Boolean(filters.assetTypeId) ||
-    Boolean(filters.assetStatusId);
-
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
-        <div className="flex-1">
-          <label
-            htmlFor="dashboard-organization-unit"
-            className="block text-sm font-medium text-gray-700"
+    <section
+      aria-labelledby="dashboard-filters-heading"
+      className="rounded-lg border border-border bg-surface p-4 shadow-sm sm:p-5"
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2
+            id="dashboard-filters-heading"
+            className="text-sm font-semibold text-foreground"
           >
-            Organization Unit
-          </label>
-          <select
-            id="dashboard-organization-unit"
-            value={filters.organizationUnitId ?? ''}
-            onChange={(event) =>
-              updateFilter('organizationUnitId', event.target.value)
-            }
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none"
-          >
-            <option value="">All organization units</option>
-            {organizationUnits.map((organizationUnit) => (
-              <option key={organizationUnit.id} value={organizationUnit.id}>
-                {organizationUnit.code} — {organizationUnit.name}
-              </option>
-            ))}
-          </select>
+            Dashboard filters
+          </h2>
+
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            Narrow the dashboard by organization unit, asset type, or asset
+            status.
+          </p>
         </div>
 
-        <div className="flex-1">
-          <label
-            htmlFor="dashboard-asset-type"
-            className="block text-sm font-medium text-gray-700"
+        {hasFilters ? (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className={[
+              'inline-flex shrink-0 items-center justify-center rounded-md',
+              'border border-border bg-surface px-3 py-2',
+              'text-sm font-medium text-foreground',
+              'transition-colors',
+              'hover:bg-surface-muted',
+              'focus:outline-none focus:ring-2 focus:ring-focus-ring',
+              'focus:ring-offset-1',
+            ].join(' ')}
           >
-            Asset Type
-          </label>
-          <select
-            id="dashboard-asset-type"
-            value={filters.assetTypeId ?? ''}
-            onChange={(event) =>
-              updateFilter('assetTypeId', event.target.value)
-            }
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none"
-          >
-            <option value="">All asset types</option>
-            {assetTypes.map((assetType) => (
-              <option key={assetType.id} value={assetType.id}>
-                {assetType.code} — {assetType.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex-1">
-          <label
-            htmlFor="dashboard-asset-status"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Asset Status
-          </label>
-          <select
-            id="dashboard-asset-status"
-            value={filters.assetStatusId ?? ''}
-            onChange={(event) =>
-              updateFilter('assetStatusId', event.target.value)
-            }
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-gray-500 focus:outline-none"
-          >
-            <option value="">All asset statuses</option>
-            {assetStatuses.map((assetStatus) => (
-              <option key={assetStatus.id} value={assetStatus.id}>
-                {assetStatus.code} — {assetStatus.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          type="button"
-          onClick={clearFilters}
-          disabled={!hasFilters}
-          className="inline-flex h-10 items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Clear Filters
-        </button>
+            Clear filters
+            <span className="ml-1.5 text-xs text-muted-foreground">
+              ({activeFilterCount})
+            </span>
+          </button>
+        ) : null}
       </div>
-    </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <FilterSelect
+          label="Organization Unit"
+          value={filters.organizationUnitId}
+          options={organizationUnits}
+          onChange={(value) => updateFilter('organizationUnitId', value)}
+        />
+
+        <FilterSelect
+          label="Asset Type"
+          value={filters.assetTypeId}
+          options={assetTypes}
+          onChange={(value) => updateFilter('assetTypeId', value)}
+        />
+
+        <FilterSelect
+          label="Asset Status"
+          value={filters.assetStatusId}
+          options={assetStatuses}
+          onChange={(value) => updateFilter('assetStatusId', value)}
+        />
+      </div>
+
+      {hasFilters ? (
+        <div
+          className="mt-4 flex items-center gap-2 rounded-md border border-primary/20 bg-info-surface px-3 py-2"
+          role="status"
+          aria-live="polite"
+        >
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+
+          <p className="text-xs font-medium text-info">
+            Dashboard results are filtered by {activeFilterCount}{' '}
+            {activeFilterCount === 1 ? 'criterion' : 'criteria'}.
+          </p>
+        </div>
+      ) : null}
+    </section>
   );
 }

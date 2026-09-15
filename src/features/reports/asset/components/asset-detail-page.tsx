@@ -1,13 +1,15 @@
 import Link from 'next/link';
 
 import { getAssetDetailAction } from '../actions/asset.actions';
+import { AccessDenied } from '@/components/ui/access-denied';
+import { AppError } from '@/lib/errors';
+
 import { AssetAssignmentHistoryTable } from './asset-assignment-history-table';
 import { AssetIncidentHistoryTable } from './asset-incident-history-table';
 import { AssetMaintenanceHistoryTable } from './asset-maintenance-history-table';
 import { AssetMovementHistoryTable } from './asset-movement-history-table';
 import { AssetVerificationHistoryTable } from './asset-verification-history-table';
-import { AccessDenied } from '@/components/ui/access-denied';
-import { AppError } from '@/lib/errors';
+
 type AssetDetailPageProps = {
   assetId: string;
 };
@@ -58,14 +60,16 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
   if (!result.success) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Asset Detail</h1>
-          <p className="mt-1 text-sm text-red-600">{result.message}</p>
+        <div className="rounded-lg border border-danger/20 bg-danger-surface p-5">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Asset Detail
+          </h1>
+          <p className="mt-2 text-sm text-danger">{result.message}</p>
         </div>
 
         <Link
           href="/reports/assets"
-          className="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Back to Asset Report
         </Link>
@@ -78,17 +82,24 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Asset Detail</h1>
-          <p className="mt-1 text-sm text-gray-600">
+      <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wider text-primary">
+            Asset management report
+          </p>
+
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+            Asset Detail
+          </h1>
+
+          <p className="mt-1 text-sm text-muted-foreground">
             {asset.assetCode} — {asset.name}
           </p>
         </div>
 
         <Link
           href="/reports/assets"
-          className="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex shrink-0 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Back to Asset Report
         </Link>
@@ -97,54 +108,72 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Asset Identity */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Asset Identity
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="mt-1 text-sm text-muted-foreground">
             Core identification information for the asset.
           </p>
         </div>
 
-        <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <dt className="text-sm font-medium text-gray-500">Asset Code</dt>
-            <dd className="mt-1 text-sm text-gray-900">{asset.assetCode}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">
+              Asset Code
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-foreground">
+              {asset.assetCode}
+            </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Asset Tag</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Asset Tag
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {asset.assetTag ?? '—'}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Asset Name</dt>
-            <dd className="mt-1 text-sm text-gray-900">{asset.name}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">
+              Asset Name
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-foreground">
+              {asset.name}
+            </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Manufacturer</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Manufacturer
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {asset.manufacturer ?? '—'}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Model</dt>
-            <dd className="mt-1 text-sm text-gray-900">{asset.model ?? '—'}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">Model</dt>
+            <dd className="mt-1 text-sm text-foreground">
+              {asset.model ?? '—'}
+            </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Serial Number</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Serial Number
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {asset.serialNumber ?? '—'}
             </dd>
           </div>
 
           <div className="sm:col-span-2 lg:col-span-3">
-            <dt className="text-sm font-medium text-gray-500">Description</dt>
-            <dd className="mt-1 whitespace-pre-wrap text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Description
+            </dt>
+            <dd className="mt-1 whitespace-pre-wrap text-sm leading-6 text-foreground">
               {asset.description ?? '—'}
             </dd>
           </div>
@@ -154,36 +183,44 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Classification & State */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Classification &amp; Current State
           </h2>
         </div>
 
-        <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <dt className="text-sm font-medium text-gray-500">Asset Type</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Asset Type
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {asset.assetType.code} — {asset.assetType.name}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Category</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Category
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {asset.assetType.category.code} — {asset.assetType.category.name}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Status</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Status
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-foreground">
               {asset.status.code} — {asset.status.name}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Condition</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Condition
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-foreground">
               {asset.condition.code} — {asset.condition.name}
             </dd>
           </div>
@@ -193,15 +230,17 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Location */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Current Location
           </h2>
         </div>
 
-        <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2">
           <div>
-            <dt className="text-sm font-medium text-gray-500">Location</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Location
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {asset.location
                 ? `${asset.location.code} — ${asset.location.name}`
                 : 'Not assigned to a location'}
@@ -209,10 +248,10 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">
+            <dt className="text-sm font-medium text-muted-foreground">
               Organization Unit
             </dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dd className="mt-1 text-sm text-foreground">
               {asset.location
                 ? `${asset.location.organizationUnit.code} — ${asset.location.organizationUnit.name}`
                 : '—'}
@@ -224,63 +263,69 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Current Assignment */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Current Assignment
           </h2>
         </div>
 
         {asset.currentAssignment ? (
-          <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">Employee</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Employee
+              </dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">
                 {formatEmployee(asset.currentAssignment.employee)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Employee Number
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.currentAssignment.employee.employeeNumber}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Organization Unit
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.currentAssignment.employee.organizationUnit.name}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Assigned Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.currentAssignment.assignedAt)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Assigned By</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Assigned By
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.currentAssignment.assignedByUser.displayName}
               </dd>
             </div>
 
             <div className="sm:col-span-2 lg:col-span-3">
-              <dt className="text-sm font-medium text-gray-500">Notes</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Notes
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-foreground">
                 {asset.currentAssignment.notes ?? '—'}
               </dd>
             </div>
           </dl>
         ) : (
-          <p className="rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
+          <p className="rounded-lg border border-border bg-surface-muted/50 p-5 text-sm text-muted-foreground">
             This asset is not currently assigned to an employee.
           </p>
         )}
@@ -289,57 +334,63 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Acquisition */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Acquisition</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
+            Acquisition
+          </h2>
         </div>
 
         {asset.acquisition ? (
-          <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Acquisition Number
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm font-medium text-foreground">
                 {asset.acquisition.acquisitionNumber}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Reference Number
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.acquisition.referenceNumber ?? '—'}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Acquisition Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.acquisition.acquisitionDate)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Acquisition Method
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.acquisition.acquisitionMethod.name}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Currency</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Currency
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.acquisition.currency ?? '—'}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Unit Cost</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Unit Cost
+              </dt>
+              <dd className="mt-1 text-sm font-medium tabular-nums text-foreground">
                 {formatCurrency(
                   asset.acquisition.currency,
                   asset.acquisition.unitCost,
@@ -348,8 +399,10 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Total Cost</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Total Cost
+              </dt>
+              <dd className="mt-1 text-sm font-semibold tabular-nums text-foreground">
                 {formatCurrency(
                   asset.acquisition.currency,
                   asset.acquisition.totalCost,
@@ -358,7 +411,7 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
             </div>
           </dl>
         ) : (
-          <p className="rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
+          <p className="rounded-lg border border-border bg-surface-muted/50 p-5 text-sm text-muted-foreground">
             No acquisition record is associated with this asset.
           </p>
         )}
@@ -367,12 +420,12 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Assignment History */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Assignment History
           </h2>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
           <AssetAssignmentHistoryTable rows={asset.assignmentHistory} />
         </div>
       </section>
@@ -380,12 +433,12 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Movement History */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Movement History
           </h2>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
           <AssetMovementHistoryTable rows={asset.movementHistory} />
         </div>
       </section>
@@ -393,12 +446,12 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Maintenance History */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Maintenance History
           </h2>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
           <AssetMaintenanceHistoryTable rows={asset.maintenanceHistory} />
         </div>
       </section>
@@ -406,12 +459,12 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Incident History */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Incident History
           </h2>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
           <AssetIncidentHistoryTable rows={asset.incidentHistory} />
         </div>
 
@@ -419,7 +472,7 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
           (incident) => incident.resolution !== null,
         ) && (
           <div className="space-y-4">
-            <h3 className="text-base font-semibold text-gray-900">
+            <h3 className="text-base font-semibold text-foreground">
               Incident Resolutions
             </h3>
 
@@ -432,54 +485,54 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
                   return (
                     <div
                       key={resolution.id}
-                      className="rounded-lg border border-gray-200 p-6"
+                      className="rounded-lg border border-border bg-surface p-5 shadow-sm"
                     >
-                      <h4 className="font-medium text-gray-900">
+                      <h4 className="font-medium text-foreground">
                         {incident.referenceNumber} — {incident.title}
                       </h4>
 
-                      <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <dl className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">
+                          <dt className="text-sm font-medium text-muted-foreground">
                             Root Cause
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
+                          <dd className="mt-1 text-sm leading-6 text-foreground">
                             {resolution.rootCause}
                           </dd>
                         </div>
 
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">
+                          <dt className="text-sm font-medium text-muted-foreground">
                             Resolution
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
+                          <dd className="mt-1 text-sm leading-6 text-foreground">
                             {resolution.resolution}
                           </dd>
                         </div>
 
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">
+                          <dt className="text-sm font-medium text-muted-foreground">
                             Corrective Action
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
+                          <dd className="mt-1 text-sm leading-6 text-foreground">
                             {resolution.correctiveAction ?? '—'}
                           </dd>
                         </div>
 
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">
+                          <dt className="text-sm font-medium text-muted-foreground">
                             Resolved By
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
+                          <dd className="mt-1 text-sm text-foreground">
                             {resolution.resolvedByUser.displayName}
                           </dd>
                         </div>
 
                         <div className="sm:col-span-2">
-                          <dt className="text-sm font-medium text-gray-500">
+                          <dt className="text-sm font-medium text-muted-foreground">
                             Notes
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
+                          <dd className="mt-1 text-sm leading-6 text-foreground">
                             {resolution.notes ?? '—'}
                           </dd>
                         </div>
@@ -495,12 +548,12 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Physical Verification History */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Physical Verification History
           </h2>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
           <AssetVerificationHistoryTable rows={asset.verificationHistory} />
         </div>
       </section>
@@ -508,104 +561,116 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Retirement */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Retirement</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
+            Retirement
+          </h2>
         </div>
 
         {asset.retirement ? (
-          <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Reference Number
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm font-medium text-foreground">
                 {asset.retirement.referenceNumber}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Retirement Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.retirement.retirementDate)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Status</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Status
+              </dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">
                 {asset.retirement.status}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Condition</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Condition
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.retirement.condition.name}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Requested By
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.retirement.requestedByUser.displayName}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Approved By</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Approved By
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.retirement.approvedByUser?.displayName ?? '—'}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Approved Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.retirement.approvedAt)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Cancelled Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.retirement.cancelledAt)}
               </dd>
             </div>
 
             <div className="sm:col-span-2 lg:col-span-4">
-              <dt className="text-sm font-medium text-gray-500">Reason</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Reason
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-foreground">
                 {asset.retirement.reason}
               </dd>
             </div>
 
             {asset.retirement.cancellationReason && (
               <div className="sm:col-span-2 lg:col-span-4">
-                <dt className="text-sm font-medium text-gray-500">
+                <dt className="text-sm font-medium text-muted-foreground">
                   Cancellation Reason
                 </dt>
-                <dd className="mt-1 text-sm text-gray-900">
+                <dd className="mt-1 text-sm leading-6 text-foreground">
                   {asset.retirement.cancellationReason}
                 </dd>
               </div>
             )}
 
             <div className="sm:col-span-2 lg:col-span-4">
-              <dt className="text-sm font-medium text-gray-500">Notes</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Notes
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-foreground">
                 {asset.retirement.notes ?? '—'}
               </dd>
             </div>
           </dl>
         ) : (
-          <p className="rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
+          <p className="rounded-lg border border-border bg-surface-muted/50 p-5 text-sm text-muted-foreground">
             No retirement record is associated with this asset.
           </p>
         )}
@@ -614,104 +679,116 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Disposal */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Disposal</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
+            Disposal
+          </h2>
         </div>
 
         {asset.disposal ? (
-          <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Reference Number
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm font-medium text-foreground">
                 {asset.disposal.referenceNumber}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Disposal Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.disposal.disposalDate)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Method</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Method
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.disposal.method}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Status</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Status
+              </dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">
                 {asset.disposal.status}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Requested By
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.disposal.requestedByUser.displayName}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">Approved By</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Approved By
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
                 {asset.disposal.approvedByUser?.displayName ?? '—'}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Approved Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.disposal.approvedAt)}
               </dd>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 Cancelled Date
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dd className="mt-1 text-sm text-foreground">
                 {formatDate(asset.disposal.cancelledAt)}
               </dd>
             </div>
 
             <div className="sm:col-span-2 lg:col-span-4">
-              <dt className="text-sm font-medium text-gray-500">Reason</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Reason
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-foreground">
                 {asset.disposal.reason ?? '—'}
               </dd>
             </div>
 
             {asset.disposal.cancellationReason && (
               <div className="sm:col-span-2 lg:col-span-4">
-                <dt className="text-sm font-medium text-gray-500">
+                <dt className="text-sm font-medium text-muted-foreground">
                   Cancellation Reason
                 </dt>
-                <dd className="mt-1 text-sm text-gray-900">
+                <dd className="mt-1 text-sm leading-6 text-foreground">
                   {asset.disposal.cancellationReason}
                 </dd>
               </div>
             )}
 
             <div className="sm:col-span-2 lg:col-span-4">
-              <dt className="text-sm font-medium text-gray-500">Notes</dt>
-              <dd className="mt-1 text-sm text-gray-900">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Notes
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-foreground">
                 {asset.disposal.notes ?? '—'}
               </dd>
             </div>
           </dl>
         ) : (
-          <p className="rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
+          <p className="rounded-lg border border-border bg-surface-muted/50 p-5 text-sm text-muted-foreground">
             No disposal record is associated with this asset.
           </p>
         )}
@@ -720,22 +797,26 @@ export async function AssetDetailPage({ assetId }: AssetDetailPageProps) {
       {/* Audit Information */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
             Record Information
           </h2>
         </div>
 
-        <dl className="grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-2">
           <div>
-            <dt className="text-sm font-medium text-gray-500">Created</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Created
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatDate(asset.createdAt)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-medium text-gray-500">Last Updated</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Last Updated
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatDate(asset.updatedAt)}
             </dd>
           </div>

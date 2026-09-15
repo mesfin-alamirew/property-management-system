@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+
 import { getAccountabilityReportAction } from '../actions/accountability.actions';
 import { AccountabilityReportFilters } from './accountability-report-filters';
 import { AccountabilityReportTable } from './accountability-report-table';
@@ -65,7 +66,7 @@ export function AccountabilityReportWorkspace({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AccountabilityReportFilters
         filters={filters}
         lookups={lookups}
@@ -73,13 +74,16 @@ export function AccountabilityReportWorkspace({
       />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          role="alert"
+          className="rounded-lg border border-danger-surface bg-danger-surface px-4 py-3 text-sm text-danger"
+        >
           {error}
         </div>
       )}
 
       {isPending && (
-        <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-600">
+        <div className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
           Loading accountability exceptions...
         </div>
       )}

@@ -45,15 +45,19 @@ export function AcquisitionSummaryWorkspace({
       <AcquisitionSummaryFilters onFilter={handleFilter} />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-danger bg-danger-surface px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
 
       <div className="relative">
         {loading && (
-          <div className="absolute inset-0 z-10 flex items-start justify-center bg-white/60 pt-8">
-            <p className="text-sm text-gray-600">Loading summary...</p>
+          <div className="absolute inset-0 z-10 flex items-start justify-center rounded-lg bg-surface/70 pt-8 backdrop-blur-[1px]">
+            <div className="rounded-md border border-border bg-surface px-4 py-2 shadow-sm">
+              <p className="text-sm font-medium text-muted-foreground">
+                Loading summary...
+              </p>
+            </div>
           </div>
         )}
 
@@ -61,12 +65,12 @@ export function AcquisitionSummaryWorkspace({
         <div className="space-y-6">
           <AcquisitionSummaryTotals totals={summary.totals} />
 
-          <section className="rounded-lg border border-gray-200 bg-white p-6">
+          <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 By Acquisition Method
               </h2>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-1 text-sm leading-5 text-muted-foreground">
                 Acquisition volume and acquired items grouped by acquisition
                 method.
               </p>
@@ -75,12 +79,12 @@ export function AcquisitionSummaryWorkspace({
             <AcquisitionSummaryMethodTable methods={summary.byMethod} />
           </section>
 
-          <section className="rounded-lg border border-gray-200 bg-white p-6">
+          <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 By Funding Source
               </h2>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-1 text-sm leading-5 text-muted-foreground">
                 Acquisition volume and acquired items grouped by funding source.
               </p>
             </div>
@@ -90,12 +94,12 @@ export function AcquisitionSummaryWorkspace({
             />
           </section>
 
-          <section className="rounded-lg border border-gray-200 bg-white p-6">
+          <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 By Currency
               </h2>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-1 text-sm leading-5 text-muted-foreground">
                 Acquisition values are reported separately for each currency.
               </p>
             </div>

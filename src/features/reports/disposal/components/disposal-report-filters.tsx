@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import type { DisposalReportFilters as DisposalReportFiltersType } from '../types/disposal.types';
 
 type DisposalReportFiltersProps = {
@@ -63,13 +65,16 @@ export function DisposalReportFilters({
     onApply({});
   }
 
+  const fieldClassName =
+    'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20 disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
+    <div className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <label
             htmlFor="disposal-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Search
           </label>
@@ -80,14 +85,14 @@ export function DisposalReportFilters({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Reference, method, reason, asset..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="disposal-status"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Status
           </label>
@@ -96,7 +101,7 @@ export function DisposalReportFilters({
             id="disposal-status"
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All statuses</option>
 
@@ -111,7 +116,7 @@ export function DisposalReportFilters({
         <div>
           <label
             htmlFor="disposal-method"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Disposal Method
           </label>
@@ -122,14 +127,14 @@ export function DisposalReportFilters({
             value={method}
             onChange={(event) => setMethod(event.target.value)}
             placeholder="e.g. Sale, Transfer..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="disposal-asset"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Asset
           </label>
@@ -138,7 +143,7 @@ export function DisposalReportFilters({
             id="disposal-asset"
             value={assetId}
             onChange={(event) => setAssetId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All assets</option>
 
@@ -153,7 +158,7 @@ export function DisposalReportFilters({
         <div>
           <label
             htmlFor="disposal-requested-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Requested By
           </label>
@@ -162,7 +167,7 @@ export function DisposalReportFilters({
             id="disposal-requested-by"
             value={requestedByUserId}
             onChange={(event) => setRequestedByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All requesters</option>
 
@@ -177,7 +182,7 @@ export function DisposalReportFilters({
         <div>
           <label
             htmlFor="disposal-approved-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Approved By
           </label>
@@ -186,7 +191,7 @@ export function DisposalReportFilters({
             id="disposal-approved-by"
             value={approvedByUserId}
             onChange={(event) => setApprovedByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All approvers</option>
 
@@ -201,7 +206,7 @@ export function DisposalReportFilters({
         <div>
           <label
             htmlFor="disposal-cancelled-by"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Cancelled By
           </label>
@@ -210,7 +215,7 @@ export function DisposalReportFilters({
             id="disposal-cancelled-by"
             value={cancelledByUserId}
             onChange={(event) => setCancelledByUserId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           >
             <option value="">All cancellers</option>
 
@@ -225,7 +230,7 @@ export function DisposalReportFilters({
         <div>
           <label
             htmlFor="disposal-date-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Disposal Date From
           </label>
@@ -235,14 +240,14 @@ export function DisposalReportFilters({
             type="date"
             value={disposalDateFrom}
             onChange={(event) => setDisposalDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="disposal-date-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Disposal Date To
           </label>
@@ -252,27 +257,19 @@ export function DisposalReportFilters({
             type="date"
             value={disposalDateTo}
             onChange={(event) => setDisposalDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className={fieldClassName}
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={handleApply}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <Button type="button" variant="primary" onClick={handleApply}>
           Apply Filters
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
+        <Button type="button" variant="secondary" onClick={handleReset}>
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );

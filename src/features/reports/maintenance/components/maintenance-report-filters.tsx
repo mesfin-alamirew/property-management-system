@@ -73,14 +73,16 @@ export function MaintenanceReportFilters({
     onApply(resetFilters);
   }
 
+  const fieldClassName =
+    'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20 disabled:cursor-not-allowed disabled:opacity-50';
+
+  const labelClassName = 'mb-1 block text-sm font-medium text-foreground';
+
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 p-4">
+    <div className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
-          <label
-            htmlFor="maintenance-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-search" className={labelClassName}>
             Search
           </label>
 
@@ -90,15 +92,12 @@ export function MaintenanceReportFilters({
             value={filters.search ?? ''}
             onChange={(event) => updateFilter('search', event.target.value)}
             placeholder="Reference, title, asset code or tag"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
-          <label
-            htmlFor="maintenance-type"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-type" className={labelClassName}>
             Maintenance Type
           </label>
 
@@ -106,7 +105,7 @@ export function MaintenanceReportFilters({
             id="maintenance-type"
             value={filters.type ?? ''}
             onChange={(event) => updateFilter('type', event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           >
             <option value="">All Types</option>
 
@@ -119,10 +118,7 @@ export function MaintenanceReportFilters({
         </div>
 
         <div>
-          <label
-            htmlFor="maintenance-status"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-status" className={labelClassName}>
             Status
           </label>
 
@@ -130,7 +126,7 @@ export function MaintenanceReportFilters({
             id="maintenance-status"
             value={filters.status ?? ''}
             onChange={(event) => updateFilter('status', event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           >
             <option value="">All Statuses</option>
 
@@ -143,10 +139,7 @@ export function MaintenanceReportFilters({
         </div>
 
         <div>
-          <label
-            htmlFor="maintenance-asset"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-asset" className={labelClassName}>
             Asset
           </label>
 
@@ -154,7 +147,7 @@ export function MaintenanceReportFilters({
             id="maintenance-asset"
             value={filters.assetId ?? ''}
             onChange={(event) => updateFilter('assetId', event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           >
             <option value="">All Assets</option>
 
@@ -167,10 +160,7 @@ export function MaintenanceReportFilters({
         </div>
 
         <div>
-          <label
-            htmlFor="maintenance-assigned-user"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-assigned-user" className={labelClassName}>
             Assigned Officer
           </label>
 
@@ -180,7 +170,7 @@ export function MaintenanceReportFilters({
             onChange={(event) =>
               updateFilter('assignedToUserId', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           >
             <option value="">All Officers</option>
 
@@ -195,7 +185,7 @@ export function MaintenanceReportFilters({
         <div>
           <label
             htmlFor="maintenance-requested-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className={labelClassName}
           >
             Requested From
           </label>
@@ -207,15 +197,12 @@ export function MaintenanceReportFilters({
             onChange={(event) =>
               updateFilter('requestedDateFrom', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
-          <label
-            htmlFor="maintenance-requested-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-requested-to" className={labelClassName}>
             Requested To
           </label>
 
@@ -226,14 +213,14 @@ export function MaintenanceReportFilters({
             onChange={(event) =>
               updateFilter('requestedDateTo', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="maintenance-scheduled-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className={labelClassName}
           >
             Scheduled From
           </label>
@@ -245,15 +232,12 @@ export function MaintenanceReportFilters({
             onChange={(event) =>
               updateFilter('scheduledDateFrom', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           />
         </div>
 
         <div>
-          <label
-            htmlFor="maintenance-scheduled-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="maintenance-scheduled-to" className={labelClassName}>
             Scheduled To
           </label>
 
@@ -264,12 +248,12 @@ export function MaintenanceReportFilters({
             onChange={(event) =>
               updateFilter('scheduledDateTo', event.target.value)
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
+            className={fieldClassName}
           />
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="flex flex-wrap items-center gap-2 pt-1">
         <Button
           type="button"
           variant="primary"

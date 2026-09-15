@@ -65,19 +65,25 @@ export function MovementReportWorkspace({
       {error && (
         <div
           role="alert"
-          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-lg border border-danger bg-danger-surface px-4 py-3 text-sm text-danger"
         >
           {error}
         </div>
       )}
 
-      {isPending && (
-        <div className="text-sm text-gray-500">
-          Loading asset movement report...
-        </div>
-      )}
+      <div className="relative">
+        {isPending && (
+          <div className="absolute inset-0 z-10 flex items-start justify-center rounded-lg bg-surface/70 pt-8 backdrop-blur-[1px]">
+            <div className="rounded-md border border-border bg-surface px-4 py-2 shadow-sm">
+              <p className="text-sm font-medium text-muted-foreground">
+                Loading asset movement report...
+              </p>
+            </div>
+          </div>
+        )}
 
-      <MovementReportTable rows={rows} />
+        <MovementReportTable rows={rows} />
+      </div>
     </div>
   );
 }

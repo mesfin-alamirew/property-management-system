@@ -39,6 +39,9 @@ const initialFilters: AssignmentReportFilters = {
   status: 'CURRENT',
 };
 
+const inputClassName =
+  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20';
+
 export function AssignmentReportFilters({
   employees,
   organizationUnits,
@@ -76,10 +79,13 @@ export function AssignmentReportFilters({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-1">
-          <label htmlFor="assignment-search" className="text-sm font-medium">
+    <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="assignment-search"
+            className="text-sm font-medium text-foreground"
+          >
             Search
           </label>
 
@@ -89,12 +95,15 @@ export function AssignmentReportFilters({
             value={filters.search ?? ''}
             onChange={(event) => updateFilter('search', event.target.value)}
             placeholder="Asset or employee..."
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           />
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="assignment-employee" className="text-sm font-medium">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="assignment-employee"
+            className="text-sm font-medium text-foreground"
+          >
             Employee
           </label>
 
@@ -102,7 +111,7 @@ export function AssignmentReportFilters({
             id="assignment-employee"
             value={filters.employeeId ?? ''}
             onChange={(event) => updateFilter('employeeId', event.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           >
             <option value="">All employees</option>
 
@@ -115,10 +124,10 @@ export function AssignmentReportFilters({
           </select>
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <label
             htmlFor="assignment-organization-unit"
-            className="text-sm font-medium"
+            className="text-sm font-medium text-foreground"
           >
             Organization Unit
           </label>
@@ -129,7 +138,7 @@ export function AssignmentReportFilters({
             onChange={(event) =>
               updateFilter('organizationUnitId', event.target.value)
             }
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           >
             <option value="">All organization units</option>
 
@@ -141,10 +150,10 @@ export function AssignmentReportFilters({
           </select>
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <label
             htmlFor="assignment-asset-type"
-            className="text-sm font-medium"
+            className="text-sm font-medium text-foreground"
           >
             Asset Type
           </label>
@@ -155,7 +164,7 @@ export function AssignmentReportFilters({
             onChange={(event) =>
               updateFilter('assetTypeId', event.target.value)
             }
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           >
             <option value="">All asset types</option>
 
@@ -167,8 +176,11 @@ export function AssignmentReportFilters({
           </select>
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="assignment-status" className="text-sm font-medium">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="assignment-status"
+            className="text-sm font-medium text-foreground"
+          >
             Assignment Status
           </label>
 
@@ -181,7 +193,7 @@ export function AssignmentReportFilters({
                 event.target.value as AssignmentStatus | 'ALL',
               )
             }
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           >
             <option value="CURRENT">Current</option>
             <option value="RETURNED">Returned</option>
@@ -189,8 +201,11 @@ export function AssignmentReportFilters({
           </select>
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="assignment-date-from" className="text-sm font-medium">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="assignment-date-from"
+            className="text-sm font-medium text-foreground"
+          >
             Assigned Date From
           </label>
 
@@ -201,12 +216,15 @@ export function AssignmentReportFilters({
             onChange={(event) =>
               updateFilter('assignedDateFrom', event.target.value)
             }
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           />
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="assignment-date-to" className="text-sm font-medium">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="assignment-date-to"
+            className="text-sm font-medium text-foreground"
+          >
             Assigned Date To
           </label>
 
@@ -217,21 +235,19 @@ export function AssignmentReportFilters({
             onChange={(event) =>
               updateFilter('assignedDateTo', event.target.value)
             }
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            className={inputClassName}
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="primary" onClick={handleApply}>
-            Apply
-          </Button>
+      <div className="mt-5 flex items-center gap-2">
+        <Button type="button" variant="primary" onClick={handleApply}>
+          Apply
+        </Button>
 
-          <Button type="button" variant="secondary" onClick={handleReset}>
-            Reset
-          </Button>
-        </div>
+        <Button type="button" variant="secondary" onClick={handleReset}>
+          Reset
+        </Button>
       </div>
     </div>
   );

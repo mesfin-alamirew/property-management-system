@@ -28,67 +28,92 @@ function formatDateTime(value: Date) {
 export function MovementReportTable({ rows }: MovementReportTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white px-6 py-10 text-center">
-        <p className="text-sm text-gray-500">
-          No asset movement records found.
-        </p>
+      <div className="rounded-lg border border-border bg-surface px-5 py-8 text-center text-sm text-muted-foreground shadow-sm">
+        No asset movement records found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Asset</TableHead>
-            <TableHead>From Location</TableHead>
-            <TableHead>To Location</TableHead>
-            <TableHead>Moved Date</TableHead>
-            <TableHead>Moved By</TableHead>
-            <TableHead>Reason</TableHead>
-            <TableHead>Notes</TableHead>
+          <TableRow className="bg-surface-muted/60">
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              From Location
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              To Location
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Moved Date
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Moved By
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Reason
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Notes
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow
+              key={row.id}
+              className="transition-colors hover:bg-surface-muted/50"
+            >
               <TableCell>
-                <div>
+                <div className="min-w-40">
                   <Link
                     href={`/reports/movements/${row.id}`}
-                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                    className="font-medium text-primary transition-colors hover:text-primary-hover hover:underline"
                   >
                     {row.asset.assetCode}
                   </Link>
 
-                  <p className="text-xs text-gray-500">{row.asset.name}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {row.asset.name}
+                  </p>
 
                   {row.asset.assetTag && (
-                    <p className="text-xs text-gray-500">
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                       Tag: {row.asset.assetTag}
                     </p>
                   )}
                 </div>
               </TableCell>
 
-              <TableCell>{row.fromLocation?.name ?? '—'}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {row.fromLocation?.name ?? '—'}
+              </TableCell>
 
-              <TableCell>{row.toLocation.name}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {row.toLocation.name}
+              </TableCell>
 
-              <TableCell>{formatDateTime(row.movedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap tabular-nums">
+                {formatDateTime(row.movedAt)}
+              </TableCell>
 
-              <TableCell>{row.movedByUser.displayName}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {row.movedByUser.displayName}
+              </TableCell>
 
               <TableCell>
-                <span className="line-clamp-2 max-w-xs">
+                <span className="line-clamp-2 max-w-xs text-sm">
                   {row.reason ?? '—'}
                 </span>
               </TableCell>
 
               <TableCell>
-                <span className="line-clamp-2 max-w-xs">
+                <span className="line-clamp-2 max-w-xs text-sm">
                   {row.notes ?? '—'}
                 </span>
               </TableCell>

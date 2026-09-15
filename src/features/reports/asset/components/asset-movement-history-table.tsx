@@ -26,7 +26,7 @@ export function AssetMovementHistoryTable({
 }: AssetMovementHistoryTableProps) {
   if (rows.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="px-5 py-4 text-sm text-muted-foreground">
         No movement history is available for this asset.
       </p>
     );
@@ -35,36 +35,59 @@ export function AssetMovementHistoryTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>From Location</TableHead>
-          <TableHead>To Location</TableHead>
-          <TableHead>Moved By</TableHead>
-          <TableHead>Reason</TableHead>
-          <TableHead>Notes</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="whitespace-nowrap font-semibold">
+            Date
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            From Location
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            To Location
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Moved By
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Reason
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Notes
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.id}>
-            <TableCell>{formatDate(row.movedAt)}</TableCell>
+          <TableRow
+            key={row.id}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
+            <TableCell className="whitespace-nowrap text-muted-foreground">
+              {formatDate(row.movedAt)}
+            </TableCell>
 
-            <TableCell>
+            <TableCell className="min-w-48 text-foreground">
               {row.fromLocation
                 ? `${row.fromLocation.code} - ${row.fromLocation.name}`
                 : '—'}
             </TableCell>
 
-            <TableCell>
+            <TableCell className="min-w-48 text-foreground">
               {`${row.toLocation.code} - ${row.toLocation.name}`}
             </TableCell>
 
-            <TableCell>{row.movedByUser.displayName}</TableCell>
+            <TableCell className="whitespace-nowrap font-medium text-foreground">
+              {row.movedByUser.displayName}
+            </TableCell>
 
-            <TableCell>{row.reason ?? '—'}</TableCell>
+            <TableCell className="min-w-40 text-foreground">
+              {row.reason ?? '—'}
+            </TableCell>
 
-            <TableCell>{row.notes ?? '—'}</TableCell>
+            <TableCell className="min-w-48 text-foreground">
+              {row.notes ?? '—'}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

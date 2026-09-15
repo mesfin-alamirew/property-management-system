@@ -64,76 +64,125 @@ export function VerificationReportTable({
 }: VerificationReportTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-sm text-gray-500">
+      <div className="rounded-lg border border-border bg-surface-muted px-5 py-4 text-sm text-muted-foreground">
         No physical verification records found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Reference Number</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Scope</TableHead>
-            <TableHead>Organization Unit</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Scheduled Date</TableHead>
-            <TableHead>Completed Date</TableHead>
-            <TableHead>Items</TableHead>
-            <TableHead>Verified</TableHead>
-            <TableHead>Discrepancies</TableHead>
-            <TableHead>Unregistered</TableHead>
-            <TableHead>Created By</TableHead>
+          <TableRow className="bg-surface-muted/60 hover:bg-surface-muted/60">
+            <TableHead className="font-semibold text-foreground">
+              Reference Number
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Title
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Scope
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Organization Unit
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Location
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Status
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Scheduled Date
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Completed Date
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Items
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Verified
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Discrepancies
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Unregistered
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Created By
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>
+            <TableRow
+              key={row.id}
+              className="transition-colors hover:bg-surface-muted/50"
+            >
+              <TableCell className="whitespace-nowrap">
                 <Link
                   href={`/reports/verifications/${row.id}`}
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-primary transition-colors hover:text-primary-hover hover:underline focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
                 >
                   {row.referenceNumber}
                 </Link>
               </TableCell>
 
-              <TableCell>{row.title}</TableCell>
+              <TableCell className="min-w-48 text-sm text-foreground">
+                {row.title}
+              </TableCell>
 
-              <TableCell>{formatScope(row.scope)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatScope(row.scope)}
+              </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {row.organizationUnit
                   ? `${row.organizationUnit.code} - ${row.organizationUnit.name}`
                   : '—'}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {row.location
                   ? `${row.location.code} - ${row.location.name}`
                   : '—'}
               </TableCell>
 
-              <TableCell>{formatStatus(row.status)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatStatus(row.status)}
+              </TableCell>
 
-              <TableCell>{formatDate(row.scheduledAt)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatDate(row.scheduledAt)}
+              </TableCell>
 
-              <TableCell>{formatDate(row.completedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatDate(row.completedAt)}
+              </TableCell>
 
-              <TableCell>{row.itemCount}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm tabular-nums text-foreground">
+                {row.itemCount}
+              </TableCell>
 
-              <TableCell>{row.verifiedCount}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm tabular-nums text-foreground">
+                {row.verifiedCount}
+              </TableCell>
 
-              <TableCell>{row.discrepancyCount}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm tabular-nums text-foreground">
+                {row.discrepancyCount}
+              </TableCell>
 
-              <TableCell>{row.unregisteredObservationCount}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm tabular-nums text-foreground">
+                {row.unregisteredObservationCount}
+              </TableCell>
 
-              <TableCell>{row.createdByUser.displayName}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {row.createdByUser.displayName}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

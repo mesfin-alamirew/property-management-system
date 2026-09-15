@@ -34,53 +34,84 @@ function formatDate(date: Date) {
 export function AssignmentReportTable({ rows }: AssignmentReportTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-md border p-6 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border border-border bg-surface px-5 py-8 text-center text-sm text-muted-foreground shadow-sm">
         No asset assignments found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Asset Code</TableHead>
-            <TableHead>Asset Tag</TableHead>
-            <TableHead>Asset Name</TableHead>
-            <TableHead>Asset Type</TableHead>
-            <TableHead>Employee</TableHead>
-            <TableHead>Employee Number</TableHead>
-            <TableHead>Employee Organization Unit</TableHead>
-            <TableHead>Asset Location</TableHead>
-            <TableHead>Asset Organization Unit</TableHead>
-            <TableHead>Assigned Date</TableHead>
-            <TableHead>Returned Date</TableHead>
-            <TableHead>Status</TableHead>
+          <TableRow className="bg-surface-muted/60">
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset Code
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset Tag
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset Name
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset Type
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Employee
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Employee Number
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Employee Organization Unit
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset Location
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Asset Organization Unit
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Assigned Date
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Returned Date
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold">
+              Status
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>
+            <TableRow
+              key={row.id}
+              className="transition-colors hover:bg-surface-muted/50"
+            >
+              <TableCell className="whitespace-nowrap">
                 <Link
                   href={`/reports/assignments/${row.id}`}
-                  className="font-medium hover:underline"
+                  className="font-medium text-primary transition-colors hover:text-primary-hover hover:underline"
                 >
                   {row.asset.assetCode}
                 </Link>
               </TableCell>
 
-              <TableCell>{row.asset.assetTag ?? '—'}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {row.asset.assetTag ?? '—'}
+              </TableCell>
 
-              <TableCell>{row.asset.name}</TableCell>
+              <TableCell className="font-medium">{row.asset.name}</TableCell>
 
               <TableCell>{row.asset.assetType.name}</TableCell>
 
               <TableCell>{formatEmployeeName(row.employee)}</TableCell>
 
-              <TableCell>{row.employee.employeeNumber}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {row.employee.employeeNumber}
+              </TableCell>
 
               <TableCell>{row.employee.organizationUnit.name}</TableCell>
 
@@ -90,13 +121,17 @@ export function AssignmentReportTable({ rows }: AssignmentReportTableProps) {
                 {row.assetLocation?.organizationUnit.name ?? '—'}
               </TableCell>
 
-              <TableCell>{formatDate(row.assignedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap tabular-nums">
+                {formatDate(row.assignedAt)}
+              </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap tabular-nums">
                 {row.returnedAt ? formatDate(row.returnedAt) : '—'}
               </TableCell>
 
-              <TableCell>{row.status}</TableCell>
+              <TableCell className="whitespace-nowrap font-medium">
+                {row.status}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

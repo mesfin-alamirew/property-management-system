@@ -31,10 +31,12 @@ type SummaryCardProps = {
 
 function SummaryCard({ label, value }: SummaryCardProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5">
-      <p className="text-sm font-medium text-gray-500">{label}</p>
+    <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+      <p className="text-sm font-medium text-muted-foreground">{label}</p>
 
-      <p className="mt-2 text-2xl font-semibold text-gray-900">{value}</p>
+      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+        {value}
+      </p>
     </div>
   );
 }

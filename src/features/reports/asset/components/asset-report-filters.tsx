@@ -26,6 +26,11 @@ type AssetReportFiltersProps = {
   onApply: (filters: AssetReportFilters) => void;
 };
 
+const fieldClassName =
+  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20';
+
+const labelClassName = 'mb-1.5 block text-sm font-medium text-foreground';
+
 export function AssetReportFilters({
   assetTypes,
   assetCategories,
@@ -85,245 +90,276 @@ export function AssetReportFilters({
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div>
-          <label
-            htmlFor="asset-report-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Search
-          </label>
-          <input
-            id="asset-report-search"
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Asset code, tag, name or serial"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-        </div>
+    <section
+      aria-labelledby="asset-report-filters-heading"
+      className="rounded-lg border border-border bg-surface shadow-sm"
+    >
+      <div className="border-b border-border px-4 py-4 sm:px-6">
+        <h2
+          id="asset-report-filters-heading"
+          className="text-base font-semibold text-foreground"
+        >
+          Report Filters
+        </h2>
 
-        <div>
-          <label
-            htmlFor="asset-report-type"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Asset Type
-          </label>
-          <select
-            id="asset-report-type"
-            value={assetTypeId}
-            onChange={(event) => setAssetTypeId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Asset Types</option>
-            {assetTypes.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-category"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Asset Category
-          </label>
-          <select
-            id="asset-report-category"
-            value={assetCategoryId}
-            onChange={(event) => setAssetCategoryId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Asset Categories</option>
-            {assetCategories.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-status"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Status
-          </label>
-          <select
-            id="asset-report-status"
-            value={statusId}
-            onChange={(event) => setStatusId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Statuses</option>
-            {statuses.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-condition"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Condition
-          </label>
-          <select
-            id="asset-report-condition"
-            value={conditionId}
-            onChange={(event) => setConditionId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Conditions</option>
-            {conditions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-organization-unit"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Organization Unit
-          </label>
-          <select
-            id="asset-report-organization-unit"
-            value={organizationUnitId}
-            onChange={(event) => setOrganizationUnitId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Organization Units</option>
-            {organizationUnits.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-location"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Location
-          </label>
-          <select
-            id="asset-report-location"
-            value={locationId}
-            onChange={(event) => setLocationId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Locations</option>
-            {locations.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-assignment"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Assignment Status
-          </label>
-          <select
-            id="asset-report-assignment"
-            value={assignmentStatus}
-            onChange={(event) =>
-              setAssignmentStatus(
-                event.target.value as AssetAssignmentStatus | 'ALL',
-              )
-            }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="ALL">All</option>
-            <option value="CURRENT">Current</option>
-            <option value="UNASSIGNED">Unassigned</option>
-            <option value="RETURNED">Returned</option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-acquisition-method"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Acquisition Method
-          </label>
-          <select
-            id="asset-report-acquisition-method"
-            value={acquisitionMethodId}
-            onChange={(event) => setAcquisitionMethodId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="">All Acquisition Methods</option>
-            {acquisitionMethods.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.code} - {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-acquisition-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Acquisition Date From
-          </label>
-          <input
-            id="asset-report-acquisition-from"
-            type="date"
-            value={acquisitionDateFrom}
-            onChange={(event) => setAcquisitionDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="asset-report-acquisition-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Acquisition Date To
-          </label>
-          <input
-            id="asset-report-acquisition-to"
-            type="date"
-            value={acquisitionDateTo}
-            onChange={(event) => setAcquisitionDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-        </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Narrow the asset report by classification, location, assignment, and
+          acquisition criteria.
+        </p>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-        <Button type="button" variant="secondary" onClick={handleReset}>
-          Reset
-        </Button>
+      <div className="space-y-6 px-4 py-5 sm:px-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label htmlFor="asset-report-search" className={labelClassName}>
+              Search
+            </label>
 
-        <Button type="button" variant="primary" onClick={handleApply}>
-          Apply Filters
-        </Button>
+            <input
+              id="asset-report-search"
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Asset code, tag, name or serial"
+              className={fieldClassName}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="asset-report-type" className={labelClassName}>
+              Asset Type
+            </label>
+
+            <select
+              id="asset-report-type"
+              value={assetTypeId}
+              onChange={(event) => setAssetTypeId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Asset Types</option>
+
+              {assetTypes.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="asset-report-category" className={labelClassName}>
+              Asset Category
+            </label>
+
+            <select
+              id="asset-report-category"
+              value={assetCategoryId}
+              onChange={(event) => setAssetCategoryId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Asset Categories</option>
+
+              {assetCategories.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="asset-report-status" className={labelClassName}>
+              Status
+            </label>
+
+            <select
+              id="asset-report-status"
+              value={statusId}
+              onChange={(event) => setStatusId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Statuses</option>
+
+              {statuses.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="asset-report-condition" className={labelClassName}>
+              Condition
+            </label>
+
+            <select
+              id="asset-report-condition"
+              value={conditionId}
+              onChange={(event) => setConditionId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Conditions</option>
+
+              {conditions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="asset-report-organization-unit"
+              className={labelClassName}
+            >
+              Organization Unit
+            </label>
+
+            <select
+              id="asset-report-organization-unit"
+              value={organizationUnitId}
+              onChange={(event) => setOrganizationUnitId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Organization Units</option>
+
+              {organizationUnits.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="asset-report-location" className={labelClassName}>
+              Location
+            </label>
+
+            <select
+              id="asset-report-location"
+              value={locationId}
+              onChange={(event) => setLocationId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Locations</option>
+
+              {locations.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="asset-report-assignment" className={labelClassName}>
+              Assignment Status
+            </label>
+
+            <select
+              id="asset-report-assignment"
+              value={assignmentStatus}
+              onChange={(event) =>
+                setAssignmentStatus(
+                  event.target.value as AssetAssignmentStatus | 'ALL',
+                )
+              }
+              className={fieldClassName}
+            >
+              <option value="ALL">All</option>
+              <option value="CURRENT">Current</option>
+              <option value="UNASSIGNED">Unassigned</option>
+              <option value="RETURNED">Returned</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="asset-report-acquisition-method"
+              className={labelClassName}
+            >
+              Acquisition Method
+            </label>
+
+            <select
+              id="asset-report-acquisition-method"
+              value={acquisitionMethodId}
+              onChange={(event) => setAcquisitionMethodId(event.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">All Acquisition Methods</option>
+
+              {acquisitionMethods.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.code} - {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="rounded-md border border-border bg-surface-muted/50 p-4">
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-foreground">
+              Acquisition Date Range
+            </h3>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Optionally limit results to assets acquired within a specific date
+              range.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="asset-report-acquisition-from"
+                className={labelClassName}
+              >
+                Acquisition Date From
+              </label>
+
+              <input
+                id="asset-report-acquisition-from"
+                type="date"
+                value={acquisitionDateFrom}
+                onChange={(event) => setAcquisitionDateFrom(event.target.value)}
+                className={fieldClassName}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="asset-report-acquisition-to"
+                className={labelClassName}
+              >
+                Acquisition Date To
+              </label>
+
+              <input
+                id="asset-report-acquisition-to"
+                type="date"
+                value={acquisitionDateTo}
+                onChange={(event) => setAcquisitionDateTo(event.target.value)}
+                className={fieldClassName}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" onClick={handleReset}>
+            Reset
+          </Button>
+
+          <Button type="button" variant="primary" onClick={handleApply}>
+            Apply Filters
+          </Button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

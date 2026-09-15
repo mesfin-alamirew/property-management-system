@@ -50,49 +50,73 @@ export function VerificationUnregisteredTable({
 }: VerificationUnregisteredTableProps) {
   if (observations.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-sm text-gray-500">
+      <div className="rounded-lg border border-border bg-surface-muted px-5 py-4 text-sm text-muted-foreground">
         No unregistered asset observations found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Observed Asset Name</TableHead>
-            <TableHead>Observed Asset Tag</TableHead>
-            <TableHead>Observed Serial Number</TableHead>
-            <TableHead>Observed Location</TableHead>
-            <TableHead>Observed Condition</TableHead>
-            <TableHead>Observed By</TableHead>
-            <TableHead>Observed At</TableHead>
-            <TableHead>Registered Asset</TableHead>
+          <TableRow className="bg-surface-muted/60 hover:bg-surface-muted/60">
+            <TableHead className="font-semibold text-foreground">
+              Observed Asset Name
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Observed Asset Tag
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Observed Serial Number
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Observed Location
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Observed Condition
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Observed By
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Observed At
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Registered Asset
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {observations.map((observation) => (
-            <TableRow key={observation.id}>
-              <TableCell>
+            <TableRow
+              key={observation.id}
+              className="transition-colors hover:bg-surface-muted/50"
+            >
+              <TableCell className="min-w-48">
                 <div>
-                  <div className="font-medium text-gray-900">
+                  <div className="font-medium text-foreground">
                     {observation.observedName}
                   </div>
+
                   {observation.notes ? (
-                    <div className="mt-1 text-sm text-gray-500">
+                    <div className="mt-1 text-sm leading-5 text-muted-foreground">
                       {observation.notes}
                     </div>
                   ) : null}
                 </div>
               </TableCell>
 
-              <TableCell>{observation.observedAssetTag || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {observation.observedAssetTag || '—'}
+              </TableCell>
 
-              <TableCell>{observation.observedSerialNumber || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {observation.observedSerialNumber || '—'}
+              </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {formatLocation(
                   observation.observedLocation,
                   observation.observedLocationCode,
@@ -100,29 +124,36 @@ export function VerificationUnregisteredTable({
                 )}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {formatCondition(
                   observation.observedConditionCode,
                   observation.observedConditionName,
                 )}
               </TableCell>
 
-              <TableCell>{observation.observedByUser.displayName}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {observation.observedByUser.displayName}
+              </TableCell>
 
-              <TableCell>{formatDate(observation.observedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatDate(observation.observedAt)}
+              </TableCell>
 
-              <TableCell>
+              <TableCell className="min-w-48">
                 {observation.registeredAsset ? (
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-foreground">
                       {observation.registeredAsset.assetCode}
                     </div>
-                    <div className="text-sm text-gray-500">
+
+                    <div className="text-sm text-muted-foreground">
                       {observation.registeredAsset.name}
                     </div>
                   </div>
                 ) : (
-                  'Not Registered'
+                  <span className="text-sm text-muted-foreground">
+                    Not Registered
+                  </span>
                 )}
               </TableCell>
             </TableRow>

@@ -24,6 +24,9 @@ type VerificationReportFiltersProps = {
   onApply: (filters: PhysicalVerificationReportFilters) => void;
 };
 
+const fieldClassName =
+  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-focus-ring/20 disabled:cursor-not-allowed disabled:opacity-50';
+
 export function VerificationReportFilters({
   organizationUnits,
   locations,
@@ -73,12 +76,12 @@ export function VerificationReportFilters({
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
+    <div className="space-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <label
             htmlFor="verification-search"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Search
           </label>
@@ -89,14 +92,14 @@ export function VerificationReportFilters({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Reference number or title"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="verification-organization-unit"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Organization Unit
           </label>
@@ -105,7 +108,7 @@ export function VerificationReportFilters({
             id="verification-organization-unit"
             value={organizationUnitId}
             onChange={(event) => setOrganizationUnitId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="">All Organization Units</option>
 
@@ -120,7 +123,7 @@ export function VerificationReportFilters({
         <div>
           <label
             htmlFor="verification-location"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Location
           </label>
@@ -129,7 +132,7 @@ export function VerificationReportFilters({
             id="verification-location"
             value={locationId}
             onChange={(event) => setLocationId(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="">All Locations</option>
 
@@ -144,7 +147,7 @@ export function VerificationReportFilters({
         <div>
           <label
             htmlFor="verification-scope"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Scope
           </label>
@@ -158,7 +161,7 @@ export function VerificationReportFilters({
                   .value as PhysicalVerificationReportFilters['scope'],
               )
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="ALL">All Scopes</option>
             <option value="ORGANIZATION">Organization</option>
@@ -174,7 +177,7 @@ export function VerificationReportFilters({
         <div>
           <label
             htmlFor="verification-status"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Status
           </label>
@@ -188,7 +191,7 @@ export function VerificationReportFilters({
                   .value as PhysicalVerificationReportFilters['status'],
               )
             }
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           >
             <option value="ALL">All Statuses</option>
             <option value="DRAFT">Draft</option>
@@ -201,7 +204,7 @@ export function VerificationReportFilters({
         <div>
           <label
             htmlFor="verification-scheduled-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Scheduled Date From
           </label>
@@ -211,14 +214,14 @@ export function VerificationReportFilters({
             type="date"
             value={scheduledDateFrom}
             onChange={(event) => setScheduledDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="verification-scheduled-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Scheduled Date To
           </label>
@@ -228,14 +231,14 @@ export function VerificationReportFilters({
             type="date"
             value={scheduledDateTo}
             onChange={(event) => setScheduledDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="verification-completed-from"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Completed Date From
           </label>
@@ -245,14 +248,14 @@ export function VerificationReportFilters({
             type="date"
             value={completedDateFrom}
             onChange={(event) => setCompletedDateFrom(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
 
         <div>
           <label
             htmlFor="verification-completed-to"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-foreground"
           >
             Completed Date To
           </label>
@@ -262,12 +265,12 @@ export function VerificationReportFilters({
             type="date"
             value={completedDateTo}
             onChange={(event) => setCompletedDateTo(event.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className={fieldClassName}
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
         <Button type="button" variant="primary" onClick={handleApply}>
           Apply
         </Button>

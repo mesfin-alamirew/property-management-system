@@ -23,134 +23,161 @@ function formatJson(value: unknown | null) {
 
 export function AuditDetailPage({ audit }: AuditDetailPageProps) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Audit Detail</h1>
-          <p className="mt-1 text-sm text-gray-600">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Audit Detail
+          </h1>
+
+          <p className="mt-1 max-w-3xl text-sm leading-5 text-muted-foreground">
             View the audit record, performer, and recorded changes.
           </p>
         </div>
 
         <Link
           href="/reports/audits"
-          className="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex shrink-0 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2"
         >
           Back to Audit Report
         </Link>
       </div>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
           Audit Information
         </h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
+        <dl className="mt-5 grid gap-6 md:grid-cols-2">
           <div>
-            <dt className="text-sm text-gray-500">Date &amp; Time</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Date &amp; Time
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatDateTime(audit.createdAt)}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">Action</dt>
-            <dd className="mt-1 text-sm text-gray-900">{audit.action}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">
+              Action
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">{audit.action}</dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">Entity Type</dt>
-            <dd className="mt-1 text-sm text-gray-900">{audit.entityType}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">
+              Entity Type
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">{audit.entityType}</dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">Entity ID</dt>
-            <dd className="mt-1 break-all font-mono text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Entity ID
+            </dt>
+            <dd className="mt-1 break-all font-mono text-sm text-foreground">
               {audit.entityId}
             </dd>
           </div>
 
           <div className="md:col-span-2">
-            <dt className="text-sm text-gray-500">Description</dt>
-            <dd className="mt-1 text-sm text-gray-900">{audit.description}</dd>
+            <dt className="text-sm font-medium text-muted-foreground">
+              Description
+            </dt>
+            <dd className="mt-1 text-sm leading-5 text-foreground">
+              {audit.description}
+            </dd>
           </div>
         </dl>
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-gray-900">Performed By</h2>
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">Performed By</h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
+        <dl className="mt-5 grid gap-6 md:grid-cols-2">
           <div>
-            <dt className="text-sm text-gray-500">Display Name</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Display Name
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {audit.user.displayName}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">Username</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Username
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {audit.user.username}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">Employee ID</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Employee ID
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {audit.user.employeeId ?? '—'}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">User Status</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              User Status
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-foreground">
               {audit.user.isActive ? 'Active' : 'Inactive'}
             </dd>
           </div>
         </dl>
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-gray-900">Changes</h2>
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">Changes</h2>
 
-        <div className="mt-4 grid gap-6 lg:grid-cols-2">
+        <div className="mt-5 grid gap-6 lg:grid-cols-2">
           <div>
-            <h3 className="text-sm font-medium text-gray-700">
+            <h3 className="text-sm font-medium text-foreground">
               Previous Value
             </h3>
 
-            <pre className="mt-2 max-h-96 overflow-auto rounded-md bg-gray-50 p-4 text-xs text-gray-800">
+            <pre className="mt-2 max-h-96 overflow-auto rounded-md border border-border bg-surface-muted p-4 text-xs leading-5 text-foreground">
               {formatJson(audit.oldValue)}
             </pre>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-700">New Value</h3>
+            <h3 className="text-sm font-medium text-foreground">New Value</h3>
 
-            <pre className="mt-2 max-h-96 overflow-auto rounded-md bg-gray-50 p-4 text-xs text-gray-800">
+            <pre className="mt-2 max-h-96 overflow-auto rounded-md border border-border bg-surface-muted p-4 text-xs leading-5 text-foreground">
               {formatJson(audit.newValue)}
             </pre>
           </div>
         </div>
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">
           Record Information
         </h2>
 
-        <dl className="mt-4 grid gap-4 md:grid-cols-2">
+        <dl className="mt-5 grid gap-6 md:grid-cols-2">
           <div>
-            <dt className="text-sm text-gray-500">Audit Log ID</dt>
-            <dd className="mt-1 break-all font-mono text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Audit Log ID
+            </dt>
+            <dd className="mt-1 break-all font-mono text-sm text-foreground">
               {audit.id}
             </dd>
           </div>
 
           <div>
-            <dt className="text-sm text-gray-500">Created At</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-muted-foreground">
+              Created At
+            </dt>
+            <dd className="mt-1 text-sm text-foreground">
               {formatDateTime(audit.createdAt)}
             </dd>
           </div>

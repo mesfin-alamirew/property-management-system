@@ -21,23 +21,34 @@ export function AcquisitionSummaryFundingSourceTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Funding Source</TableHead>
-          <TableHead>Acquisitions</TableHead>
-          <TableHead>Items</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="font-semibold">Funding Source</TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Acquisitions
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Items
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {fundingSources.map((fundingSource) => (
-          <TableRow key={fundingSource.fundingSource}>
+          <TableRow
+            key={fundingSource.fundingSource}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
             <TableCell className="font-medium">
               {fundingSource.fundingSource}
             </TableCell>
 
-            <TableCell>{fundingSource.acquisitionCount}</TableCell>
+            <TableCell className="whitespace-nowrap tabular-nums">
+              {fundingSource.acquisitionCount}
+            </TableCell>
 
-            <TableCell>{fundingSource.itemCount}</TableCell>
+            <TableCell className="whitespace-nowrap tabular-nums">
+              {fundingSource.itemCount}
+            </TableCell>
           </TableRow>
         ))}
 
@@ -45,7 +56,7 @@ export function AcquisitionSummaryFundingSourceTable({
           <TableRow>
             <TableCell
               colSpan={3}
-              className="py-6 text-center text-sm text-gray-500"
+              className="px-5 py-4 text-center text-sm text-muted-foreground"
             >
               No funding source data is available.
             </TableCell>

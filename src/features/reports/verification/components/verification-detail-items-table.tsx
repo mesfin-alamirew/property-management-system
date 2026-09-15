@@ -85,55 +85,98 @@ export function VerificationDetailItemsTable({
 }: VerificationDetailItemsTableProps) {
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-sm text-gray-500">
-        No verification items found.
+      <div className="rounded-lg border border-border bg-surface-muted px-5 py-4">
+        <p className="text-sm text-muted-foreground">
+          No verification items found.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Asset</TableHead>
-            <TableHead>Expected Tag</TableHead>
-            <TableHead>Observed Tag</TableHead>
-            <TableHead>Expected Serial</TableHead>
-            <TableHead>Observed Serial</TableHead>
-            <TableHead>Expected Employee</TableHead>
-            <TableHead>Observed Employee</TableHead>
-            <TableHead>Expected Location</TableHead>
-            <TableHead>Observed Location</TableHead>
-            <TableHead>Expected Condition</TableHead>
-            <TableHead>Observed Condition</TableHead>
-            <TableHead>Result</TableHead>
-            <TableHead>Verified By</TableHead>
-            <TableHead>Verified At</TableHead>
+          <TableRow className="bg-surface-muted/60">
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Asset
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Expected Tag
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Observed Tag
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Expected Serial
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Observed Serial
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Expected Employee
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Observed Employee
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Expected Location
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Observed Location
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Expected Condition
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Observed Condition
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Result
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Verified By
+            </TableHead>
+            <TableHead className="whitespace-nowrap font-semibold text-foreground">
+              Verified At
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {items.map((item) => (
-            <TableRow key={item.id}>
+            <TableRow
+              key={item.id}
+              className="transition-colors hover:bg-surface-muted/50"
+            >
               <TableCell>
-                <div>
-                  <div className="font-medium text-gray-900">
+                <div className="min-w-40">
+                  <div className="font-medium text-foreground">
                     {item.asset.assetCode}
                   </div>
-                  <div className="text-sm text-gray-500">{item.asset.name}</div>
+                  <div className="mt-0.5 text-sm text-muted-foreground">
+                    {item.asset.name}
+                  </div>
                 </div>
               </TableCell>
 
-              <TableCell>{item.expectedAssetTag || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {item.expectedAssetTag || '—'}
+              </TableCell>
 
-              <TableCell>{item.observedAssetTag || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {item.observedAssetTag || '—'}
+              </TableCell>
 
-              <TableCell>{item.expectedSerialNumber || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {item.expectedSerialNumber || '—'}
+              </TableCell>
 
-              <TableCell>{item.observedSerialNumber || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {item.observedSerialNumber || '—'}
+              </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {formatEmployee(
                   item.expectedEmployee,
                   item.expectedEmployeeNumber,
@@ -141,7 +184,7 @@ export function VerificationDetailItemsTable({
                 )}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {item.observedEmployeeNumber && item.observedEmployeeName
                   ? `${item.observedEmployeeNumber} - ${item.observedEmployeeName}`
                   : item.observedEmployeeNumber ||
@@ -149,7 +192,7 @@ export function VerificationDetailItemsTable({
                     '—'}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {formatLocation(
                   item.expectedLocation,
                   item.expectedLocationCode,
@@ -157,7 +200,7 @@ export function VerificationDetailItemsTable({
                 )}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {item.observedLocationCode && item.observedLocationName
                   ? `${item.observedLocationCode} - ${item.observedLocationName}`
                   : item.observedLocationCode ||
@@ -165,7 +208,7 @@ export function VerificationDetailItemsTable({
                     '—'}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {item.expectedConditionCode && item.expectedConditionName
                   ? `${item.expectedConditionCode} - ${item.expectedConditionName}`
                   : item.expectedConditionCode ||
@@ -173,7 +216,7 @@ export function VerificationDetailItemsTable({
                     '—'}
               </TableCell>
 
-              <TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
                 {item.observedConditionCode && item.observedConditionName
                   ? `${item.observedConditionCode} - ${item.observedConditionName}`
                   : item.observedConditionCode ||
@@ -181,11 +224,17 @@ export function VerificationDetailItemsTable({
                     '—'}
               </TableCell>
 
-              <TableCell>{formatResult(item.result)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatResult(item.result)}
+              </TableCell>
 
-              <TableCell>{item.verifiedByUser?.displayName || '—'}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {item.verifiedByUser?.displayName || '—'}
+              </TableCell>
 
-              <TableCell>{formatDate(item.verifiedAt)}</TableCell>
+              <TableCell className="whitespace-nowrap text-sm text-foreground">
+                {formatDate(item.verifiedAt)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

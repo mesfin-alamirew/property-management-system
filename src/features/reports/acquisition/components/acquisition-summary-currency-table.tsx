@@ -21,24 +21,39 @@ export function AcquisitionSummaryCurrencyTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Currency</TableHead>
-          <TableHead>Acquisitions</TableHead>
-          <TableHead>Items</TableHead>
-          <TableHead>Total Amount</TableHead>
+        <TableRow className="bg-surface-muted/60">
+          <TableHead className="font-semibold">Currency</TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Acquisitions
+          </TableHead>
+          <TableHead className="whitespace-nowrap font-semibold">
+            Items
+          </TableHead>
+          <TableHead className="whitespace-nowrap text-right font-semibold">
+            Total Amount
+          </TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
         {currencies.map((currency) => (
-          <TableRow key={currency.currency}>
+          <TableRow
+            key={currency.currency}
+            className="transition-colors hover:bg-surface-muted/50"
+          >
             <TableCell className="font-medium">{currency.currency}</TableCell>
 
-            <TableCell>{currency.acquisitionCount}</TableCell>
+            <TableCell className="whitespace-nowrap tabular-nums">
+              {currency.acquisitionCount}
+            </TableCell>
 
-            <TableCell>{currency.itemCount}</TableCell>
+            <TableCell className="whitespace-nowrap tabular-nums">
+              {currency.itemCount}
+            </TableCell>
 
-            <TableCell>{formatAmount(currency.totalAmount)}</TableCell>
+            <TableCell className="whitespace-nowrap text-right font-medium tabular-nums">
+              {formatAmount(currency.totalAmount)}
+            </TableCell>
           </TableRow>
         ))}
 
@@ -46,7 +61,7 @@ export function AcquisitionSummaryCurrencyTable({
           <TableRow>
             <TableCell
               colSpan={4}
-              className="py-6 text-center text-sm text-gray-500"
+              className="px-5 py-4 text-center text-sm text-muted-foreground"
             >
               No currency data is available.
             </TableCell>

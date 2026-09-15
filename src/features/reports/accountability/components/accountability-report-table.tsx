@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { AccountabilityReportRow } from '../types/accountability.types';
+
 import {
   Table,
   TableBody,
@@ -9,6 +9,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import type { AccountabilityReportRow } from '../types/accountability.types';
+
 type AccountabilityReportTableProps = {
   rows: AccountabilityReportRow[];
   hasActiveFilters: boolean;
@@ -17,13 +19,13 @@ type AccountabilityReportTableProps = {
 function getSeverityClasses(severity: AccountabilityReportRow['severity']) {
   switch (severity) {
     case 'HIGH':
-      return 'bg-red-100 text-red-800';
+      return 'bg-danger-surface text-danger';
     case 'REVIEW':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-warning-surface text-warning';
     case 'MONITOR':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-info-surface text-info';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-surface-muted text-muted-foreground';
   }
 }
 
@@ -102,157 +104,172 @@ export function AccountabilityReportTable({
 }: AccountabilityReportTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white px-6 py-12 text-center">
-        <p className="text-sm text-gray-600">
-          {hasActiveFilters
-            ? 'No accountability exceptions match the selected filters.'
-            : 'No accountability exceptions found.'}
-        </p>
+      <div className="rounded-lg border border-border bg-surface-muted px-5 py-4 text-center text-sm text-muted-foreground">
+        {hasActiveFilters
+          ? 'No accountability exceptions match the selected filters.'
+          : 'No accountability exceptions found.'}
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Asset</TableHead>
-              <TableHead>Exception</TableHead>
-              <TableHead>Severity</TableHead>
-              <TableHead>Details</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Organization Unit</TableHead>
-              <TableHead>Custodian</TableHead>
-              <TableHead>Evidence</TableHead>
-            </TableRow>
-          </TableHeader>
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-surface-muted/60 hover:bg-surface-muted/60">
+            <TableHead className="font-semibold text-foreground">
+              Asset
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Exception
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Severity
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Details
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Location
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Organization Unit
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Custodian
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Evidence
+            </TableHead>
+          </TableRow>
+        </TableHeader>
 
-          <TableBody>
-            {rows.map((row) => {
-              const evidenceHref = getEvidenceHref(row);
+        <TableBody>
+          {rows.map((row) => {
+            const evidenceHref = getEvidenceHref(row);
 
-              return (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <div className="min-w-[180px]">
-                      <Link
-                        href={`/reports/assets/${row.asset.id}`}
-                        className="font-medium text-gray-900 hover:underline"
-                      >
-                        {row.asset.assetCode}
-                      </Link>
+            return (
+              <TableRow
+                key={row.id}
+                className="transition-colors hover:bg-surface-muted/50"
+              >
+                <TableCell>
+                  <div className="min-w-[180px]">
+                    <Link
+                      href={`/reports/assets/${row.asset.id}`}
+                      className="font-medium text-primary transition-colors hover:text-primary-hover hover:underline focus:outline-none focus:ring-2 focus:ring-focus-ring/20"
+                    >
+                      {row.asset.assetCode}
+                    </Link>
 
-                      {row.asset.assetTag && (
-                        <p className="text-xs text-gray-500">
-                          {row.asset.assetTag}
-                        </p>
+                    {row.asset.assetTag && (
+                      <p className="text-xs text-muted-foreground">
+                        {row.asset.assetTag}
+                      </p>
+                    )}
+
+                    <p className="text-sm text-foreground">{row.asset.name}</p>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <span className="whitespace-nowrap font-medium text-foreground">
+                    {getExceptionLabel(row.exceptionType)}
+                  </span>
+                </TableCell>
+
+                <TableCell>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getSeverityClasses(
+                      row.severity,
+                    )}`}
+                  >
+                    {getSeverityLabel(row.severity)}
+                  </span>
+                </TableCell>
+
+                <TableCell>
+                  <div className="min-w-[260px] text-sm text-foreground">
+                    {row.details}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  {row.location ? (
+                    <div className="min-w-[150px]">
+                      <p className="font-medium text-foreground">
+                        {row.location.code}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {row.location.name}
+                      </p>
+                    </div>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+
+                <TableCell>
+                  {row.organizationUnit ? (
+                    <div className="min-w-[150px]">
+                      <p className="font-medium text-foreground">
+                        {row.organizationUnit.code}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {row.organizationUnit.name}
+                      </p>
+                    </div>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+
+                <TableCell>
+                  {row.employee ? (
+                    <div className="min-w-[150px]">
+                      <p className="font-medium text-foreground">
+                        {row.employee.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {row.employee.employeeNumber}
+                      </p>
+                    </div>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+
+                <TableCell>
+                  {row.evidence ? (
+                    <div className="min-w-[150px]">
+                      {evidenceHref ? (
+                        <Link
+                          href={evidenceHref}
+                          className="font-medium text-primary transition-colors hover:text-primary-hover hover:underline focus:outline-none focus:ring-2 focus:ring-focus-ring/20"
+                        >
+                          {row.evidence.referenceNumber ?? 'View Record'}
+                        </Link>
+                      ) : (
+                        <span className="font-medium text-foreground">
+                          {row.evidence.referenceNumber ?? 'View Record'}
+                        </span>
                       )}
 
-                      <p className="text-sm text-gray-700">{row.asset.name}</p>
+                      {row.evidence.date && (
+                        <p className="text-xs text-muted-foreground">
+                          {formatEvidenceDate(row.evidence.date)}
+                        </p>
+                      )}
                     </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <span className="whitespace-nowrap font-medium text-gray-900">
-                      {getExceptionLabel(row.exceptionType)}
-                    </span>
-                  </TableCell>
-
-                  <TableCell>
-                    <span
-                      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getSeverityClasses(
-                        row.severity,
-                      )}`}
-                    >
-                      {getSeverityLabel(row.severity)}
-                    </span>
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="min-w-[260px] text-sm text-gray-700">
-                      {row.details}
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    {row.location ? (
-                      <div className="min-w-[150px]">
-                        <p className="font-medium text-gray-900">
-                          {row.location.code}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {row.location.name}
-                        </p>
-                      </div>
-                    ) : (
-                      '—'
-                    )}
-                  </TableCell>
-
-                  <TableCell>
-                    {row.organizationUnit ? (
-                      <div className="min-w-[150px]">
-                        <p className="font-medium text-gray-900">
-                          {row.organizationUnit.code}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {row.organizationUnit.name}
-                        </p>
-                      </div>
-                    ) : (
-                      '—'
-                    )}
-                  </TableCell>
-
-                  <TableCell>
-                    {row.employee ? (
-                      <div className="min-w-[150px]">
-                        <p className="font-medium text-gray-900">
-                          {row.employee.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {row.employee.employeeNumber}
-                        </p>
-                      </div>
-                    ) : (
-                      '—'
-                    )}
-                  </TableCell>
-
-                  <TableCell>
-                    {row.evidence ? (
-                      <div className="min-w-[150px]">
-                        {evidenceHref ? (
-                          <Link
-                            href={evidenceHref}
-                            className="font-medium text-gray-900 hover:underline"
-                          >
-                            {row.evidence.referenceNumber ?? 'View Record'}
-                          </Link>
-                        ) : (
-                          <span className="font-medium text-gray-900">
-                            {row.evidence.referenceNumber ?? 'View Record'}
-                          </span>
-                        )}
-
-                        {row.evidence.date && (
-                          <p className="text-xs text-gray-500">
-                            {formatEvidenceDate(row.evidence.date)}
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      '—'
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }
