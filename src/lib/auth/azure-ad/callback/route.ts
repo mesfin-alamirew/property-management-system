@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
     await startUserSession(user.id);
 
-    return NextResponse.redirect(new URL('/buildings', url));
+    return NextResponse.redirect(new URL('/', url));
   } catch {
     return NextResponse.redirect(
       new URL('/login?error=authentication_failed', url),

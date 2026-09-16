@@ -68,21 +68,6 @@ const VERIFICATION_EXCEPTION_TYPES = new Set([
   'MULTIPLE_DISCREPANCIES',
 ]);
 
-type AssetWithDashboardData = {
-  id: string;
-  assetTypeId: string;
-  statusId: string;
-  locationId: string | null;
-  location: {
-    id: string;
-    organizationUnitId: string;
-  } | null;
-  assetAssignments: Array<{
-    id: string;
-    returnedAt: Date | null;
-  }>;
-};
-
 function getExceptionSeverity(
   exceptionType: string,
 ): 'HIGH' | 'REVIEW' | 'MONITOR' {

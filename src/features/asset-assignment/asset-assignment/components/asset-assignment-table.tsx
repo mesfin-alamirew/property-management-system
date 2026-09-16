@@ -2,7 +2,6 @@
 
 import type { AssetAssignmentWithRelations } from '../types/asset-assignment.types';
 
-import { RowActionButtons } from '@/components/common/row-action-buttons';
 import { StatusBadge } from '@/components/common/status-badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';

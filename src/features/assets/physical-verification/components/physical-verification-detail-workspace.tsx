@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 import { MasterDataLayout } from '@/components/layouts/master-data-layout';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
-import { StatusBadge } from '@/components/common/status-badge';
 
 import type { PhysicalVerificationDetailWithRelations } from '../types/physical-verification.types';
 

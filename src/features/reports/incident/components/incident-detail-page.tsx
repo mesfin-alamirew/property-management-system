@@ -6,16 +6,6 @@ type IncidentDetailPageProps = {
   incident: IncidentDetail;
 };
 
-function formatDate(date: Date | null) {
-  if (!date) return '—';
-
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-  }).format(new Date(date));
-}
-
 function formatDateTime(date: Date | null) {
   if (!date) return '—';
 

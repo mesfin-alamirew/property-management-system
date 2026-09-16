@@ -9,7 +9,6 @@ import {
   createUnregisteredAssetObservationRecord,
   findPhysicalVerificationById,
   findPhysicalVerificationItemById,
-  completePhysicalVerificationRecord,
 } from '../repositories/physical-verification.repository';
 
 import { determinePhysicalVerificationResult } from '../services/physical-verification-result.service';

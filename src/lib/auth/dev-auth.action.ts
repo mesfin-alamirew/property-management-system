@@ -35,5 +35,5 @@ export async function devLoginAction() {
     );
   }
 
-  redirect('/buildings');
+  redirect('/');
 }
