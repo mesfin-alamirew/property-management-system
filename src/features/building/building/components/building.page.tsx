@@ -16,8 +16,8 @@ export async function BuildingPage() {
     data = await Promise.all([
       getBuildings(user.id),
       getProperties(user.id),
-      getBuildingTypes(),
-      getBuildingConditions(),
+      getBuildingTypes(user.id),
+      getBuildingConditions(user.id),
     ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {

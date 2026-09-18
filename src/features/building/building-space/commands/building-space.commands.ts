@@ -20,7 +20,7 @@ export async function createBuildingSpace(
 ) {
   await requirePermission({
     userId,
-    permissionCode: 'BUILDING_SPACE_TYPE:CREATE',
+    permissionCode: 'BUILDING_SPACE:CREATE',
   });
 
   const building = await findBuildingById(data.buildingId);
@@ -71,7 +71,7 @@ export async function updateBuildingSpace(
 ) {
   await requirePermission({
     userId,
-    permissionCode: 'BUILDING_SPACE_TYPE:UPDATE',
+    permissionCode: 'BUILDING_SPACE:UPDATE',
   });
   const space = await findBuildingSpaceById(id);
 
@@ -124,7 +124,7 @@ export async function updateBuildingSpace(
 export async function deactivateBuildingSpace(userId: string, id: string) {
   await requirePermission({
     userId,
-    permissionCode: 'BUILDING_SPACE_TYPE:DEACTIVATE',
+    permissionCode: 'BUILDING_SPACE:DEACTIVATE',
   });
   const space = await findBuildingSpaceById(id);
 

@@ -2,17 +2,17 @@ import { AccessDenied } from '@/components/ui/access-denied';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 
-import { getBuildingSpaceTypes } from '../queries/building-space-type.queries';
+import { getBuildingTypes } from '../queries/building-type.queries';
 
-import { BuildingSpaceTypeWorkspace } from './building-space-type-workspace';
+import { BuildingTypeWorkspace } from './building-type.workspace';
 
-export async function BuildingSpaceTypePage() {
+export async function BuildingTypePage() {
   const user = await requireCurrentUser();
 
-  let spaceTypes;
+  let buildingTypes;
 
   try {
-    spaceTypes = await getBuildingSpaceTypes(user.id);
+    buildingTypes = await getBuildingTypes(user.id);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
       return <AccessDenied />;
@@ -21,5 +21,5 @@ export async function BuildingSpaceTypePage() {
     throw error;
   }
 
-  return <BuildingSpaceTypeWorkspace spaceTypes={spaceTypes} />;
+  return <BuildingTypeWorkspace buildingTypes={buildingTypes} />;
 }

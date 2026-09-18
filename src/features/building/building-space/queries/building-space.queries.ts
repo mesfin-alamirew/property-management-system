@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -5,7 +6,12 @@ import {
   findBuildingSpaceById,
 } from '../repositories/building-space.repository';
 
-export async function getBuildingSpaces() {
+export async function getBuildingSpaces(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_SPACE:READ',
+  });
+
   return findBuildingSpaces();
 }
 

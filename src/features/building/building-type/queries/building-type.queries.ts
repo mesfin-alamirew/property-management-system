@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -5,7 +6,12 @@ import {
   findBuildingTypeById,
 } from '../repositories/building-type.repository';
 
-export async function getBuildingTypes() {
+export async function getBuildingTypes(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_TYPE:READ',
+  });
+
   return findBuildingTypes();
 }
 

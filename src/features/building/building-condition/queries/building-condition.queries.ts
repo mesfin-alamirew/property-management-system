@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
 
 import {
@@ -5,7 +6,12 @@ import {
   findBuildingConditionById,
 } from '../repositories/building-condition.repository';
 
-export async function getBuildingConditions() {
+export async function getBuildingConditions(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'BUILDING_CONDITION:READ',
+  });
+
   return findBuildingConditions();
 }
 
