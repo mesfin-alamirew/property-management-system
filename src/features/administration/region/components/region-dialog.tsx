@@ -32,7 +32,7 @@ export function RegionDialog({
 }: RegionDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{region ? 'Edit Region' : 'Create Region'}</DialogTitle>
 

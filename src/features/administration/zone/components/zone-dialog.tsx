@@ -32,7 +32,7 @@ export function ZoneDialog({
 }: ZoneDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{zone ? 'Edit Zone' : 'Create Zone'}</DialogTitle>
 

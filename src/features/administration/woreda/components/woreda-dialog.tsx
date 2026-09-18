@@ -32,7 +32,7 @@ export function WoredaDialog({
 }: WoredaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{woreda ? 'Edit Woreda' : 'Create Woreda'}</DialogTitle>
 
