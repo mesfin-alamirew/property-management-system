@@ -1,7 +1,3 @@
-import Link from 'next/link';
-
-import { Button } from './button';
-
 export function AccessDenied() {
   return (
     <main className="flex min-h-[60vh] items-center justify-center px-6">
@@ -19,10 +15,6 @@ export function AccessDenied() {
             you should have access.
           </p>
         </div>
-
-        <Button asChild variant="secondary">
-          <Link href="/buildings">Return to Buildings</Link>
-        </Button>
       </div>
     </main>
   );

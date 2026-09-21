@@ -1,77 +1,72 @@
 import 'dotenv/config';
+
 import { prisma } from '../src/lib/prisma';
 import { AuthProvider } from '../src/generated/prisma/client';
 import { PERMISSION_CATALOG } from '../src/lib/authorization/permission-catalog';
+
+function getRequiredEnv(name: string): string {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+
+  return value;
+}
+
 async function main() {
   console.log('Starting PMS seed...');
 
-  const devUser = await prisma.user.upsert({
+  // ============================================================
+  // Production bootstrap administrator
+  // ============================================================
+
+  const bootstrapUsername = getRequiredEnv('PMS_BOOTSTRAP_ADMIN_USERNAME');
+
+  const bootstrapUser = await prisma.user.findUnique({
     where: {
-      username: 'dev.user',
+      username: bootstrapUsername,
     },
-    update: {
-      displayName: 'Development User',
-      isActive: true,
-    },
-    create: {
-      username: 'dev.user',
-      displayName: 'Development User',
-      isActive: true,
-    },
-  });
-  const devApprover = await prisma.user.upsert({
-    where: {
-      username: 'dev.approver',
-    },
-    update: {
-      displayName: 'Development Approver',
-      isActive: true,
-    },
-    create: {
-      username: 'dev.approver',
-      displayName: 'Development Approver',
-      isActive: true,
+    include: {
+      identities: {
+        where: {
+          provider: AuthProvider.AZURE_AD,
+        },
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
-  await prisma.userIdentity.upsert({
-    where: {
-      provider_externalId: {
-        provider: AuthProvider.LOCAL,
-        externalId: 'dev-local-user-001',
-      },
-    },
-    update: {
-      userId: devUser.id,
-    },
-    create: {
-      userId: devUser.id,
-      provider: AuthProvider.LOCAL,
-      externalId: 'dev-local-user-001',
-    },
-  });
-  await prisma.userIdentity.upsert({
-    where: {
-      provider_externalId: {
-        provider: AuthProvider.LOCAL,
-        externalId: 'dev-local-approver-001',
-      },
-    },
-    update: {
-      userId: devApprover.id,
-    },
-    create: {
-      userId: devApprover.id,
-      provider: AuthProvider.LOCAL,
-      externalId: 'dev-local-approver-001',
-    },
-  });
+  if (!bootstrapUser) {
+    throw new Error(
+      `Bootstrap administrator user not found: ${bootstrapUsername}`,
+    );
+  }
+
+  if (!bootstrapUser.isActive) {
+    throw new Error(
+      `Bootstrap administrator user is inactive: ${bootstrapUsername}`,
+    );
+  }
+
+  if (bootstrapUser.identities.length === 0) {
+    throw new Error(
+      `Bootstrap administrator user does not have an Azure AD identity: ${bootstrapUsername}`,
+    );
+  }
+
+  console.log(`Bootstrap administrator verified: ${bootstrapUser.username}`);
+
   // ============================================================
   // Authorization
   // ============================================================
 
   const systemAdminRole = await prisma.role.upsert({
-    where: { code: 'SYSTEM_ADMIN' },
+    where: {
+      code: 'SYSTEM_ADMIN',
+    },
     update: {
       name: 'System Administrator',
       description: 'Full system administration role',
@@ -88,7 +83,9 @@ async function main() {
   // Seed the authoritative permission catalog.
   for (const permission of PERMISSION_CATALOG) {
     await prisma.permission.upsert({
-      where: { code: permission.code },
+      where: {
+        code: permission.code,
+      },
       update: {
         resource: permission.resource,
         action: permission.action,
@@ -108,7 +105,9 @@ async function main() {
   // SYSTEM_ADMIN receives every permission in the catalog.
   for (const permission of PERMISSION_CATALOG) {
     const dbPermission = await prisma.permission.findUnique({
-      where: { code: permission.code },
+      where: {
+        code: permission.code,
+      },
     });
 
     if (!dbPermission) {
@@ -130,24 +129,36 @@ async function main() {
     });
   }
 
-  // // Assign SYSTEM_ADMIN to the development user.
-  // const existingUserRole = await prisma.userRole.findFirst({
-  //   where: {
-  //     userId: devUser.id,
-  //     roleId: systemAdminRole.id,
-  //     removedAt: null,
-  //   },
-  // });
+  // SYSTEM_ADMIN is protected from normal Role Management.
+  // This initial assignment is a bootstrap operation.
+  const existingSystemAdminRole = await prisma.userRole.findFirst({
+    where: {
+      userId: bootstrapUser.id,
+      roleId: systemAdminRole.id,
+      removedAt: null,
+    },
+  });
 
-  // if (!existingUserRole) {
-  //   await prisma.userRole.create({
-  //     data: {
-  //       userId: devUser.id,
-  //       roleId: systemAdminRole.id,
-  //       assignedByUserId: devUser.id,
-  //     },
-  //   });
-  // }
+  if (!existingSystemAdminRole) {
+    await prisma.userRole.create({
+      data: {
+        userId: bootstrapUser.id,
+        roleId: systemAdminRole.id,
+        assignedByUserId: bootstrapUser.id,
+      },
+    });
+
+    console.log(
+      `SYSTEM_ADMIN assigned to bootstrap administrator: ${bootstrapUser.username}`,
+    );
+  } else {
+    console.log(
+      `SYSTEM_ADMIN already assigned to bootstrap administrator: ${bootstrapUser.username}`,
+    );
+  }
+
+  //=========================================================================================
+
   const statuses = [
     {
       code: 'ACTIVE',
