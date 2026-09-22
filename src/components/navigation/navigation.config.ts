@@ -63,6 +63,10 @@ export const navigationSections: NavigationSection[] = [
         title: 'Roles',
         href: '/administration/roles',
       },
+      {
+        title: 'System Administrators',
+        href: '/administration/system-administration',
+      },
     ],
   },
 
