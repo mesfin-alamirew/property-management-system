@@ -1146,4 +1146,24 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
     action: 'ACTIVATE',
     description: 'Activate a role',
   },
+  {
+    code: 'SYSTEM_ADMINISTRATOR:READ',
+    resource: 'SYSTEM_ADMINISTRATOR',
+    action: 'READ',
+    description: 'View system administrators',
+  },
+
+  {
+    code: 'SYSTEM_ADMINISTRATOR:CREATE',
+    resource: 'SYSTEM_ADMINISTRATOR',
+    action: 'CREATE',
+    description: 'Assign the System Administrator role to a user',
+  },
+
+  {
+    code: 'SYSTEM_ADMINISTRATOR:DELETE',
+    resource: 'SYSTEM_ADMINISTRATOR',
+    action: 'DELETE',
+    description: 'Remove the System Administrator role from a user',
+  },
 ];
