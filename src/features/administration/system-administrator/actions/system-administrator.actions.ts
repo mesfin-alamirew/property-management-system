@@ -24,7 +24,7 @@ export async function assignSystemAdministratorAction(
 
     const result = await assignSystemAdministrator(user.id, data.targetUserId);
 
-    revalidatePath('/administration/system-administrators');
+    revalidatePath('/administration/system-administration');
 
     return {
       success: true,
@@ -55,7 +55,7 @@ export async function removeSystemAdministratorAction(
 
     const result = await removeSystemAdministrator(user.id, targetUserId);
 
-    revalidatePath('/administration/system-administrators');
+    revalidatePath('/administration/system-administration');
 
     return {
       success: true,
