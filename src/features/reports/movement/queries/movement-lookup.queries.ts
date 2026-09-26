@@ -1,6 +1,13 @@
 import { prisma } from '@/lib/prisma';
 
-export async function getMovementReportAssets() {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
+export async function getMovementReportAssets(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MOVEMENT:READ',
+  });
+
   return prisma.asset.findMany({
     orderBy: {
       assetCode: 'asc',
@@ -14,7 +21,12 @@ export async function getMovementReportAssets() {
   });
 }
 
-export async function getMovementReportLocations() {
+export async function getMovementReportLocations(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MOVEMENT:READ',
+  });
+
   return prisma.assetLocation.findMany({
     orderBy: {
       name: 'asc',
@@ -26,7 +38,12 @@ export async function getMovementReportLocations() {
   });
 }
 
-export async function getMovementReportUsers() {
+export async function getMovementReportUsers(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MOVEMENT:READ',
+  });
+
   return prisma.user.findMany({
     where: {
       isActive: true,

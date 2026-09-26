@@ -1,5 +1,5 @@
-import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
 
 import { getMaintenanceReport } from '../queries/maintenance.queries';
@@ -13,9 +13,15 @@ export async function MaintenanceReportPage() {
   const user = await requireCurrentUser();
 
   let initialRows;
+  let assets;
+  let assignedUsers;
 
   try {
-    initialRows = await getMaintenanceReport(user.id, {});
+    [initialRows, assets, assignedUsers] = await Promise.all([
+      getMaintenanceReport(user.id, {}),
+      getMaintenanceReportAssets(user.id),
+      getMaintenanceReportAssignedUsers(user.id),
+    ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
       return <AccessDenied />;
@@ -23,11 +29,6 @@ export async function MaintenanceReportPage() {
 
     throw error;
   }
-
-  const [assets, assignedUsers] = await Promise.all([
-    getMaintenanceReportAssets(),
-    getMaintenanceReportAssignedUsers(),
-  ]);
 
   return (
     <div className="space-y-6">

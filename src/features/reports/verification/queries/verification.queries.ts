@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import type {
   PhysicalVerificationReportFilters,
   PhysicalVerificationReportRow,
@@ -18,8 +18,13 @@ const discrepancyResults: PhysicalVerificationResult[] = [
 ];
 
 export async function getPhysicalVerificationReport(
+  userId: string,
   filters?: PhysicalVerificationReportFilters,
 ): Promise<PhysicalVerificationReportRow[]> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_VERIFICATION:READ',
+  });
   const search = filters?.search?.trim();
 
   const scope = filters?.scope;

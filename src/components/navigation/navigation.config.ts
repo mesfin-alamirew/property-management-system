@@ -1,8 +1,10 @@
 import type { LucideIcon } from 'lucide-react';
+
 import {
   BarChart3,
   Building2,
   ClipboardCheck,
+  FileText,
   Handshake,
   LayoutDashboard,
   Package,
@@ -39,33 +41,45 @@ export const navigationSections: NavigationSection[] = [
         title: 'Organization Units',
         href: '/organization-units',
       },
+
       {
         title: 'Employees',
         href: '/employees',
       },
+
       {
         title: 'Countries',
         href: '/countries',
       },
+
       {
         title: 'Regions',
         href: '/regions',
       },
+
       {
         title: 'Zones',
         href: '/zones',
       },
+
       {
         title: 'Woredas',
         href: '/woredas',
       },
+
       {
         title: 'Roles',
         href: '/administration/roles',
       },
+
       {
         title: 'System Administrators',
         href: '/administration/system-administration',
+      },
+
+      {
+        title: 'System Settings',
+        href: '/administration/system-settings',
       },
     ],
   },
@@ -78,18 +92,22 @@ export const navigationSections: NavigationSection[] = [
         title: 'Properties',
         href: '/properties',
       },
+
       {
         title: 'Property Types',
         href: '/property-types',
       },
+
       {
         title: 'Property Categories',
         href: '/property-categories',
       },
+
       {
         title: 'Property Statuses',
         href: '/property-statuses',
       },
+
       {
         title: 'Property Tenures',
         href: '/property-tenures',
@@ -105,18 +123,22 @@ export const navigationSections: NavigationSection[] = [
         title: 'Buildings',
         href: '/buildings',
       },
+
       {
         title: 'Building Types',
         href: '/building-types',
       },
+
       {
         title: 'Building Conditions',
         href: '/building-conditions',
       },
+
       {
         title: 'Building Space Types',
         href: '/building-space-types',
       },
+
       {
         title: 'Building Spaces',
         href: '/building-spaces',
@@ -132,6 +154,7 @@ export const navigationSections: NavigationSection[] = [
         title: 'Ownerships',
         href: '/ownerships',
       },
+
       {
         title: 'Ownership Types',
         href: '/ownership-types',
@@ -147,10 +170,12 @@ export const navigationSections: NavigationSection[] = [
         title: 'Acquisitions',
         href: '/acquisitions',
       },
+
       {
         title: 'Acquisition Items',
         href: '/acquisition-items',
       },
+
       {
         title: 'Acquisition Methods',
         href: '/acquisition-methods',
@@ -166,57 +191,86 @@ export const navigationSections: NavigationSection[] = [
         title: 'Assets',
         href: '/assets',
       },
+
       {
         title: 'Asset Types',
         href: '/asset-types',
       },
+
       {
         title: 'Asset Categories',
         href: '/asset-categories',
       },
+
       {
         title: 'Asset Statuses',
         href: '/asset-statuses',
       },
+
       {
         title: 'Asset Conditions',
         href: '/asset-conditions',
       },
+
       {
         title: 'Asset Locations',
         href: '/asset-locations',
       },
+
       {
         title: 'Asset Movements',
         href: '/asset-movements',
       },
+
       {
         title: 'Asset Assignments',
         href: '/asset-assignments',
       },
+
       {
         title: 'Physical Verifications',
         href: '/physical-verifications',
       },
+
       {
         title: 'Maintenance',
         href: '/maintenances',
       },
+
       {
         title: 'Maintenance Services',
         href: '/assets/maintenance/services',
       },
+
       {
         title: 'Incidents',
         href: '/incidents',
       },
+
       {
         title: 'Retirements',
         href: '/retirements',
       },
+
       {
         title: 'Disposals',
         href: '/disposals',
+      },
+    ],
+  },
+
+  {
+    title: 'Documents',
+    icon: FileText,
+    items: [
+      {
+        title: 'Documents',
+        href: '/documents',
+      },
+
+      {
+        title: 'Document Types',
+        href: '/document-types',
       },
     ],
   },
@@ -229,46 +283,57 @@ export const navigationSections: NavigationSection[] = [
         title: 'Dashboard',
         href: '/reports/dashboard',
       },
+
       {
         title: 'Assets',
         href: '/reports/assets',
       },
+
       {
         title: 'Acquisitions',
         href: '/reports/acquisitions',
       },
+
       {
         title: 'Assignments',
         href: '/reports/assignments',
       },
+
       {
         title: 'Movements',
         href: '/reports/movements',
       },
+
       {
         title: 'Maintenance',
         href: '/reports/maintenances',
       },
+
       {
         title: 'Incidents',
         href: '/reports/incidents',
       },
+
       {
         title: 'Verifications',
         href: '/reports/verifications',
       },
+
       {
         title: 'Retirements',
         href: '/reports/retirements',
       },
+
       {
         title: 'Disposals',
         href: '/reports/disposals',
       },
+
       {
         title: 'Accountability',
         href: '/reports/accountability',
       },
+
       {
         title: 'Audits',
         href: '/reports/audits',

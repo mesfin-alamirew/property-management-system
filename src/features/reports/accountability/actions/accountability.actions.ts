@@ -1,13 +1,14 @@
 'use server';
 
-import { AppError } from '@/lib/errors';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
 import {
   accountabilityReportSchema,
   type AccountabilityReportInput,
 } from '../schemas/accountability.schema';
-import { getAccountabilityReport } from '../queries/accountability.queries';
 import { getAccountabilityReportLookups } from '../queries/accountability-lookup.queries';
+import { getAccountabilityReport } from '../queries/accountability.queries';
 import type { AccountabilityReportFilters } from '../types/accountability.types';
 
 export type AccountabilityActionResult<T> =
@@ -79,9 +80,9 @@ export async function getAccountabilityReportLookupsAction(): Promise<
   >
 > {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const data = await getAccountabilityReportLookups();
+    const data = await getAccountabilityReportLookups(user.id);
 
     return {
       success: true,

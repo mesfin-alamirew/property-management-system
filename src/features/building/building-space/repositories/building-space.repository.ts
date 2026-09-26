@@ -1,3 +1,4 @@
+import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
 import type { BuildingSpaceFormData } from '../schemas/building-space.schema';
@@ -68,8 +69,11 @@ export async function findBuildingSpaceByCode(
   });
 }
 
-export async function createBuildingSpaceRecord(data: BuildingSpaceFormData) {
-  return prisma.buildingSpace.create({
+export async function createBuildingSpaceRecord(
+  tx: Prisma.TransactionClient,
+  data: BuildingSpaceFormData,
+) {
+  return tx.buildingSpace.create({
     data: {
       buildingId: data.buildingId,
       spaceTypeId: data.spaceTypeId,
@@ -84,10 +88,11 @@ export async function createBuildingSpaceRecord(data: BuildingSpaceFormData) {
 }
 
 export async function updateBuildingSpaceRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: BuildingSpaceFormData,
 ) {
-  return prisma.buildingSpace.update({
+  return tx.buildingSpace.update({
     where: {
       id,
     },
@@ -104,8 +109,11 @@ export async function updateBuildingSpaceRecord(
   });
 }
 
-export async function deactivateBuildingSpaceRecord(id: string) {
-  return prisma.buildingSpace.update({
+export async function deactivateBuildingSpaceRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.buildingSpace.update({
     where: {
       id,
     },

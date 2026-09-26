@@ -6,6 +6,7 @@ import type {
   CreateAssetAssignmentFormData,
   ReturnAssetAssignmentFormData,
 } from '../schemas/asset-assignment.schema';
+import { AppError } from '@/lib/errors';
 
 const assetAssignmentInclude = {
   asset: {
@@ -130,13 +131,15 @@ export async function createAssetAssignmentRecord(
 }
 
 export async function returnAssetAssignmentRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   userId: string,
   data: ReturnAssetAssignmentFormData,
 ) {
-  return prisma.assetAssignment.update({
+  const result = await tx.assetAssignment.updateMany({
     where: {
       id,
+      returnedAt: null,
     },
 
     data: {
@@ -145,6 +148,19 @@ export async function returnAssetAssignmentRecord(
       returnedByUserId: userId,
 
       notes: data.notes,
+    },
+  });
+
+  if (result.count !== 1) {
+    throw new AppError(
+      'Asset Assignment has already been returned or no longer exists',
+      'ASSET_ASSIGNMENT_RETURN_CONFLICT',
+    );
+  }
+
+  return tx.assetAssignment.findUniqueOrThrow({
+    where: {
+      id,
     },
 
     include: assetAssignmentInclude,

@@ -157,6 +157,24 @@ async function main() {
     );
   }
 
+  // ============================================================
+  // System Settings
+  // ============================================================
+
+  await prisma.systemSetting.upsert({
+    where: {
+      key: 'DOCUMENT_MAX_FILE_SIZE_MB',
+    },
+    update: {},
+    create: {
+      key: 'DOCUMENT_MAX_FILE_SIZE_MB',
+      value: '25',
+      description: 'Maximum allowed document upload file size in megabytes',
+    },
+  });
+
+  console.log('System settings initialized.');
+
   //=========================================================================================
 
   const statuses = [

@@ -16,7 +16,8 @@ import {
 import type { AssetFormData } from '../schemas/asset.schema';
 
 import { generateNextAssetCode } from '../services/asset-code.service';
-
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 export async function createAsset(userId: string, data: AssetFormData) {
   await requirePermission({
     userId,
@@ -85,7 +86,25 @@ export async function createAsset(userId: string, data: AssetFormData) {
   return prisma.$transaction(async (tx) => {
     const assetCode = await generateNextAssetCode(tx);
 
-    return createAssetRecord(tx, assetCode, data);
+    const asset = await createAssetRecord(tx, assetCode, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ASSET_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.ASSET,
+      entityId: asset.id,
+      description: `Asset ${asset.assetCode} created`,
+      newValue: {
+        assetCode: asset.assetCode,
+        assetTag: asset.assetTag,
+        name: asset.name,
+        assetTypeId: asset.assetTypeId,
+        statusId: asset.statusId,
+        conditionId: asset.conditionId,
+      },
+    });
+
+    return asset;
   });
 }
 
@@ -160,5 +179,39 @@ export async function updateAsset(
     }
   }
 
-  return updateAssetRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedAsset = await updateAssetRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ASSET_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.ASSET,
+      entityId: updatedAsset.id,
+      description: `Asset ${updatedAsset.assetCode} updated`,
+      oldValue: {
+        assetTag: asset.assetTag,
+        name: asset.name,
+        description: asset.description,
+        manufacturer: asset.manufacturer,
+        model: asset.model,
+        serialNumber: asset.serialNumber,
+        assetTypeId: asset.assetTypeId,
+        statusId: asset.statusId,
+        conditionId: asset.conditionId,
+      },
+      newValue: {
+        assetTag: updatedAsset.assetTag,
+        name: updatedAsset.name,
+        description: updatedAsset.description,
+        manufacturer: updatedAsset.manufacturer,
+        model: updatedAsset.model,
+        serialNumber: updatedAsset.serialNumber,
+        assetTypeId: updatedAsset.assetTypeId,
+        statusId: updatedAsset.statusId,
+        conditionId: updatedAsset.conditionId,
+      },
+    });
+
+    return updatedAsset;
+  });
 }

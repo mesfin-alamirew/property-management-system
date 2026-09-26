@@ -15,7 +15,9 @@ import type {
   CreateAssetAssignmentFormData,
   ReturnAssetAssignmentFormData,
 } from '../schemas/asset-assignment.schema';
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
 
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 export async function createAssetAssignment(
   userId: string,
   data: CreateAssetAssignmentFormData,
@@ -48,7 +50,24 @@ export async function createAssetAssignment(
   }
 
   return prisma.$transaction(async (tx) => {
-    return createAssetAssignmentRecord(tx, userId, data);
+    const assignment = await createAssetAssignmentRecord(tx, userId, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ASSET_ASSIGNED,
+      entityType: AUDIT_ENTITY_TYPES.ASSET_ASSIGNMENT,
+      entityId: assignment.id,
+      description: `Asset ${assignment.asset.assetCode} assigned to employee ${assignment.employee.employeeNumber}`,
+      newValue: {
+        assetId: assignment.assetId,
+        employeeId: assignment.employeeId,
+        assignedAt: assignment.assignedAt.toISOString(),
+        assignedByUserId: assignment.assignedByUserId,
+        notes: assignment.notes,
+      },
+    });
+
+    return assignment;
   });
 }
 
@@ -78,5 +97,40 @@ export async function returnAssetAssignment(
     );
   }
 
-  return returnAssetAssignmentRecord(id, userId, data);
+  return prisma.$transaction(async (tx) => {
+    const returnedAssignment = await returnAssetAssignmentRecord(
+      tx,
+      id,
+      userId,
+      data,
+    );
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ASSET_RETURNED,
+      entityType: AUDIT_ENTITY_TYPES.ASSET_ASSIGNMENT,
+      entityId: returnedAssignment.id,
+      description: `Asset ${returnedAssignment.asset.assetCode} returned by employee ${returnedAssignment.employee.employeeNumber}`,
+      oldValue: {
+        assetId: assignment.assetId,
+        employeeId: assignment.employeeId,
+        assignedAt: assignment.assignedAt.toISOString(),
+        assignedByUserId: assignment.assignedByUserId,
+        returnedAt: null,
+        returnedByUserId: null,
+        notes: assignment.notes,
+      },
+      newValue: {
+        assetId: returnedAssignment.assetId,
+        employeeId: returnedAssignment.employeeId,
+        assignedAt: returnedAssignment.assignedAt.toISOString(),
+        assignedByUserId: returnedAssignment.assignedByUserId,
+        returnedAt: returnedAssignment.returnedAt?.toISOString() ?? null,
+        returnedByUserId: returnedAssignment.returnedByUserId,
+        notes: returnedAssignment.notes,
+      },
+    });
+
+    return returnedAssignment;
+  });
 }

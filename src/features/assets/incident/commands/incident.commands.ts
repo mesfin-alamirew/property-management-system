@@ -13,7 +13,7 @@ import {
   reportIncidentRecord,
   assignIncidentRecord,
   startIncidentRecord,
-  resolveIncidentRecord,
+  // resolveIncidentRecord,
   closeIncidentRecord,
   cancelIncidentRecord,
 } from '../repositories/incident.repository';
@@ -351,69 +351,69 @@ export async function startIncident(userId: string, incidentId: string) {
   });
 }
 
-export async function resolveIncident(userId: string, incidentId: string) {
-  await requirePermission({
-    userId,
-    permissionCode: 'INCIDENT:RESOLVE',
-  });
+// export async function resolveIncident(userId: string, incidentId: string) {
+//   await requirePermission({
+//     userId,
+//     permissionCode: 'INCIDENT:RESOLVE',
+//   });
 
-  const incident = await findIncidentById(incidentId);
+//   const incident = await findIncidentById(incidentId);
 
-  if (!incident) {
-    throw new AppError('Incident not found', 'INCIDENT_NOT_FOUND');
-  }
+//   if (!incident) {
+//     throw new AppError('Incident not found', 'INCIDENT_NOT_FOUND');
+//   }
 
-  if (incident.status !== 'IN_PROGRESS') {
-    throw new AppError(
-      'Only in-progress incident records can be resolved',
-      'INCIDENT_INVALID_STATUS',
-    );
-  }
+//   if (incident.status !== 'IN_PROGRESS') {
+//     throw new AppError(
+//       'Only in-progress incident records can be resolved',
+//       'INCIDENT_INVALID_STATUS',
+//     );
+//   }
 
-  const user = await findUserById(userId);
+//   const user = await findUserById(userId);
 
-  if (!user) {
-    throw new AppError('User not found', 'USER_NOT_FOUND');
-  }
+//   if (!user) {
+//     throw new AppError('User not found', 'USER_NOT_FOUND');
+//   }
 
-  if (!user.isActive) {
-    throw new AppError('User is inactive', 'USER_INACTIVE');
-  }
+//   if (!user.isActive) {
+//     throw new AppError('User is inactive', 'USER_INACTIVE');
+//   }
 
-  return prisma.$transaction(async (tx) => {
-    const resolvedAt = new Date();
+//   return prisma.$transaction(async (tx) => {
+//     const resolvedAt = new Date();
 
-    const resolvedIncident = await resolveIncidentRecord(
-      tx,
-      incidentId,
-      resolvedAt,
-    );
+//     const resolvedIncident = await resolveIncidentRecord(
+//       tx,
+//       incidentId,
+//       resolvedAt,
+//     );
 
-    await recordAuditEvent(tx, {
-      userId,
-      action: AUDIT_ACTIONS.INCIDENT_RESOLVED,
-      entityType: AUDIT_ENTITY_TYPES.INCIDENT,
-      entityId: incident.id,
-      description: `Incident ${incident.referenceNumber} was resolved.`,
+//     await recordAuditEvent(tx, {
+//       userId,
+//       action: AUDIT_ACTIONS.INCIDENT_RESOLVED,
+//       entityType: AUDIT_ENTITY_TYPES.INCIDENT,
+//       entityId: incident.id,
+//       description: `Incident ${incident.referenceNumber} was resolved.`,
 
-      oldValue: {
-        status: incident.status,
-        resolvedAt: incident.resolvedAt
-          ? incident.resolvedAt.toISOString()
-          : null,
-      },
+//       oldValue: {
+//         status: incident.status,
+//         resolvedAt: incident.resolvedAt
+//           ? incident.resolvedAt.toISOString()
+//           : null,
+//       },
 
-      newValue: {
-        status: resolvedIncident.status,
-        resolvedAt: resolvedIncident.resolvedAt
-          ? resolvedIncident.resolvedAt.toISOString()
-          : null,
-      },
-    });
+//       newValue: {
+//         status: resolvedIncident.status,
+//         resolvedAt: resolvedIncident.resolvedAt
+//           ? resolvedIncident.resolvedAt.toISOString()
+//           : null,
+//       },
+//     });
 
-    return resolvedIncident;
-  });
-}
+//     return resolvedIncident;
+//   });
+// }
 
 export async function closeIncident(userId: string, incidentId: string) {
   await requirePermission({

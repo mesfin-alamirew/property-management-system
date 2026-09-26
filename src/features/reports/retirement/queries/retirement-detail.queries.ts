@@ -1,6 +1,11 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getRetirementDetail(id: string) {
+export async function getRetirementDetail(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_RETIREMENT:READ',
+  });
   const retirement = await prisma.retirement.findUnique({
     where: {
       id,

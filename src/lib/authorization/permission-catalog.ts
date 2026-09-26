@@ -589,6 +589,12 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
     description: 'Update an acquisition method',
   },
   {
+    code: 'ACQUISITION_METHOD:ACTIVATE',
+    resource: 'ACQUISITION_METHOD',
+    action: 'ACTIVATE',
+    description: 'Activate an acquisition method',
+  },
+  {
     code: 'ACQUISITION_METHOD:DEACTIVATE',
     resource: 'ACQUISITION_METHOD',
     action: 'DEACTIVATE',
@@ -904,7 +910,69 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
     action: 'UPDATE',
     description: 'Update a disposal item',
   },
+  // ============================================================
+  // Document Management
+  // ============================================================
 
+  {
+    code: 'DOCUMENT:CREATE',
+    resource: 'DOCUMENT',
+    action: 'CREATE',
+    description: 'Create a document',
+  },
+
+  {
+    code: 'DOCUMENT:READ',
+    resource: 'DOCUMENT',
+    action: 'READ',
+    description: 'View documents',
+  },
+
+  {
+    code: 'DOCUMENT:UPDATE',
+    resource: 'DOCUMENT',
+    action: 'UPDATE',
+    description: 'Update document information and create document versions',
+  },
+
+  {
+    code: 'DOCUMENT:DELETE',
+    resource: 'DOCUMENT',
+    action: 'DELETE',
+    description: 'Delete a document',
+  },
+
+  // ============================================================
+  // Document Type
+  // ============================================================
+
+  {
+    code: 'DOCUMENT_TYPE:CREATE',
+    resource: 'DOCUMENT_TYPE',
+    action: 'CREATE',
+    description: 'Create a document type',
+  },
+
+  {
+    code: 'DOCUMENT_TYPE:READ',
+    resource: 'DOCUMENT_TYPE',
+    action: 'READ',
+    description: 'View document types',
+  },
+
+  {
+    code: 'DOCUMENT_TYPE:UPDATE',
+    resource: 'DOCUMENT_TYPE',
+    action: 'UPDATE',
+    description: 'Update document type information',
+  },
+
+  {
+    code: 'DOCUMENT_TYPE:DEACTIVATE',
+    resource: 'DOCUMENT_TYPE',
+    action: 'DEACTIVATE',
+    description: 'Deactivate a document type',
+  },
   // ============================================================
   // Reporting
   // ============================================================
@@ -1165,5 +1233,18 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
     resource: 'SYSTEM_ADMINISTRATOR',
     action: 'DELETE',
     description: 'Remove the System Administrator role from a user',
+  },
+  {
+    code: 'SYSTEM_SETTING:READ',
+    resource: 'SYSTEM_SETTING',
+    action: 'READ',
+    description: 'View system settings',
+  },
+
+  {
+    code: 'SYSTEM_SETTING:UPDATE',
+    resource: 'SYSTEM_SETTING',
+    action: 'UPDATE',
+    description: 'Update system settings',
   },
 ];

@@ -21,13 +21,13 @@ export async function AssetReportPage() {
 
   try {
     data = await Promise.all([
-      getAssetReportAssetTypes(),
-      getAssetReportAssetCategories(),
-      getAssetReportStatuses(),
-      getAssetReportConditions(),
-      getAssetReportOrganizationUnits(),
-      getAssetReportLocations(),
-      getAssetReportAcquisitionMethods(),
+      getAssetReportAssetTypes(user.id),
+      getAssetReportAssetCategories(user.id),
+      getAssetReportStatuses(user.id),
+      getAssetReportConditions(user.id),
+      getAssetReportOrganizationUnits(user.id),
+      getAssetReportLocations(user.id),
+      getAssetReportAcquisitionMethods(user.id),
       getAssetReport(user.id),
     ]);
   } catch (error) {

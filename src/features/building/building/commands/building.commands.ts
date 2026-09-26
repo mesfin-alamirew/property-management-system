@@ -1,4 +1,7 @@
 import { AppError } from '@/lib/errors';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { prisma } from '@/lib/prisma';
 
 import {
   findBuildingByCode,
@@ -71,7 +74,39 @@ export async function createBuilding(userId: string, data: BuildingFormData) {
     );
   }
 
-  return createBuildingRecord(data);
+  return prisma.$transaction(async (tx) => {
+    const building = await createBuildingRecord(tx, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.BUILDING_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.BUILDING,
+      entityId: building.id,
+      description: `Building ${building.buildingCode} created`,
+      newValue: {
+        propertyId: building.propertyId,
+        buildingCode: building.buildingCode,
+        name: building.name,
+        description: building.description,
+        buildingTypeId: building.buildingTypeId,
+        buildingConditionId: building.buildingConditionId,
+        numberOfFloors: building.numberOfFloors,
+        numberOfBasements: building.numberOfBasements,
+        yearBuilt: building.yearBuilt,
+        yearRenovated: building.yearRenovated,
+        floorAreaSqm: building.floorAreaSqm?.toString() ?? null,
+        usableAreaSqm: building.usableAreaSqm?.toString() ?? null,
+        numberOfRooms: building.numberOfRooms,
+        numberOfUnits: building.numberOfUnits,
+        parkingCapacity: building.parkingCapacity,
+        accessibilityFeatures: building.accessibilityFeatures,
+        notes: building.notes,
+        isActive: building.isActive,
+      },
+    });
+
+    return building;
+  });
 }
 
 export async function updateBuilding(
@@ -142,7 +177,59 @@ export async function updateBuilding(
     );
   }
 
-  return updateBuildingRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedBuilding = await updateBuildingRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.BUILDING_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.BUILDING,
+      entityId: updatedBuilding.id,
+      description: `Building ${updatedBuilding.buildingCode} updated`,
+      oldValue: {
+        propertyId: building.propertyId,
+        buildingCode: building.buildingCode,
+        name: building.name,
+        description: building.description,
+        buildingTypeId: building.buildingTypeId,
+        buildingConditionId: building.buildingConditionId,
+        numberOfFloors: building.numberOfFloors,
+        numberOfBasements: building.numberOfBasements,
+        yearBuilt: building.yearBuilt,
+        yearRenovated: building.yearRenovated,
+        floorAreaSqm: building.floorAreaSqm?.toString() ?? null,
+        usableAreaSqm: building.usableAreaSqm?.toString() ?? null,
+        numberOfRooms: building.numberOfRooms,
+        numberOfUnits: building.numberOfUnits,
+        parkingCapacity: building.parkingCapacity,
+        accessibilityFeatures: building.accessibilityFeatures,
+        notes: building.notes,
+        isActive: building.isActive,
+      },
+      newValue: {
+        propertyId: updatedBuilding.propertyId,
+        buildingCode: updatedBuilding.buildingCode,
+        name: updatedBuilding.name,
+        description: updatedBuilding.description,
+        buildingTypeId: updatedBuilding.buildingTypeId,
+        buildingConditionId: updatedBuilding.buildingConditionId,
+        numberOfFloors: updatedBuilding.numberOfFloors,
+        numberOfBasements: updatedBuilding.numberOfBasements,
+        yearBuilt: updatedBuilding.yearBuilt,
+        yearRenovated: updatedBuilding.yearRenovated,
+        floorAreaSqm: updatedBuilding.floorAreaSqm?.toString() ?? null,
+        usableAreaSqm: updatedBuilding.usableAreaSqm?.toString() ?? null,
+        numberOfRooms: updatedBuilding.numberOfRooms,
+        numberOfUnits: updatedBuilding.numberOfUnits,
+        parkingCapacity: updatedBuilding.parkingCapacity,
+        accessibilityFeatures: updatedBuilding.accessibilityFeatures,
+        notes: updatedBuilding.notes,
+        isActive: updatedBuilding.isActive,
+      },
+    });
+
+    return updatedBuilding;
+  });
 }
 
 export async function deactivateBuilding(userId: string, id: string) {
@@ -156,5 +243,57 @@ export async function deactivateBuilding(userId: string, id: string) {
     throw new AppError('Building not found', 'BUILDING_NOT_FOUND');
   }
 
-  return deactivateBuildingRecord(id);
+  return prisma.$transaction(async (tx) => {
+    const updatedBuilding = await deactivateBuildingRecord(tx, id);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.BUILDING_DEACTIVATED,
+      entityType: AUDIT_ENTITY_TYPES.BUILDING,
+      entityId: updatedBuilding.id,
+      description: `Building ${updatedBuilding.buildingCode} deactivated`,
+      oldValue: {
+        propertyId: building.propertyId,
+        buildingCode: building.buildingCode,
+        name: building.name,
+        description: building.description,
+        buildingTypeId: building.buildingTypeId,
+        buildingConditionId: building.buildingConditionId,
+        numberOfFloors: building.numberOfFloors,
+        numberOfBasements: building.numberOfBasements,
+        yearBuilt: building.yearBuilt,
+        yearRenovated: building.yearRenovated,
+        floorAreaSqm: building.floorAreaSqm?.toString() ?? null,
+        usableAreaSqm: building.usableAreaSqm?.toString() ?? null,
+        numberOfRooms: building.numberOfRooms,
+        numberOfUnits: building.numberOfUnits,
+        parkingCapacity: building.parkingCapacity,
+        accessibilityFeatures: building.accessibilityFeatures,
+        notes: building.notes,
+        isActive: building.isActive,
+      },
+      newValue: {
+        propertyId: updatedBuilding.propertyId,
+        buildingCode: updatedBuilding.buildingCode,
+        name: updatedBuilding.name,
+        description: updatedBuilding.description,
+        buildingTypeId: updatedBuilding.buildingTypeId,
+        buildingConditionId: updatedBuilding.buildingConditionId,
+        numberOfFloors: updatedBuilding.numberOfFloors,
+        numberOfBasements: updatedBuilding.numberOfBasements,
+        yearBuilt: updatedBuilding.yearBuilt,
+        yearRenovated: updatedBuilding.yearRenovated,
+        floorAreaSqm: updatedBuilding.floorAreaSqm?.toString() ?? null,
+        usableAreaSqm: updatedBuilding.usableAreaSqm?.toString() ?? null,
+        numberOfRooms: updatedBuilding.numberOfRooms,
+        numberOfUnits: updatedBuilding.numberOfUnits,
+        parkingCapacity: updatedBuilding.parkingCapacity,
+        accessibilityFeatures: updatedBuilding.accessibilityFeatures,
+        notes: updatedBuilding.notes,
+        isActive: updatedBuilding.isActive,
+      },
+    });
+
+    return updatedBuilding;
+  });
 }

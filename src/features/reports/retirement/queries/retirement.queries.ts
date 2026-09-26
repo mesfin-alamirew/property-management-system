@@ -2,10 +2,16 @@ import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
 import type { RetirementReportFilters } from '../types/retirement.types';
+import { requirePermission } from '@/lib/authorization/authorization.service';
 
 export async function getRetirementReport(
+  userId: string,
   filters: RetirementReportFilters = {},
 ) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_RETIREMENT:READ',
+  });
   const {
     search,
     status,

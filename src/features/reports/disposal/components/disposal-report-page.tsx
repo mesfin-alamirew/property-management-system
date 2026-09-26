@@ -13,9 +13,15 @@ export async function DisposalReportPage() {
   const user = await requireCurrentUser();
 
   let rows;
+  let assets;
+  let users;
 
   try {
-    rows = await getDisposalReport(user.id, {});
+    [rows, assets, users] = await Promise.all([
+      getDisposalReport(user.id, {}),
+      getDisposalReportAssets(user.id),
+      getDisposalReportUsers(user.id),
+    ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
       return <AccessDenied />;
@@ -23,11 +29,6 @@ export async function DisposalReportPage() {
 
     throw error;
   }
-
-  const [assets, users] = await Promise.all([
-    getDisposalReportAssets(),
-    getDisposalReportUsers(),
-  ]);
 
   return (
     <div className="space-y-6">

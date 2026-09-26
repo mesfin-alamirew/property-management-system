@@ -1,3 +1,4 @@
+import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
 import type { BuildingTypeFormData } from '../schemas/building-type.schema';
@@ -34,8 +35,11 @@ export async function findBuildingTypeByCode(code: string, excludeId?: string) {
   });
 }
 
-export async function createBuildingTypeRecord(data: BuildingTypeFormData) {
-  return prisma.buildingType.create({
+export async function createBuildingTypeRecord(
+  tx: Prisma.TransactionClient,
+  data: BuildingTypeFormData,
+) {
+  return tx.buildingType.create({
     data: {
       code: data.code,
       name: data.name,
@@ -45,10 +49,11 @@ export async function createBuildingTypeRecord(data: BuildingTypeFormData) {
 }
 
 export async function updateBuildingTypeRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: BuildingTypeFormData,
 ) {
-  return prisma.buildingType.update({
+  return tx.buildingType.update({
     where: {
       id,
     },
@@ -60,8 +65,11 @@ export async function updateBuildingTypeRecord(
   });
 }
 
-export async function deactivateBuildingTypeRecord(id: string) {
-  return prisma.buildingType.update({
+export async function deactivateBuildingTypeRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.buildingType.update({
     where: {
       id,
     },

@@ -58,8 +58,11 @@ export async function findBuildingByCode(
   });
 }
 
-export async function createBuildingRecord(data: BuildingFormData) {
-  return prisma.building.create({
+export async function createBuildingRecord(
+  tx: Prisma.TransactionClient,
+  data: BuildingFormData,
+) {
+  return tx.building.create({
     data: {
       propertyId: data.propertyId,
       buildingCode: data.buildingCode,
@@ -109,8 +112,12 @@ export async function createBuildingRecord(data: BuildingFormData) {
   });
 }
 
-export async function updateBuildingRecord(id: string, data: BuildingFormData) {
-  return prisma.building.update({
+export async function updateBuildingRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+  data: BuildingFormData,
+) {
+  return tx.building.update({
     where: {
       id,
     },
@@ -132,6 +139,7 @@ export async function updateBuildingRecord(id: string, data: BuildingFormData) {
         data.numberOfBasements !== undefined
           ? Number(data.numberOfBasements)
           : undefined,
+
       yearBuilt: data.yearBuilt ? Number(data.yearBuilt) : undefined,
 
       yearRenovated:
@@ -163,8 +171,11 @@ export async function updateBuildingRecord(id: string, data: BuildingFormData) {
   });
 }
 
-export async function deactivateBuildingRecord(id: string) {
-  return prisma.building.update({
+export async function deactivateBuildingRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.building.update({
     where: {
       id,
     },

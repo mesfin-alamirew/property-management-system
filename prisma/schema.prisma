@@ -856,6 +856,12 @@ model User {
   approvedDisposals  Disposal[] @relation("DisposalApprovedBy")
   cancelledDisposals Disposal[] @relation("DisposalCancelledBy")
 
+  documentsCreated        Document[]        @relation("DocumentCreatedBy")
+  documentsUpdated        Document[]        @relation("DocumentUpdatedBy")
+  documentsDeleted        Document[]        @relation("DocumentDeletedBy")
+  documentVersionsCreated DocumentVersion[] @relation("DocumentVersionCreatedBy")
+  systemSettingsUpdated   SystemSetting[]   @relation("SystemSettingUpdatedBy")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -1639,4 +1645,126 @@ model DisposalItem {
 
   @@unique([disposalId, assetId])
   @@index([assetId])
+}
+
+enum DocumentEntityType {
+  ASSET
+  ACQUISITION
+  ACQUISITION_ITEM
+  ASSET_ASSIGNMENT
+  ASSET_MOVEMENT
+  PHYSICAL_VERIFICATION
+  PHYSICAL_VERIFICATION_ITEM
+  PROPERTY
+  BUILDING
+  OWNERSHIP
+  MAINTENANCE
+  INCIDENT
+  INCIDENT_RESOLUTION
+  RETIREMENT
+  DISPOSAL
+  DISPOSAL_ITEM
+}
+
+enum DocumentStorageProvider {
+  AZURE_BLOB
+}
+
+model DocumentType {
+  id String @id @default(cuid())
+
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  isActive Boolean @default(true)
+
+  documents Document[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Document {
+  id String @id @default(cuid())
+
+  documentTypeId String
+  documentType   DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
+
+  entityType DocumentEntityType
+  entityId   String
+
+  title       String
+  description String?
+
+  currentVersionId String?
+
+  versions DocumentVersion[] @relation("DocumentVersions")
+
+  deletedAt       DateTime?
+  deletedByUserId String?
+
+  deletedByUser User? @relation("DocumentDeletedBy", fields: [deletedByUserId], references: [id], onDelete: Restrict)
+
+  createdByUserId String
+  createdByUser   User   @relation("DocumentCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  updatedByUserId String
+  updatedByUser   User   @relation("DocumentUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([entityType])
+  @@index([entityId])
+  @@index([entityType, entityId])
+  @@index([documentTypeId])
+  @@index([deletedAt])
+}
+
+model DocumentVersion {
+  id String @id @default(cuid())
+
+  documentId String
+  document   Document @relation("DocumentVersions", fields: [documentId], references: [id], onDelete: Restrict)
+
+  versionNumber Int
+
+  originalFileName String
+  storedFileName   String
+
+  storageProvider  DocumentStorageProvider
+  storageContainer String
+  storageKey       String                  @unique
+
+  mimeType String
+  fileSize BigInt
+  checksum String?
+
+  createdByUserId String
+  createdByUser   User   @relation("DocumentVersionCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+  @@index([createdByUserId])
+}
+
+model SystemSetting {
+  id String @id @default(cuid())
+
+  key         String  @unique
+  value       String
+  description String?
+
+  updatedByUserId String?
+  updatedByUser   User?   @relation("SystemSettingUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedByUserId])
 }

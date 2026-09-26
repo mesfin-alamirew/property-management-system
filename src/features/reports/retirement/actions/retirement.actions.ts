@@ -19,11 +19,11 @@ export async function getRetirementReportAction(
   filters: RetirementReportFilters = {},
 ): Promise<ActionResult<RetirementReportRow[]>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     const parsed = retirementReportSchema.parse(filters);
 
-    const result = await getRetirementReport(parsed);
+    const result = await getRetirementReport(user.id, parsed);
 
     return {
       success: true,
@@ -55,7 +55,7 @@ export async function getRetirementDetailAction(
   id: string,
 ): Promise<ActionResult<RetirementDetail>> {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
     if (!id) {
       return {
@@ -64,7 +64,7 @@ export async function getRetirementDetailAction(
       };
     }
 
-    const result = await getRetirementDetail(id);
+    const result = await getRetirementDetail(user.id, id);
 
     if (!result) {
       return {

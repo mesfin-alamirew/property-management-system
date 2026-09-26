@@ -1,5 +1,8 @@
 import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { prisma } from '@/lib/prisma';
 
 import {
   findPropertyByCode,
@@ -113,7 +116,39 @@ export async function createProperty(userId: string, data: PropertyFormData) {
     }
   }
 
-  return createPropertyRecord(data);
+  return prisma.$transaction(async (tx) => {
+    const property = await createPropertyRecord(tx, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.PROPERTY_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.PROPERTY,
+      entityId: property.id,
+      description: `Property ${property.propertyCode} created`,
+      newValue: {
+        propertyCode: property.propertyCode,
+        name: property.name,
+        displayName: property.displayName,
+        description: property.description,
+        address: property.address,
+        city: property.city,
+        stateProvince: property.stateProvince,
+        postalCode: property.postalCode,
+        latitude: property.latitude?.toString() ?? null,
+        longitude: property.longitude?.toString() ?? null,
+        constructionDate: property.constructionDate?.toISOString() ?? null,
+        grossAreaSqm: property.grossAreaSqm?.toString() ?? null,
+        organizationUnitId: property.organizationUnitId,
+        propertyTypeId: property.propertyTypeId,
+        propertyCategoryId: property.propertyCategoryId,
+        propertyTenureId: property.propertyTenureId,
+        propertyStatusId: property.propertyStatusId,
+        isActive: property.isActive,
+      },
+    });
+
+    return property;
+  });
 }
 
 export async function updateProperty(
@@ -126,6 +161,11 @@ export async function updateProperty(
     permissionCode: 'PROPERTY:UPDATE',
   });
 
+  const property = await findPropertyById(id);
+
+  if (!property) {
+    throw new AppError('Property not found', 'PROPERTY_NOT_FOUND');
+  }
   const existingProperty = await findPropertyByCode(data.propertyCode, id);
 
   if (existingProperty) {
@@ -216,7 +256,60 @@ export async function updateProperty(
     }
   }
 
-  return updatePropertyRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedProperty = await updatePropertyRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.PROPERTY_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.PROPERTY,
+      entityId: updatedProperty.id,
+      description: `Property ${updatedProperty.propertyCode} updated`,
+      oldValue: {
+        propertyCode: property.propertyCode,
+        name: property.name,
+        displayName: property.displayName,
+        description: property.description,
+        address: property.address,
+        city: property.city,
+        stateProvince: property.stateProvince,
+        postalCode: property.postalCode,
+        latitude: property.latitude?.toString() ?? null,
+        longitude: property.longitude?.toString() ?? null,
+        constructionDate: property.constructionDate?.toISOString() ?? null,
+        grossAreaSqm: property.grossAreaSqm?.toString() ?? null,
+        organizationUnitId: property.organizationUnitId,
+        propertyTypeId: property.propertyTypeId,
+        propertyCategoryId: property.propertyCategoryId,
+        propertyTenureId: property.propertyTenureId,
+        propertyStatusId: property.propertyStatusId,
+        isActive: property.isActive,
+      },
+      newValue: {
+        propertyCode: updatedProperty.propertyCode,
+        name: updatedProperty.name,
+        displayName: updatedProperty.displayName,
+        description: updatedProperty.description,
+        address: updatedProperty.address,
+        city: updatedProperty.city,
+        stateProvince: updatedProperty.stateProvince,
+        postalCode: updatedProperty.postalCode,
+        latitude: updatedProperty.latitude?.toString() ?? null,
+        longitude: updatedProperty.longitude?.toString() ?? null,
+        constructionDate:
+          updatedProperty.constructionDate?.toISOString() ?? null,
+        grossAreaSqm: updatedProperty.grossAreaSqm?.toString() ?? null,
+        organizationUnitId: updatedProperty.organizationUnitId,
+        propertyTypeId: updatedProperty.propertyTypeId,
+        propertyCategoryId: updatedProperty.propertyCategoryId,
+        propertyTenureId: updatedProperty.propertyTenureId,
+        propertyStatusId: updatedProperty.propertyStatusId,
+        isActive: updatedProperty.isActive,
+      },
+    });
+
+    return updatedProperty;
+  });
 }
 
 export async function deactivateProperty(userId: string, id: string) {
@@ -238,5 +331,58 @@ export async function deactivateProperty(userId: string, id: string) {
     );
   }
 
-  return deactivatePropertyRecord(id);
+  return prisma.$transaction(async (tx) => {
+    const updatedProperty = await deactivatePropertyRecord(tx, id);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.PROPERTY_DEACTIVATED,
+      entityType: AUDIT_ENTITY_TYPES.PROPERTY,
+      entityId: updatedProperty.id,
+      description: `Property ${updatedProperty.propertyCode} deactivated`,
+      oldValue: {
+        propertyCode: property.propertyCode,
+        name: property.name,
+        displayName: property.displayName,
+        description: property.description,
+        address: property.address,
+        city: property.city,
+        stateProvince: property.stateProvince,
+        postalCode: property.postalCode,
+        latitude: property.latitude?.toString() ?? null,
+        longitude: property.longitude?.toString() ?? null,
+        constructionDate: property.constructionDate?.toISOString() ?? null,
+        grossAreaSqm: property.grossAreaSqm?.toString() ?? null,
+        organizationUnitId: property.organizationUnitId,
+        propertyTypeId: property.propertyTypeId,
+        propertyCategoryId: property.propertyCategoryId,
+        propertyTenureId: property.propertyTenureId,
+        propertyStatusId: property.propertyStatusId,
+        isActive: property.isActive,
+      },
+      newValue: {
+        propertyCode: updatedProperty.propertyCode,
+        name: updatedProperty.name,
+        displayName: updatedProperty.displayName,
+        description: updatedProperty.description,
+        address: updatedProperty.address,
+        city: updatedProperty.city,
+        stateProvince: updatedProperty.stateProvince,
+        postalCode: updatedProperty.postalCode,
+        latitude: updatedProperty.latitude?.toString() ?? null,
+        longitude: updatedProperty.longitude?.toString() ?? null,
+        constructionDate:
+          updatedProperty.constructionDate?.toISOString() ?? null,
+        grossAreaSqm: updatedProperty.grossAreaSqm?.toString() ?? null,
+        organizationUnitId: updatedProperty.organizationUnitId,
+        propertyTypeId: updatedProperty.propertyTypeId,
+        propertyCategoryId: updatedProperty.propertyCategoryId,
+        propertyTenureId: updatedProperty.propertyTenureId,
+        propertyStatusId: updatedProperty.propertyStatusId,
+        isActive: updatedProperty.isActive,
+      },
+    });
+
+    return updatedProperty;
+  });
 }

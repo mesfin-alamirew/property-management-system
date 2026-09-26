@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getEmployees() {
+export async function getEmployees(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'EMPLOYEE:READ',
+  });
+
   return prisma.employee.findMany({
     where: {
       isActive: true,
@@ -23,7 +29,12 @@ export async function getEmployees() {
   });
 }
 
-export async function getEmployeeById(id: string) {
+export async function getEmployeeById(userId: string, id: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'EMPLOYEE:READ',
+  });
+
   return prisma.employee.findUnique({
     where: {
       id,

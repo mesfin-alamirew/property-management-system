@@ -149,8 +149,12 @@ export async function createAssetRecord(
   });
 }
 
-export async function updateAssetRecord(id: string, data: AssetFormData) {
-  return prisma.asset.update({
+export async function updateAssetRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+  data: AssetFormData,
+) {
+  return tx.asset.update({
     where: {
       id,
     },

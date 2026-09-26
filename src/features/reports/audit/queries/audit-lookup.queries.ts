@@ -1,6 +1,13 @@
 import { prisma } from '@/lib/prisma';
 
-export async function getAuditReportUsers() {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
+export async function getAuditReportUsers(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_AUDIT:READ',
+  });
+
   return prisma.user.findMany({
     orderBy: {
       displayName: 'asc',
@@ -14,7 +21,12 @@ export async function getAuditReportUsers() {
   });
 }
 
-export async function getAuditReportActions() {
+export async function getAuditReportActions(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_AUDIT:READ',
+  });
+
   const auditLogs = await prisma.auditLog.findMany({
     distinct: ['action'],
     orderBy: {
@@ -28,7 +40,12 @@ export async function getAuditReportActions() {
   return auditLogs.map((auditLog) => auditLog.action);
 }
 
-export async function getAuditReportEntityTypes() {
+export async function getAuditReportEntityTypes(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_AUDIT:READ',
+  });
+
   const auditLogs = await prisma.auditLog.findMany({
     distinct: ['entityType'],
     orderBy: {

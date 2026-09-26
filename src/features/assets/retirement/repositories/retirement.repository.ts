@@ -159,27 +159,27 @@ export async function createRetirementRecord(
   });
 }
 
-export async function updateRetirementRecord(
-  tx: Prisma.TransactionClient,
-  id: string,
-  data: RetirementFormData,
-) {
-  return tx.retirement.update({
-    where: {
-      id,
-    },
+// export async function updateRetirementRecord(
+//   tx: Prisma.TransactionClient,
+//   id: string,
+//   data: RetirementFormData,
+// ) {
+//   return tx.retirement.update({
+//     where: {
+//       id,
+//     },
 
-    data: {
-      assetId: data.assetId,
-      retirementDate: data.retirementDate ?? new Date(),
-      reason: data.reason,
-      conditionId: data.conditionId,
-      notes: data.notes,
-    },
+//     data: {
+//       assetId: data.assetId,
+//       retirementDate: data.retirementDate ?? new Date(),
+//       reason: data.reason,
+//       conditionId: data.conditionId,
+//       notes: data.notes,
+//     },
 
-    include: retirementInclude,
-  });
-}
+//     include: retirementInclude,
+//   });
+// }
 
 export async function requestRetirementRecord(
   tx: Prisma.TransactionClient,

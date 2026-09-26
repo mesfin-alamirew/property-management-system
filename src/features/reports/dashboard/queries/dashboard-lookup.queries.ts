@@ -1,6 +1,13 @@
 import { prisma } from '@/lib/prisma';
 
-export async function getDashboardLookups() {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
+export async function getDashboardLookups(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_DASHBOARD:READ',
+  });
+
   const [organizationUnits, assetTypes, assetStatuses] = await Promise.all([
     prisma.organizationUnit.findMany({
       orderBy: {

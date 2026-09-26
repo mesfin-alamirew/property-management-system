@@ -1,3 +1,7 @@
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
 import { getPhysicalVerificationReport } from '../queries/verification.queries';
 import {
   getVerificationLocations,
@@ -6,14 +10,28 @@ import {
 import { VerificationReportWorkspace } from './verification-report-workspace';
 
 export async function VerificationReportPage() {
-  const [organizationUnits, locations, initialRows] = await Promise.all([
-    getVerificationOrganizationUnits(),
-    getVerificationLocations(),
-    getPhysicalVerificationReport({
-      scope: 'ALL',
-      status: 'ALL',
-    }),
-  ]);
+  const user = await requireCurrentUser();
+
+  let organizationUnits;
+  let locations;
+  let initialRows;
+
+  try {
+    [organizationUnits, locations, initialRows] = await Promise.all([
+      getVerificationOrganizationUnits(user.id),
+      getVerificationLocations(user.id),
+      getPhysicalVerificationReport(user.id, {
+        scope: 'ALL',
+        status: 'ALL',
+      }),
+    ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
 
   return (
     <div className="space-y-6">

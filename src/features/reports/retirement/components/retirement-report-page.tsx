@@ -1,3 +1,7 @@
+import { AccessDenied } from '@/components/ui/access-denied';
+import { requireCurrentUser } from '@/lib/auth/require-current-user';
+import { AppError } from '@/lib/errors';
+
 import { getRetirementReportAction } from '../actions/retirement.actions';
 import {
   getRetirementReportAssets,
@@ -7,12 +11,27 @@ import {
 import { RetirementReportWorkspace } from './retirement-report-workspace';
 
 export async function RetirementReportPage() {
-  const [reportResult, assets, conditions, users] = await Promise.all([
-    getRetirementReportAction({}),
-    getRetirementReportAssets(),
-    getRetirementReportConditions(),
-    getRetirementReportUsers(),
-  ]);
+  const user = await requireCurrentUser();
+
+  let reportResult;
+  let assets;
+  let conditions;
+  let users;
+
+  try {
+    [reportResult, assets, conditions, users] = await Promise.all([
+      getRetirementReportAction({}),
+      getRetirementReportAssets(user.id),
+      getRetirementReportConditions(user.id),
+      getRetirementReportUsers(user.id),
+    ]);
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
+      return <AccessDenied />;
+    }
+
+    throw error;
+  }
 
   if (!reportResult.success) {
     return (

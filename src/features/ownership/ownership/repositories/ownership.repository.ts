@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@/generated/prisma/client';
 
 import type { OwnershipFormData } from '../schemas/ownership.schema';
 
@@ -69,9 +70,11 @@ export async function findOwnershipByPropertyId(propertyId: string) {
     },
   });
 }
-
-export async function createOwnershipRecord(data: OwnershipFormData) {
-  return prisma.ownership.create({
+export async function createOwnershipRecord(
+  tx: Prisma.TransactionClient,
+  data: OwnershipFormData,
+) {
+  return tx.ownership.create({
     data: {
       propertyId: data.propertyId,
       ownershipTypeId: data.ownershipTypeId,
@@ -93,10 +96,11 @@ export async function createOwnershipRecord(data: OwnershipFormData) {
 }
 
 export async function updateOwnershipRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: OwnershipFormData,
 ) {
-  return prisma.ownership.update({
+  return tx.ownership.update({
     where: {
       id,
     },
@@ -120,8 +124,11 @@ export async function updateOwnershipRecord(
   });
 }
 
-export async function deactivateOwnershipRecord(id: string) {
-  return prisma.ownership.update({
+export async function deactivateOwnershipRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.ownership.update({
     where: {
       id,
     },

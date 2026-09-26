@@ -10,9 +10,13 @@ export default async function AccountabilityReportPage() {
   const user = await requireCurrentUser();
 
   let rows;
+  let lookups;
 
   try {
-    rows = await getAccountabilityReport(user.id, {});
+    [rows, lookups] = await Promise.all([
+      getAccountabilityReport(user.id, {}),
+      getAccountabilityReportLookups(user.id),
+    ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
       return <AccessDenied />;
@@ -20,8 +24,6 @@ export default async function AccountabilityReportPage() {
 
     throw error;
   }
-
-  const lookups = await getAccountabilityReportLookups();
 
   return (
     <div className="space-y-6">

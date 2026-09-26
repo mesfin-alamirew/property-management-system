@@ -18,9 +18,9 @@ export default async function AssignmentsReportRoute() {
 
   try {
     const [employees, organizationUnits, assetTypes, rows] = await Promise.all([
-      getAssignmentEmployees(),
-      getAssignmentOrganizationUnits(),
-      getAssignmentAssetTypes(),
+      getAssignmentEmployees(user.id),
+      getAssignmentOrganizationUnits(user.id),
+      getAssignmentAssetTypes(user.id),
       getAssignmentReport(user.id, {
         status: 'CURRENT',
       }),

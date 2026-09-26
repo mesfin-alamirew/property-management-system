@@ -9,6 +9,8 @@ import { createAssetMovementRecord } from '../repositories/asset-movement.reposi
 
 import type { AssetMovementFormData } from '../schemas/asset-movement.schema';
 
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 export async function createAssetMovement(
   userId: string,
   data: AssetMovementFormData,
@@ -56,12 +58,26 @@ export async function createAssetMovement(
     );
 
     await tx.asset.update({
-      where: {
-        id: asset.id,
-      },
+      where: { id: asset.id },
+      data: { locationId: data.toLocationId },
+    });
 
-      data: {
-        locationId: data.toLocationId,
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ASSET_MOVED,
+      entityType: AUDIT_ENTITY_TYPES.ASSET_MOVEMENT,
+      entityId: movement.id,
+      description: `Asset ${asset.assetCode} moved`,
+      oldValue: {
+        assetId: asset.id,
+        locationId: asset.locationId,
+      },
+      newValue: {
+        assetId: movement.assetId,
+        fromLocationId: movement.fromLocationId,
+        toLocationId: movement.toLocationId,
+        reason: movement.reason,
+        notes: movement.notes,
       },
     });
 

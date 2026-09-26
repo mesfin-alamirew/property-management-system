@@ -108,13 +108,15 @@ export async function createAcquisitionRecord(
 }
 
 export async function updateAcquisitionRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: AcquisitionFormData,
 ) {
-  return prisma.acquisition.update({
+  return tx.acquisition.update({
     where: {
       id,
     },
+
     data: {
       // acquisitionNumber is deliberately NOT updated.
       acquisitionDate: data.acquisitionDate,

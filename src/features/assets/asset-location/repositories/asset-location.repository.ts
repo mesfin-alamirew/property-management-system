@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-
+import { Prisma } from '@/generated/prisma/client';
 import type { AssetLocationFormData } from '../schemas/asset-location.schema';
 
 export async function findAssetLocations() {
@@ -84,8 +84,11 @@ export async function findAssetLocationByName(
     },
   });
 }
-export async function createAssetLocationRecord(data: AssetLocationFormData) {
-  return prisma.assetLocation.create({
+export async function createAssetLocationRecord(
+  tx: Prisma.TransactionClient,
+  data: AssetLocationFormData,
+) {
+  return tx.assetLocation.create({
     data: {
       code: data.code,
       name: data.name,
@@ -101,10 +104,11 @@ export async function createAssetLocationRecord(data: AssetLocationFormData) {
 }
 
 export async function updateAssetLocationRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: AssetLocationFormData,
 ) {
-  return prisma.assetLocation.update({
+  return tx.assetLocation.update({
     where: {
       id,
     },
@@ -123,8 +127,11 @@ export async function updateAssetLocationRecord(
   });
 }
 
-export async function deactivateAssetLocationRecord(id: string) {
-  return prisma.assetLocation.update({
+export async function deactivateAssetLocationRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.assetLocation.update({
     where: {
       id,
     },

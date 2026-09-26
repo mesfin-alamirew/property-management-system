@@ -20,7 +20,7 @@ export default async function Page() {
     throw error;
   }
 
-  const lookups = await getAccountabilityReportLookups();
+  const lookups = await getAccountabilityReportLookups(user.id);
 
   return (
     <div className="space-y-6">

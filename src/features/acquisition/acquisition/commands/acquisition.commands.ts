@@ -13,7 +13,8 @@ import {
 import type { AcquisitionFormData } from '../schemas/acquisition.schema';
 
 import { generateNextAcquisitionNumber } from '../services/acquisition-number.service';
-
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 export async function createAcquisition(
   userId: string,
   data: AcquisitionFormData,
@@ -48,7 +49,33 @@ export async function createAcquisition(
   return prisma.$transaction(async (tx) => {
     const acquisitionNumber = await generateNextAcquisitionNumber(tx);
 
-    return createAcquisitionRecord(tx, acquisitionNumber, data);
+    const acquisition = await createAcquisitionRecord(
+      tx,
+      acquisitionNumber,
+      data,
+    );
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ACQUISITION_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.ACQUISITION,
+      entityId: acquisition.id,
+      description: `Acquisition ${acquisition.acquisitionNumber} created`,
+      newValue: {
+        acquisitionNumber: acquisition.acquisitionNumber,
+        acquisitionDate: acquisition.acquisitionDate.toISOString(),
+        acquisitionMethodId: acquisition.acquisitionMethodId,
+        supplierName: acquisition.supplierName,
+        referenceNumber: acquisition.referenceNumber,
+        description: acquisition.description,
+        fundingSource: acquisition.fundingSource,
+        totalAmount: acquisition.totalAmount?.toString() ?? null,
+        currency: acquisition.currency,
+        notes: acquisition.notes,
+      },
+    });
+
+    return acquisition;
   });
 }
 
@@ -90,5 +117,41 @@ export async function updateAcquisition(
     );
   }
 
-  return updateAcquisitionRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedAcquisition = await updateAcquisitionRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ACQUISITION_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.ACQUISITION,
+      entityId: updatedAcquisition.id,
+      description: `Acquisition ${updatedAcquisition.acquisitionNumber} updated`,
+      oldValue: {
+        acquisitionNumber: acquisition.acquisitionNumber,
+        acquisitionDate: acquisition.acquisitionDate.toISOString(),
+        acquisitionMethodId: acquisition.acquisitionMethodId,
+        supplierName: acquisition.supplierName,
+        referenceNumber: acquisition.referenceNumber,
+        description: acquisition.description,
+        fundingSource: acquisition.fundingSource,
+        totalAmount: acquisition.totalAmount?.toString() ?? null,
+        currency: acquisition.currency,
+        notes: acquisition.notes,
+      },
+      newValue: {
+        acquisitionNumber: updatedAcquisition.acquisitionNumber,
+        acquisitionDate: updatedAcquisition.acquisitionDate.toISOString(),
+        acquisitionMethodId: updatedAcquisition.acquisitionMethodId,
+        supplierName: updatedAcquisition.supplierName,
+        referenceNumber: updatedAcquisition.referenceNumber,
+        description: updatedAcquisition.description,
+        fundingSource: updatedAcquisition.fundingSource,
+        totalAmount: updatedAcquisition.totalAmount?.toString() ?? null,
+        currency: updatedAcquisition.currency,
+        notes: updatedAcquisition.notes,
+      },
+    });
+
+    return updatedAcquisition;
+  });
 }

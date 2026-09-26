@@ -1,6 +1,6 @@
+import { AccessDenied } from '@/components/ui/access-denied';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
-import { AccessDenied } from '@/components/ui/access-denied';
 
 import { getMovementReport } from '../queries/movement.queries';
 import {
@@ -14,9 +14,17 @@ export async function MovementReportPage() {
   const user = await requireCurrentUser();
 
   let reportResult;
+  let assets;
+  let locations;
+  let users;
 
   try {
-    reportResult = await getMovementReport(user.id, {});
+    [reportResult, assets, locations, users] = await Promise.all([
+      getMovementReport(user.id, {}),
+      getMovementReportAssets(user.id),
+      getMovementReportLocations(user.id),
+      getMovementReportUsers(user.id),
+    ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
       return <AccessDenied />;
@@ -24,12 +32,6 @@ export async function MovementReportPage() {
 
     throw error;
   }
-
-  const [assets, locations, users] = await Promise.all([
-    getMovementReportAssets(),
-    getMovementReportLocations(),
-    getMovementReportUsers(),
-  ]);
 
   return (
     <div className="space-y-6">

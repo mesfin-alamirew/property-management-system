@@ -1,6 +1,10 @@
 import { prisma } from '@/lib/prisma';
-
-export async function getAssetReportAssetTypes() {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+export async function getAssetReportAssetTypes(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.assetType.findMany({
     where: {
       isActive: true,
@@ -23,7 +27,11 @@ export async function getAssetReportAssetTypes() {
   });
 }
 
-export async function getAssetReportAssetCategories() {
+export async function getAssetReportAssetCategories(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.assetCategory.findMany({
     where: {
       isActive: true,
@@ -39,7 +47,11 @@ export async function getAssetReportAssetCategories() {
   });
 }
 
-export async function getAssetReportStatuses() {
+export async function getAssetReportStatuses(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.assetStatus.findMany({
     where: {
       isActive: true,
@@ -55,7 +67,11 @@ export async function getAssetReportStatuses() {
   });
 }
 
-export async function getAssetReportConditions() {
+export async function getAssetReportConditions(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.assetCondition.findMany({
     where: {
       isActive: true,
@@ -71,7 +87,11 @@ export async function getAssetReportConditions() {
   });
 }
 
-export async function getAssetReportOrganizationUnits() {
+export async function getAssetReportOrganizationUnits(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.organizationUnit.findMany({
     where: {
       isActive: true,
@@ -87,7 +107,11 @@ export async function getAssetReportOrganizationUnits() {
   });
 }
 
-export async function getAssetReportLocations() {
+export async function getAssetReportLocations(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.assetLocation.findMany({
     where: {
       isActive: true,
@@ -110,7 +134,11 @@ export async function getAssetReportLocations() {
   });
 }
 
-export async function getAssetReportAcquisitionMethods() {
+export async function getAssetReportAcquisitionMethods(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSET:READ',
+  });
   return prisma.acquisitionMethod.findMany({
     where: {
       isActive: true,

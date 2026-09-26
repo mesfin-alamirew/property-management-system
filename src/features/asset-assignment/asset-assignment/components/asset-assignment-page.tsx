@@ -20,7 +20,7 @@ export async function AssetAssignmentPage() {
     data = await Promise.all([
       getAssetAssignments(user.id),
       getAvailableAssets(),
-      getEmployees(),
+      getEmployees(user.id),
     ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {

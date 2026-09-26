@@ -1,6 +1,11 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getDisposalReportAssets() {
+export async function getDisposalReportAssets(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_DISPOSAL:READ',
+  });
   return prisma.asset.findMany({
     orderBy: {
       assetCode: 'asc',
@@ -14,7 +19,11 @@ export async function getDisposalReportAssets() {
   });
 }
 
-export async function getDisposalReportUsers() {
+export async function getDisposalReportUsers(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_DISPOSAL:READ',
+  });
   return prisma.user.findMany({
     where: {
       isActive: true,

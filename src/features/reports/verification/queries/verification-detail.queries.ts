@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import type {
   PhysicalVerificationDetail,
   PhysicalVerificationDetailItem,
@@ -16,12 +16,19 @@ const discrepancyResults = [
   'MULTIPLE_DISCREPANCIES',
 ] as const;
 
-export async function getPhysicalVerificationDetail(id: string): Promise<{
+export async function getPhysicalVerificationDetail(
+  userId: string,
+  id: string,
+): Promise<{
   verification: PhysicalVerificationDetail;
   items: PhysicalVerificationDetailItem[];
   resultSummary: PhysicalVerificationDetailResultSummary[];
   unregisteredObservations: PhysicalVerificationUnregisteredObservation[];
 } | null> {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_VERIFICATION:READ',
+  });
   const verification = await prisma.physicalVerification.findUnique({
     where: { id },
     select: {

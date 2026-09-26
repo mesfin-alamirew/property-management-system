@@ -1,14 +1,15 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getVerificationOrganizationUnits() {
+export async function getVerificationOrganizationUnits(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_VERIFICATION:READ',
+  });
+
   return prisma.organizationUnit.findMany({
     where: {
       isActive: true,
-    },
-    select: {
-      id: true,
-      code: true,
-      name: true,
     },
     orderBy: {
       name: 'asc',
@@ -16,15 +17,15 @@ export async function getVerificationOrganizationUnits() {
   });
 }
 
-export async function getVerificationLocations() {
+export async function getVerificationLocations(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_VERIFICATION:READ',
+  });
+
   return prisma.assetLocation.findMany({
     where: {
       isActive: true,
-    },
-    select: {
-      id: true,
-      code: true,
-      name: true,
     },
     orderBy: {
       name: 'asc',

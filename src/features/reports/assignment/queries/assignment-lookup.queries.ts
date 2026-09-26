@@ -1,6 +1,11 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getAssignmentEmployees() {
+export async function getAssignmentEmployees(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSIGNMENT:READ',
+  });
   return prisma.employee.findMany({
     where: {
       isActive: true,
@@ -23,7 +28,11 @@ export async function getAssignmentEmployees() {
   });
 }
 
-export async function getAssignmentOrganizationUnits() {
+export async function getAssignmentOrganizationUnits(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSIGNMENT:READ',
+  });
   return prisma.organizationUnit.findMany({
     where: {
       isActive: true,
@@ -39,7 +48,11 @@ export async function getAssignmentOrganizationUnits() {
   });
 }
 
-export async function getAssignmentAssetTypes() {
+export async function getAssignmentAssetTypes(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ASSIGNMENT:READ',
+  });
   return prisma.assetType.findMany({
     where: {
       isActive: true,

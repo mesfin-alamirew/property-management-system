@@ -14,9 +14,17 @@ export async function AuditReportPage() {
   const user = await requireCurrentUser();
 
   let rows;
+  let users;
+  let actions;
+  let entityTypes;
 
   try {
-    rows = await getAuditReport(user.id, {});
+    [rows, users, actions, entityTypes] = await Promise.all([
+      getAuditReport(user.id, {}),
+      getAuditReportUsers(user.id),
+      getAuditReportActions(user.id),
+      getAuditReportEntityTypes(user.id),
+    ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
       return <AccessDenied />;
@@ -24,12 +32,6 @@ export async function AuditReportPage() {
 
     throw error;
   }
-
-  const [users, actions, entityTypes] = await Promise.all([
-    getAuditReportUsers(),
-    getAuditReportActions(),
-    getAuditReportEntityTypes(),
-  ]);
 
   return (
     <div className="space-y-6">

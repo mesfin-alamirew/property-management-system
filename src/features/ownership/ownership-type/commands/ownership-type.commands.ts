@@ -1,5 +1,8 @@
 import { requirePermission } from '@/lib/authorization/authorization.service';
 import { AppError } from '@/lib/errors';
+import { prisma } from '@/lib/prisma';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
 
 import {
   findOwnershipTypeById,
@@ -26,7 +29,25 @@ export async function createOwnershipType(
     throw new AppError('Ownership Type code already exists', 'DUPLICATE_CODE');
   }
 
-  return createOwnershipTypeRecord(data);
+  return prisma.$transaction(async (tx) => {
+    const ownershipType = await createOwnershipTypeRecord(tx, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.OWNERSHIP_TYPE_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.OWNERSHIP_TYPE,
+      entityId: ownershipType.id,
+      description: `Ownership Type ${ownershipType.code} created`,
+      newValue: {
+        code: ownershipType.code,
+        name: ownershipType.name,
+        description: ownershipType.description,
+        isActive: ownershipType.isActive,
+      },
+    });
+
+    return ownershipType;
+  });
 }
 
 export async function updateOwnershipType(
@@ -51,7 +72,31 @@ export async function updateOwnershipType(
     throw new AppError('Ownership Type code already exists', 'DUPLICATE_CODE');
   }
 
-  return updateOwnershipTypeRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedOwnershipType = await updateOwnershipTypeRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.OWNERSHIP_TYPE_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.OWNERSHIP_TYPE,
+      entityId: updatedOwnershipType.id,
+      description: `Ownership Type ${updatedOwnershipType.code} updated`,
+      oldValue: {
+        code: ownershipType.code,
+        name: ownershipType.name,
+        description: ownershipType.description,
+        isActive: ownershipType.isActive,
+      },
+      newValue: {
+        code: updatedOwnershipType.code,
+        name: updatedOwnershipType.name,
+        description: updatedOwnershipType.description,
+        isActive: updatedOwnershipType.isActive,
+      },
+    });
+
+    return updatedOwnershipType;
+  });
 }
 
 export async function deactivateOwnershipType(userId: string, id: string) {
@@ -66,5 +111,29 @@ export async function deactivateOwnershipType(userId: string, id: string) {
     throw new AppError('Ownership Type not found', 'OWNERSHIP_TYPE_NOT_FOUND');
   }
 
-  return deactivateOwnershipTypeRecord(id);
+  return prisma.$transaction(async (tx) => {
+    const updatedOwnershipType = await deactivateOwnershipTypeRecord(tx, id);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.OWNERSHIP_TYPE_DEACTIVATED,
+      entityType: AUDIT_ENTITY_TYPES.OWNERSHIP_TYPE,
+      entityId: updatedOwnershipType.id,
+      description: `Ownership Type ${updatedOwnershipType.code} deactivated`,
+      oldValue: {
+        code: ownershipType.code,
+        name: ownershipType.name,
+        description: ownershipType.description,
+        isActive: ownershipType.isActive,
+      },
+      newValue: {
+        code: updatedOwnershipType.code,
+        name: updatedOwnershipType.name,
+        description: updatedOwnershipType.description,
+        isActive: updatedOwnershipType.isActive,
+      },
+    });
+
+    return updatedOwnershipType;
+  });
 }

@@ -12,7 +12,7 @@ import {
 
 import type { DisposalItemFormData } from '../schemas/disposal-item.schema';
 import { requirePermission } from '@/lib/authorization/authorization.service';
-
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 export async function createDisposalItem(
   userId: string,
   data: DisposalItemFormData,
@@ -26,6 +26,13 @@ export async function createDisposalItem(
 
   if (!disposal) {
     throw new AppError('Disposal not found', 'DISPOSAL_NOT_FOUND');
+  }
+
+  if (disposal.status !== 'DRAFT') {
+    throw new AppError(
+      'Items can only be added to draft disposals',
+      'INVALID_DISPOSAL_STATUS',
+    );
   }
 
   const asset = await findAssetById(data.assetId);
@@ -44,7 +51,21 @@ export async function createDisposalItem(
   }
 
   return prisma.$transaction(async (tx) => {
-    return createDisposalItemRecord(tx, data);
+    const disposalItem = await createDisposalItemRecord(tx, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: 'DISPOSAL_ITEM_CREATED',
+      entityType: 'DISPOSAL_ITEM',
+      entityId: disposalItem.id,
+      description: `Disposal item created for asset ${data.assetId}`,
+      newValue: {
+        disposalId: data.disposalId,
+        assetId: data.assetId,
+      },
+    });
+
+    return disposalItem;
   });
 }
 
@@ -64,10 +85,32 @@ export async function updateDisposalItem(
     throw new AppError('Disposal item not found', 'DISPOSAL_ITEM_NOT_FOUND');
   }
 
-  const disposal = await findDisposalById(data.disposalId);
+  const disposal = await findDisposalById(disposalItem.disposalId);
 
   if (!disposal) {
     throw new AppError('Disposal not found', 'DISPOSAL_NOT_FOUND');
+  }
+
+  if (disposal.status !== 'DRAFT') {
+    throw new AppError(
+      'Items can only be updated in draft disposals',
+      'INVALID_DISPOSAL_STATUS',
+    );
+  }
+
+  if (data.disposalId !== disposalItem.disposalId) {
+    const targetDisposal = await findDisposalById(data.disposalId);
+
+    if (!targetDisposal) {
+      throw new AppError('Disposal not found', 'DISPOSAL_NOT_FOUND');
+    }
+
+    if (targetDisposal.status !== 'DRAFT') {
+      throw new AppError(
+        'Items can only be moved to draft disposals',
+        'INVALID_DISPOSAL_STATUS',
+      );
+    }
   }
 
   const asset = await findAssetById(data.assetId);
@@ -85,5 +128,25 @@ export async function updateDisposalItem(
     );
   }
 
-  return updateDisposalItemRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedDisposalItem = await updateDisposalItemRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: 'DISPOSAL_ITEM_UPDATED',
+      entityType: 'DISPOSAL_ITEM',
+      entityId: updatedDisposalItem.id,
+      description: `Disposal item updated for asset ${data.assetId}`,
+      oldValue: {
+        disposalId: disposalItem.disposalId,
+        assetId: disposalItem.assetId,
+      },
+      newValue: {
+        disposalId: data.disposalId,
+        assetId: data.assetId,
+      },
+    });
+
+    return updatedDisposalItem;
+  });
 }

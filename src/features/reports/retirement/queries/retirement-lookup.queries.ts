@@ -1,6 +1,11 @@
 import { prisma } from '@/lib/prisma';
-
-export async function getRetirementReportAssets() {
+import { requirePermission } from '@/lib/authorization/authorization.service';
+import { StringDecoder } from 'string_decoder';
+export async function getRetirementReportAssets(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_RETIREMENT:READ',
+  });
   return prisma.asset.findMany({
     orderBy: {
       assetCode: 'asc',
@@ -14,7 +19,11 @@ export async function getRetirementReportAssets() {
   });
 }
 
-export async function getRetirementReportConditions() {
+export async function getRetirementReportConditions(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_RETIREMENT:READ',
+  });
   return prisma.assetCondition.findMany({
     orderBy: {
       name: 'asc',
@@ -26,7 +35,11 @@ export async function getRetirementReportConditions() {
   });
 }
 
-export async function getRetirementReportUsers() {
+export async function getRetirementReportUsers(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_RETIREMENT:READ',
+  });
   return prisma.user.findMany({
     where: {
       isActive: true,

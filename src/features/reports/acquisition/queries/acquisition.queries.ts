@@ -156,7 +156,12 @@ export async function getAcquisitionReport(
   }));
 }
 
-export async function getActiveAcquisitionMethods() {
+export async function getActiveAcquisitionMethods(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ACQUISITION:READ',
+  });
+
   return prisma.acquisitionMethod.findMany({
     where: {
       isActive: true,

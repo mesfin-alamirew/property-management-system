@@ -64,9 +64,9 @@ export async function getDashboardLookupsAction(): Promise<
   DashboardActionResult<Awaited<ReturnType<typeof getDashboardLookups>>>
 > {
   try {
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const data = await getDashboardLookups();
+    const data = await getDashboardLookups(user.id);
 
     return {
       success: true,

@@ -117,22 +117,22 @@ export async function createDisposalRecord(
   });
 }
 
-export async function updateDisposalRecord(id: string, data: DisposalFormData) {
-  return prisma.disposal.update({
-    where: {
-      id,
-    },
+// export async function updateDisposalRecord(id: string, data: DisposalFormData) {
+//   return prisma.disposal.update({
+//     where: {
+//       id,
+//     },
 
-    data: {
-      // referenceNumber is deliberately NOT updated.
+//     data: {
+//       // referenceNumber is deliberately NOT updated.
 
-      disposalDate: data.disposalDate,
-      method: data.method,
-      reason: data.reason,
-      notes: data.notes,
-    },
-  });
-}
+//       disposalDate: data.disposalDate,
+//       method: data.method,
+//       reason: data.reason,
+//       notes: data.notes,
+//     },
+//   });
+// }
 
 export async function findUserById(id: string) {
   return prisma.user.findUnique({
@@ -146,13 +146,24 @@ export async function requestDisposalRecord(
   tx: Prisma.TransactionClient,
   disposalId: string,
 ) {
-  return tx.disposal.update({
+  const result = await tx.disposal.updateMany({
     where: {
       id: disposalId,
+      status: 'DRAFT',
     },
 
     data: {
       status: 'REQUESTED',
+    },
+  });
+
+  if (result.count !== 1) {
+    throw new Error('Disposal status changed before request');
+  }
+
+  return tx.disposal.findUniqueOrThrow({
+    where: {
+      id: disposalId,
     },
   });
 }
@@ -162,15 +173,26 @@ export async function approveDisposalRecord(
   disposalId: string,
   userId: string,
 ) {
-  return tx.disposal.update({
+  const result = await tx.disposal.updateMany({
     where: {
       id: disposalId,
+      status: 'REQUESTED',
     },
 
     data: {
       status: 'APPROVED',
       approvedByUserId: userId,
       approvedAt: new Date(),
+    },
+  });
+
+  if (result.count !== 1) {
+    throw new Error('Disposal status changed before approval');
+  }
+
+  return tx.disposal.findUniqueOrThrow({
+    where: {
+      id: disposalId,
     },
   });
 }
@@ -181,9 +203,12 @@ export async function cancelDisposalRecord(
   userId: string,
   reason: string,
 ) {
-  return tx.disposal.update({
+  const result = await tx.disposal.updateMany({
     where: {
       id: disposalId,
+      status: {
+        in: ['DRAFT', 'REQUESTED'],
+      },
     },
 
     data: {
@@ -191,6 +216,16 @@ export async function cancelDisposalRecord(
       cancelledByUserId: userId,
       cancelledAt: new Date(),
       cancellationReason: reason,
+    },
+  });
+
+  if (result.count !== 1) {
+    throw new Error('Disposal status changed before cancellation');
+  }
+
+  return tx.disposal.findUniqueOrThrow({
+    where: {
+      id: disposalId,
     },
   });
 }

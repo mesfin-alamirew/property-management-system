@@ -1,5 +1,7 @@
 import { AppError } from '@/lib/errors';
-
+import { prisma } from '@/lib/prisma';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
 import {
   findBuildingTypeByCode,
   createBuildingTypeRecord,
@@ -26,7 +28,25 @@ export async function createBuildingType(
     throw new AppError('Building Type code already exists', 'DUPLICATE_CODE');
   }
 
-  return createBuildingTypeRecord(data);
+  return prisma.$transaction(async (tx) => {
+    const buildingType = await createBuildingTypeRecord(tx, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.BUILDING_TYPE_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.BUILDING_TYPE,
+      entityId: buildingType.id,
+      description: `Building Type ${buildingType.code} created`,
+      newValue: {
+        code: buildingType.code,
+        name: buildingType.name,
+        description: buildingType.description ?? null,
+        isActive: buildingType.isActive,
+      },
+    });
+
+    return buildingType;
+  });
 }
 
 export async function updateBuildingType(
@@ -38,7 +58,7 @@ export async function updateBuildingType(
     userId,
     permissionCode: 'BUILDING_TYPE:UPDATE',
   });
-  await getBuildingTypeById(id);
+  const buildingType = await getBuildingTypeById(id);
 
   const existingCode = await findBuildingTypeByCode(data.code, id);
 
@@ -46,7 +66,31 @@ export async function updateBuildingType(
     throw new AppError('Building Type code already exists', 'DUPLICATE_CODE');
   }
 
-  return updateBuildingTypeRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedBuildingType = await updateBuildingTypeRecord(tx, id, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.BUILDING_TYPE_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.BUILDING_TYPE,
+      entityId: updatedBuildingType.id,
+      description: `Building Type ${updatedBuildingType.code} updated`,
+      oldValue: {
+        code: buildingType.code,
+        name: buildingType.name,
+        description: buildingType.description ?? null,
+        isActive: buildingType.isActive,
+      },
+      newValue: {
+        code: updatedBuildingType.code,
+        name: updatedBuildingType.name,
+        description: updatedBuildingType.description ?? null,
+        isActive: updatedBuildingType.isActive,
+      },
+    });
+
+    return updatedBuildingType;
+  });
 }
 
 export async function deactivateBuildingType(userId: string, id: string) {
@@ -60,5 +104,29 @@ export async function deactivateBuildingType(userId: string, id: string) {
     throw new AppError('Building Type is already inactive', 'ALREADY_INACTIVE');
   }
 
-  return deactivateBuildingTypeRecord(id);
+  return prisma.$transaction(async (tx) => {
+    const updatedBuildingType = await deactivateBuildingTypeRecord(tx, id);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.BUILDING_TYPE_DEACTIVATED,
+      entityType: AUDIT_ENTITY_TYPES.BUILDING_TYPE,
+      entityId: updatedBuildingType.id,
+      description: `Building Type ${updatedBuildingType.code} deactivated`,
+      oldValue: {
+        code: buildingType.code,
+        name: buildingType.name,
+        description: buildingType.description ?? null,
+        isActive: buildingType.isActive,
+      },
+      newValue: {
+        code: updatedBuildingType.code,
+        name: updatedBuildingType.name,
+        description: updatedBuildingType.description ?? null,
+        isActive: updatedBuildingType.isActive,
+      },
+    });
+
+    return updatedBuildingType;
+  });
 }

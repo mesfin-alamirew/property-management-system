@@ -14,7 +14,7 @@ export default async function Page() {
 
     [initialData, lookups] = await Promise.all([
       getDashboardData(user.id),
-      getDashboardLookups(),
+      getDashboardLookups(user.id),
     ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {

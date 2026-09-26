@@ -1,6 +1,12 @@
+import { requirePermission } from '@/lib/authorization/authorization.service';
 import { prisma } from '@/lib/prisma';
 
-export async function getMaintenanceReportAssets() {
+export async function getMaintenanceReportAssets(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MAINTENANCE:READ',
+  });
+
   return prisma.asset.findMany({
     orderBy: {
       assetCode: 'asc',
@@ -14,7 +20,12 @@ export async function getMaintenanceReportAssets() {
   });
 }
 
-export async function getMaintenanceReportAssignedUsers() {
+export async function getMaintenanceReportAssignedUsers(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_MAINTENANCE:READ',
+  });
+
   return prisma.user.findMany({
     where: {
       isActive: true,

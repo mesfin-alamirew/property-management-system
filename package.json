@@ -10,10 +10,12 @@
     "seed": "tsx prisma/seed.ts",
     "test:auth": "tsx scripts/test-auth.ts",
     "test:building-action": "tsx scripts/test-building-action.ts",
+    "test:azure-blob": "tsx scripts/test-azure-blob.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
     "@azure/msal-node": "^6.0.0",
+    "@azure/storage-blob": "^12.33.0",
     "@hookform/resolvers": "^5.7.1",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",

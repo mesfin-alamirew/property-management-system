@@ -1,3 +1,4 @@
+import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export async function findAllAcquisitionMethods() {
@@ -43,18 +44,22 @@ export async function findAcquisitionMethodByName(name: string) {
   });
 }
 
-export async function createAcquisitionMethod(data: {
-  code: string;
-  name: string;
-  description?: string;
-  isActive: boolean;
-}) {
-  return prisma.acquisitionMethod.create({
+export async function createAcquisitionMethod(
+  tx: Prisma.TransactionClient,
+  data: {
+    code: string;
+    name: string;
+    description?: string;
+    isActive: boolean;
+  },
+) {
+  return tx.acquisitionMethod.create({
     data,
   });
 }
 
 export async function updateAcquisitionMethod(
+  tx: Prisma.TransactionClient,
   id: string,
   data: {
     code: string;
@@ -63,7 +68,7 @@ export async function updateAcquisitionMethod(
     isActive: boolean;
   },
 ) {
-  return prisma.acquisitionMethod.update({
+  return tx.acquisitionMethod.update({
     where: {
       id,
     },

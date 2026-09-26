@@ -1,29 +1,41 @@
-import { PropertyWorkspace } from './property-workspace';
-
-import { getProperties } from '../queries/property.queries';
-
-import { getOrganizationUnits } from '@/features/administration/organization-unit/queries/organization-unit.queries';
-import { getPropertyTypes } from '@/features/properties/property-type/queries/property-type.queries';
-import { getPropertyCategories } from '@/features/properties/property-category/queries/property-category.queries';
-import { getPropertyTenures } from '@/features/properties/property-tenure/queries/property-tenure.queries';
-import { getPropertyStatuses } from '@/features/properties/property-status/queries/property-status.queries';
+import { AccessDenied } from '@/components/ui/access-denied';
 import { requireCurrentUser } from '@/lib/auth/require-current-user';
 import { AppError } from '@/lib/errors';
-import { AccessDenied } from '@/components/ui/access-denied';
+
+import { getOrganizationUnits } from '@/features/administration/organization-unit/queries/organization-unit.queries';
+import { getPropertyCategories } from '@/features/properties/property-category/queries/property-category.queries';
+import { getPropertyStatuses } from '@/features/properties/property-status/queries/property-status.queries';
+import { getPropertyTenures } from '@/features/properties/property-tenure/queries/property-tenure.queries';
+import { getPropertyTypes } from '@/features/properties/property-type/queries/property-type.queries';
+
+import { getProperties } from '../queries/property.queries';
+import { PropertyWorkspace } from './property-workspace';
 
 export async function PropertyPage() {
   const user = await requireCurrentUser();
 
-  let data;
+  let properties;
+  let organizationUnits;
+  let propertyTypes;
+  let propertyCategories;
+  let propertyTenures;
+  let propertyStatuses;
 
   try {
-    data = await Promise.all([
+    [
+      properties,
+      organizationUnits,
+      propertyTypes,
+      propertyCategories,
+      propertyTenures,
+      propertyStatuses,
+    ] = await Promise.all([
       getProperties(user.id),
       getOrganizationUnits(user.id),
-      getPropertyTypes(),
-      getPropertyCategories(),
-      getPropertyTenures(),
-      getPropertyStatuses(),
+      getPropertyTypes(user.id),
+      getPropertyCategories(user.id),
+      getPropertyTenures(user.id),
+      getPropertyStatuses(user.id),
     ]);
   } catch (error) {
     if (error instanceof AppError && error.code === 'PERMISSION_DENIED') {
@@ -32,15 +44,6 @@ export async function PropertyPage() {
 
     throw error;
   }
-
-  const [
-    properties,
-    organizationUnits,
-    propertyTypes,
-    propertyCategories,
-    propertyTenures,
-    propertyStatuses,
-  ] = data;
 
   return (
     <PropertyWorkspace

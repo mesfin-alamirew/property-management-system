@@ -90,13 +90,15 @@ export async function createAcquisitionItemRecord(
 }
 
 export async function updateAcquisitionItemRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: AcquisitionItemFormData,
 ) {
-  return prisma.acquisitionItem.update({
+  return tx.acquisitionItem.update({
     where: {
       id,
     },
+
     data: {
       // acquisitionId and assetId can be deliberately controlled
       // by the command/business layer.

@@ -12,7 +12,7 @@ import {
   reportIncident,
   assignIncident,
   startIncident,
-  resolveIncident,
+  // resolveIncident,
   closeIncident,
   cancelIncident,
 } from '../commands/incident.commands';
@@ -184,37 +184,37 @@ export async function startIncidentAction(
   }
 }
 
-export async function resolveIncidentAction(
-  incidentId: string,
-): Promise<ActionResult<IncidentActionData>> {
-  try {
-    const user = await requireCurrentUser();
+// export async function resolveIncidentAction(
+//   incidentId: string,
+// ): Promise<ActionResult<IncidentActionData>> {
+//   try {
+//     const user = await requireCurrentUser();
 
-    const result = await resolveIncident(user.id, incidentId);
+//     const result = await resolveIncident(user.id, incidentId);
 
-    revalidatePath('/incidents');
-    revalidatePath(`/incidents/${incidentId}`);
+//     revalidatePath('/incidents');
+//     revalidatePath(`/incidents/${incidentId}`);
 
-    return {
-      success: true,
-      data: {
-        id: result.id,
-      },
-    };
-  } catch (error) {
-    if (error instanceof AppError) {
-      return {
-        success: false,
-        message: error.message,
-      };
-    }
+//     return {
+//       success: true,
+//       data: {
+//         id: result.id,
+//       },
+//     };
+//   } catch (error) {
+//     if (error instanceof AppError) {
+//       return {
+//         success: false,
+//         message: error.message,
+//       };
+//     }
 
-    return {
-      success: false,
-      message: 'Something went wrong',
-    };
-  }
-}
+//     return {
+//       success: false,
+//       message: 'Something went wrong',
+//     };
+//   }
+// }
 
 export async function closeIncidentAction(
   incidentId: string,

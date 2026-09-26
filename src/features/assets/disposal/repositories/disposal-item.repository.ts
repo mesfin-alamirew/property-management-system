@@ -100,10 +100,11 @@ export async function createDisposalItemRecord(
 }
 
 export async function updateDisposalItemRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: DisposalItemFormData,
 ) {
-  return prisma.disposalItem.update({
+  return tx.disposalItem.update({
     where: {
       id,
     },

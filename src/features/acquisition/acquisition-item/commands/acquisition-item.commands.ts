@@ -12,7 +12,8 @@ import {
 } from '../repositories/acquisition-item.repository';
 
 import type { AcquisitionItemFormData } from '../schemas/acquisition-item.schema';
-
+import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+import { recordAuditEvent } from '@/lib/audit/audit.service';
 export async function createAcquisitionItem(
   userId: string,
   data: AcquisitionItemFormData,
@@ -44,7 +45,23 @@ export async function createAcquisitionItem(
   }
 
   return prisma.$transaction(async (tx) => {
-    return createAcquisitionItemRecord(tx, data);
+    const acquisitionItem = await createAcquisitionItemRecord(tx, data);
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ACQUISITION_ITEM_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.ACQUISITION_ITEM,
+      entityId: acquisitionItem.id,
+      description: `Acquisition Item created for asset ${acquisitionItem.assetId}`,
+      newValue: {
+        acquisitionId: acquisitionItem.acquisitionId,
+        assetId: acquisitionItem.assetId,
+        unitCost: acquisitionItem.unitCost?.toString() ?? null,
+        totalCost: acquisitionItem.totalCost?.toString() ?? null,
+      },
+    });
+
+    return acquisitionItem;
   });
 }
 
@@ -88,5 +105,33 @@ export async function updateAcquisitionItem(
     );
   }
 
-  return updateAcquisitionItemRecord(id, data);
+  return prisma.$transaction(async (tx) => {
+    const updatedAcquisitionItem = await updateAcquisitionItemRecord(
+      tx,
+      id,
+      data,
+    );
+
+    await recordAuditEvent(tx, {
+      userId,
+      action: AUDIT_ACTIONS.ACQUISITION_ITEM_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.ACQUISITION_ITEM,
+      entityId: updatedAcquisitionItem.id,
+      description: `Acquisition Item updated for asset ${updatedAcquisitionItem.assetId}`,
+      oldValue: {
+        acquisitionId: acquisitionItem.acquisitionId,
+        assetId: acquisitionItem.assetId,
+        unitCost: acquisitionItem.unitCost?.toString() ?? null,
+        totalCost: acquisitionItem.totalCost?.toString() ?? null,
+      },
+      newValue: {
+        acquisitionId: updatedAcquisitionItem.acquisitionId,
+        assetId: updatedAcquisitionItem.assetId,
+        unitCost: updatedAcquisitionItem.unitCost?.toString() ?? null,
+        totalCost: updatedAcquisitionItem.totalCost?.toString() ?? null,
+      },
+    });
+
+    return updatedAcquisitionItem;
+  });
 }

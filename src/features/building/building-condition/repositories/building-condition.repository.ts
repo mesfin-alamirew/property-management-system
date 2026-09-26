@@ -1,3 +1,4 @@
+import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 
 import type { BuildingConditionFormData } from '../schemas/building-condition.schema';
@@ -38,9 +39,10 @@ export async function findBuildingConditionByCode(
 }
 
 export async function createBuildingConditionRecord(
+  tx: Prisma.TransactionClient,
   data: BuildingConditionFormData,
 ) {
-  return prisma.buildingCondition.create({
+  return tx.buildingCondition.create({
     data: {
       code: data.code,
       name: data.name,
@@ -50,10 +52,11 @@ export async function createBuildingConditionRecord(
 }
 
 export async function updateBuildingConditionRecord(
+  tx: Prisma.TransactionClient,
   id: string,
   data: BuildingConditionFormData,
 ) {
-  return prisma.buildingCondition.update({
+  return tx.buildingCondition.update({
     where: {
       id,
     },
@@ -65,8 +68,11 @@ export async function updateBuildingConditionRecord(
   });
 }
 
-export async function deactivateBuildingConditionRecord(id: string) {
-  return prisma.buildingCondition.update({
+export async function deactivateBuildingConditionRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.buildingCondition.update({
     where: {
       id,
     },

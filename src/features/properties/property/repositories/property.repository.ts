@@ -83,8 +83,11 @@ export async function findPropertyByCode(
   });
 }
 
-export async function createPropertyRecord(data: PropertyFormData) {
-  return prisma.property.create({
+export async function createPropertyRecord(
+  tx: Prisma.TransactionClient,
+  data: PropertyFormData,
+) {
+  return tx.property.create({
     data: {
       propertyCode: data.propertyCode,
       name: data.name,
@@ -113,8 +116,12 @@ export async function createPropertyRecord(data: PropertyFormData) {
   });
 }
 
-export async function updatePropertyRecord(id: string, data: PropertyFormData) {
-  return prisma.property.update({
+export async function updatePropertyRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+  data: PropertyFormData,
+) {
+  return tx.property.update({
     where: {
       id,
     },
@@ -146,8 +153,11 @@ export async function updatePropertyRecord(id: string, data: PropertyFormData) {
   });
 }
 
-export async function deactivatePropertyRecord(id: string) {
-  return prisma.property.update({
+export async function deactivatePropertyRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.property.update({
     where: {
       id,
     },

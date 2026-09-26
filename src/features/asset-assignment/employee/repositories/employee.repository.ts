@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-
+import { Prisma } from '@/generated/prisma/client';
 import type { EmployeeFormData } from '../schemas/employee.schema';
 
 export async function findEmployees() {
@@ -64,8 +64,11 @@ export async function findActiveEmployeeById(id: string) {
   });
 }
 
-export async function createEmployeeRecord(data: EmployeeFormData) {
-  return prisma.employee.create({
+export async function createEmployeeRecord(
+  tx: Prisma.TransactionClient,
+  data: EmployeeFormData,
+) {
+  return tx.employee.create({
     data: {
       employeeNumber: data.employeeNumber,
       firstName: data.firstName,
@@ -75,9 +78,12 @@ export async function createEmployeeRecord(data: EmployeeFormData) {
     },
   });
 }
-
-export async function updateEmployeeRecord(id: string, data: EmployeeFormData) {
-  return prisma.employee.update({
+export async function updateEmployeeRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+  data: EmployeeFormData,
+) {
+  return tx.employee.update({
     where: {
       id,
     },
@@ -91,8 +97,11 @@ export async function updateEmployeeRecord(id: string, data: EmployeeFormData) {
   });
 }
 
-export async function deactivateEmployeeRecord(id: string) {
-  return prisma.employee.update({
+export async function deactivateEmployeeRecord(
+  tx: Prisma.TransactionClient,
+  id: string,
+) {
+  return tx.employee.update({
     where: {
       id,
     },

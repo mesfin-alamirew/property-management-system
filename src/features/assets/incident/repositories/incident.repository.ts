@@ -4,9 +4,9 @@ import { Prisma } from '@/generated/prisma/client';
 
 import type { IncidentFormData } from '../schemas/incident.schema';
 
-import { createAuditLog } from '@/lib/audit/audit.repository';
+// import { createAuditLog } from '@/lib/audit/audit.repository';
 
-import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
+// import { AUDIT_ACTIONS, AUDIT_ENTITY_TYPES } from '@/lib/audit/audit.types';
 
 export async function findIncidents() {
   return prisma.incident.findMany({
@@ -229,22 +229,22 @@ export async function startIncidentRecord(
   });
 }
 
-export async function resolveIncidentRecord(
-  tx: Prisma.TransactionClient,
-  id: string,
-  resolvedAt: Date,
-) {
-  return tx.incident.update({
-    where: {
-      id,
-    },
+// export async function resolveIncidentRecord(
+//   tx: Prisma.TransactionClient,
+//   id: string,
+//   resolvedAt: Date,
+// ) {
+//   return tx.incident.update({
+//     where: {
+//       id,
+//     },
 
-    data: {
-      status: 'RESOLVED',
-      resolvedAt,
-    },
-  });
-}
+//     data: {
+//       status: 'RESOLVED',
+//       resolvedAt,
+//     },
+//   });
+// }
 export async function closeIncidentRecord(
   tx: Prisma.TransactionClient,
   id: string,
@@ -275,114 +275,114 @@ export async function cancelIncidentRecord(
     },
   });
 }
-export async function createIncidentAssignmentAudit(
-  tx: Prisma.TransactionClient,
-  userId: string,
-  incidentId: string,
-  referenceNumber: string,
-  oldAssignedToUserId: string | null,
-  assignedToUserId: string,
-) {
-  return createAuditLog(tx, {
-    userId,
-    action: AUDIT_ACTIONS.INCIDENT_ASSIGNED,
-    entityType: AUDIT_ENTITY_TYPES.INCIDENT,
-    entityId: incidentId,
+// export async function createIncidentAssignmentAudit(
+//   tx: Prisma.TransactionClient,
+//   userId: string,
+//   incidentId: string,
+//   referenceNumber: string,
+//   oldAssignedToUserId: string | null,
+//   assignedToUserId: string,
+// ) {
+//   return createAuditLog(tx, {
+//     userId,
+//     action: AUDIT_ACTIONS.INCIDENT_ASSIGNED,
+//     entityType: AUDIT_ENTITY_TYPES.INCIDENT,
+//     entityId: incidentId,
 
-    description: `Incident ${referenceNumber} was assigned to an incident officer.`,
+//     description: `Incident ${referenceNumber} was assigned to an incident officer.`,
 
-    oldValue: {
-      status: 'REPORTED',
-      assignedToUserId: oldAssignedToUserId,
-    },
+//     oldValue: {
+//       status: 'REPORTED',
+//       assignedToUserId: oldAssignedToUserId,
+//     },
 
-    newValue: {
-      status: 'ASSIGNED',
-      assignedToUserId,
-    },
-  });
-}
+//     newValue: {
+//       status: 'ASSIGNED',
+//       assignedToUserId,
+//     },
+//   });
+// }
 
-export async function createIncidentStartAudit(
-  tx: Prisma.TransactionClient,
-  userId: string,
-  incidentId: string,
-  referenceNumber: string,
-  oldStartedAt: Date | null,
-  startedAt: Date,
-) {
-  return createAuditLog(tx, {
-    userId,
-    action: AUDIT_ACTIONS.INCIDENT_STARTED,
-    entityType: AUDIT_ENTITY_TYPES.INCIDENT,
-    entityId: incidentId,
+// export async function createIncidentStartAudit(
+//   tx: Prisma.TransactionClient,
+//   userId: string,
+//   incidentId: string,
+//   referenceNumber: string,
+//   oldStartedAt: Date | null,
+//   startedAt: Date,
+// ) {
+//   return createAuditLog(tx, {
+//     userId,
+//     action: AUDIT_ACTIONS.INCIDENT_STARTED,
+//     entityType: AUDIT_ENTITY_TYPES.INCIDENT,
+//     entityId: incidentId,
 
-    description: `Incident ${referenceNumber} was started.`,
+//     description: `Incident ${referenceNumber} was started.`,
 
-    oldValue: {
-      status: 'ASSIGNED',
-      startedAt: oldStartedAt?.toISOString() ?? null,
-    },
+//     oldValue: {
+//       status: 'ASSIGNED',
+//       startedAt: oldStartedAt?.toISOString() ?? null,
+//     },
 
-    newValue: {
-      status: 'IN_PROGRESS',
-      startedAt: startedAt.toISOString(),
-    },
-  });
-}
+//     newValue: {
+//       status: 'IN_PROGRESS',
+//       startedAt: startedAt.toISOString(),
+//     },
+//   });
+// }
 
-export async function createIncidentResolutionAudit(
-  tx: Prisma.TransactionClient,
-  userId: string,
-  incidentId: string,
-  referenceNumber: string,
-  oldResolvedAt: Date | null,
-  resolvedAt: Date,
-) {
-  return createAuditLog(tx, {
-    userId,
-    action: AUDIT_ACTIONS.INCIDENT_RESOLVED,
-    entityType: AUDIT_ENTITY_TYPES.INCIDENT,
-    entityId: incidentId,
+// export async function createIncidentResolutionAudit(
+//   tx: Prisma.TransactionClient,
+//   userId: string,
+//   incidentId: string,
+//   referenceNumber: string,
+//   oldResolvedAt: Date | null,
+//   resolvedAt: Date,
+// ) {
+//   return createAuditLog(tx, {
+//     userId,
+//     action: AUDIT_ACTIONS.INCIDENT_RESOLVED,
+//     entityType: AUDIT_ENTITY_TYPES.INCIDENT,
+//     entityId: incidentId,
 
-    description: `Incident ${referenceNumber} was resolved.`,
+//     description: `Incident ${referenceNumber} was resolved.`,
 
-    oldValue: {
-      status: 'IN_PROGRESS',
-      resolvedAt: oldResolvedAt?.toISOString() ?? null,
-    },
+//     oldValue: {
+//       status: 'IN_PROGRESS',
+//       resolvedAt: oldResolvedAt?.toISOString() ?? null,
+//     },
 
-    newValue: {
-      status: 'RESOLVED',
-      resolvedAt: resolvedAt.toISOString(),
-    },
-  });
-}
+//     newValue: {
+//       status: 'RESOLVED',
+//       resolvedAt: resolvedAt.toISOString(),
+//     },
+//   });
+// }
 
-export async function createIncidentClosureAudit(
-  tx: Prisma.TransactionClient,
-  userId: string,
-  incidentId: string,
-  referenceNumber: string,
-  oldClosedAt: Date | null,
-  closedAt: Date,
-) {
-  return createAuditLog(tx, {
-    userId,
-    action: AUDIT_ACTIONS.INCIDENT_CLOSED,
-    entityType: AUDIT_ENTITY_TYPES.INCIDENT,
-    entityId: incidentId,
+// export async function createIncidentClosureAudit(
+//   tx: Prisma.TransactionClient,
+//   userId: string,
+//   incidentId: string,
+//   referenceNumber: string,
+//   oldClosedAt: Date | null,
+//   closedAt: Date,
+// ) {
+//   return createAuditLog(tx, {
+//     userId,
+//     action: AUDIT_ACTIONS.INCIDENT_CLOSED,
+//     entityType: AUDIT_ENTITY_TYPES.INCIDENT,
+//     entityId: incidentId,
 
-    description: `Incident ${referenceNumber} was closed.`,
+//     description: `Incident ${referenceNumber} was closed.`,
 
-    oldValue: {
-      status: 'RESOLVED',
-      closedAt: oldClosedAt?.toISOString() ?? null,
-    },
+//     oldValue: {
+//       status: 'RESOLVED',
+//       closedAt: oldClosedAt?.toISOString() ?? null,
+//     },
 
-    newValue: {
-      status: 'CLOSED',
-      closedAt: closedAt.toISOString(),
-    },
-  });
-}
+//     newValue: {
+//       status: 'CLOSED',
+//       closedAt: closedAt.toISOString(),
+//     },
+//   });
+// }

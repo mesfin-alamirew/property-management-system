@@ -1,10 +1,17 @@
 import { prisma } from '@/lib/prisma';
+import { requirePermission } from '@/lib/authorization/authorization.service';
+
 import type {
   AccountabilityExceptionSeverity,
   AccountabilityExceptionType,
 } from '../types/accountability.types';
 
-export async function getAccountabilityReportLookups() {
+export async function getAccountabilityReportLookups(userId: string) {
+  await requirePermission({
+    userId,
+    permissionCode: 'REPORT_ACCOUNTABILITY:READ',
+  });
+
   const [organizationUnits, locations, assetTypes, assetStatuses] =
     await Promise.all([
       prisma.organizationUnit.findMany({

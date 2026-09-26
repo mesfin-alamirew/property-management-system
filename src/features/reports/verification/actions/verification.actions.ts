@@ -23,9 +23,9 @@ export async function getPhysicalVerificationReportAction(
   try {
     const filters = physicalVerificationReportSchema.parse(formData);
 
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getPhysicalVerificationReport(filters);
+    const result = await getPhysicalVerificationReport(user.id, filters);
 
     return {
       success: true,
@@ -61,9 +61,9 @@ export async function getPhysicalVerificationDetailAction(
   try {
     const verificationId = verificationIdSchema.parse(id);
 
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
 
-    const result = await getPhysicalVerificationDetail(verificationId);
+    const result = await getPhysicalVerificationDetail(user.id, verificationId);
 
     if (!result) {
       return {
